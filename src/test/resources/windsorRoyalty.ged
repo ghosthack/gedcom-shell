@@ -1,0 +1,713 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Charles Philip Arthur George /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 14 NOV 1948
+2 PLAC Buckingham Palace, London, England
+1 TITL King of the United Kingdom
+1 OCCU Monarch
+1 NOTE King Charles III. Ascended to the throne on 8 September 2022 after Queen Elizabeth II's death. Longest-serving heir apparent in British history (70 years).
+1 FAMC @F1@
+1 FAMS @F2@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Diana Frances /Spencer/
+1 SEX F
+1 BIRT
+2 DATE 1 JUL 1961
+2 PLAC Sandringham, England
+1 DEAT
+2 DATE 31 AUG 1997
+2 PLAC Paris, France
+1 TITL Princess of Wales
+1 NOTE Princess Diana. Died in car crash in Paris. Known as "The People's Princess" for her humanitarian work and connection with public.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 29 JUL 1981
+2 PLAC St Paul's Cathedral, London, England
+1 DIV
+2 DATE 28 AUG 1996
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME William Arthur Philip Louis /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 21 JUN 1982
+2 PLAC St Mary's Hospital, London, England
+1 TITL Prince of Wales
+1 NOTE Prince William. Heir apparent to the British throne. President of The FA and patron of numerous charities.
+1 FAMC @F2@
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Henry Charles Albert David /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 15 SEP 1984
+2 PLAC St Mary's Hospital, London, England
+1 TITL Duke of Sussex
+1 NOTE Prince Harry. Stepped back from senior royal duties in 2020. Founded Invictus Games for wounded veterans.
+1 FAMC @F2@
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Catherine Elizabeth /Middleton/
+1 SEX F
+1 BIRT
+2 DATE 9 JAN 1982
+2 PLAC Reading, England
+1 TITL Princess of Wales
+1 NOTE Princess Catherine. Met William at University of St Andrews. First commoner to marry an heir to the throne in over 350 years.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I3@
+1 WIFE @I5@
+1 MARR
+2 DATE 29 APR 2011
+2 PLAC Westminster Abbey, London, England
+1 CHIL @I6@
+1 CHIL @I7@
+1 CHIL @I8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME George Alexander Louis /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 22 JUL 2013
+2 PLAC St Mary's Hospital, London, England
+1 TITL Prince of Wales (future)
+1 NOTE Prince George. Second in line to the throne after his father.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Charlotte Elizabeth Diana /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 2 MAY 2015
+2 PLAC St Mary's Hospital, London, England
+1 TITL Princess of Wales (future)
+1 NOTE Princess Charlotte. Third in line to the throne. Named after her grandfather Charles and grandmother Diana.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Louis Arthur Charles /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 23 APR 2018
+2 PLAC St Mary's Hospital, London, England
+1 TITL Prince
+1 NOTE Prince Louis. Fourth in line to the throne.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Rachel Meghan /Markle/
+1 SEX F
+1 BIRT
+2 DATE 4 AUG 1981
+2 PLAC Los Angeles, California, USA
+1 TITL Duchess of Sussex
+1 NOTE Meghan, Duchess of Sussex. American actress before marriage. Stepped back from royal duties with Harry in 2020.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I4@
+1 WIFE @I9@
+1 MARR
+2 DATE 19 MAY 2018
+2 PLAC St George's Chapel, Windsor Castle, England
+1 CHIL @I10@
+1 CHIL @I11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Archie Harrison /Mountbatten-Windsor/
+1 SEX M
+1 BIRT
+2 DATE 6 MAY 2019
+2 PLAC Portland Hospital, London, England
+1 NOTE Son of Harry and Meghan. Seventh in line to the throne.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME Lilibet Diana /Mountbatten-Windsor/
+1 SEX F
+1 BIRT
+2 DATE 4 JUN 2021
+2 PLAC Santa Barbara, California, USA
+1 NOTE Daughter of Harry and Meghan. Named after Queen Elizabeth II (Lilibet was her nickname) and Princess Diana.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Camilla Rosemary /Parker Bowles/
+1 SEX F
+1 BIRT
+2 DATE 17 JUL 1947
+2 PLAC London, England
+1 TITL Queen Consort
+1 NOTE Queen Camilla. Second wife of King Charles III. Became Queen Consort in 2022.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I1@
+1 WIFE @I12@
+1 MARR
+2 DATE 9 APR 2005
+2 PLAC Windsor Guildhall, England
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Elizabeth Alexandra Mary /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 21 APR 1926
+2 PLAC London, England
+1 DEAT
+2 DATE 8 SEP 2022
+2 PLAC Balmoral Castle, Scotland
+1 TITL Queen of the United Kingdom
+1 NOTE Queen Elizabeth II. Reigned from 6 February 1952 to 8 September 2022 (70 years). Longest-reigning British monarch and longest-reigning female monarch in world history.
+1 FAMC @F6@
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Philip /Mountbatten/
+1 SEX M
+1 BIRT
+2 DATE 10 JUN 1921
+2 PLAC Mon Repos, Corfu, Greece
+1 DEAT
+2 DATE 9 APR 2021
+2 PLAC Windsor Castle, England
+1 TITL Duke of Edinburgh
+1 NOTE Prince Philip. Born Prince of Greece and Denmark. Longest-serving consort in British history. Married Elizabeth before she became Queen.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I14@
+1 WIFE @I13@
+1 MARR
+2 DATE 20 NOV 1947
+2 PLAC Westminster Abbey, London, England
+1 CHIL @I1@
+1 CHIL @I15@
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Anne Elizabeth Alice Louise /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 15 AUG 1950
+2 PLAC Clarence House, London, England
+1 TITL Princess Royal
+1 NOTE Princess Anne. Only daughter of Elizabeth II. Known for her extensive charity work. Olympic equestrian (1976).
+1 FAMC @F1@
+1 FAMS @F7@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Andrew Albert Christian Edward /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 19 FEB 1960
+2 PLAC Buckingham Palace, London, England
+1 TITL Duke of York
+1 NOTE Prince Andrew. Served in Royal Navy, flew helicopters in Falklands War. Stepped back from royal duties in 2019.
+1 FAMC @F1@
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Edward Antony Richard Louis /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1964
+2 PLAC Buckingham Palace, London, England
+1 TITL Duke of Edinburgh
+1 NOTE Prince Edward. Youngest child of Elizabeth II. Took on Duke of Edinburgh title after Philip's death.
+1 FAMC @F1@
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Mark Anthony Peter /Phillips/
+1 SEX M
+1 BIRT
+2 DATE 22 SEP 1948
+2 PLAC Tetbury, England
+1 TITL Captain
+1 NOTE Captain Mark Phillips. Olympic gold medalist in equestrian (1972). First husband of Princess Anne.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I18@
+1 WIFE @I15@
+1 MARR
+2 DATE 14 NOV 1973
+2 PLAC Westminster Abbey, London, England
+1 DIV
+2 DATE 28 APR 1992
+1 CHIL @I19@
+1 CHIL @I20@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Peter Mark Andrew /Phillips/
+1 SEX M
+1 BIRT
+2 DATE 15 NOV 1977
+2 PLAC St Mary's Hospital, London, England
+1 NOTE Son of Princess Anne. First grandchild of Elizabeth II. No royal title at mother's request.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Zara Anne Elizabeth /Phillips/
+1 SEX F
+1 BIRT
+2 DATE 15 MAY 1981
+2 PLAC St Mary's Hospital, London, England
+1 NOTE Daughter of Princess Anne. Olympic silver medalist in equestrian (2012). Married to rugby player Mike Tindall.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Timothy James Hamilton /Laurence/
+1 SEX M
+1 BIRT
+2 DATE 1 MAR 1955
+2 PLAC Camberwell, London, England
+1 TITL Vice Admiral
+1 NOTE Vice Admiral Sir Timothy Laurence. Second husband of Princess Anne. Royal Navy officer.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I21@
+1 WIFE @I15@
+1 MARR
+2 DATE 12 DEC 1992
+2 PLAC Crathie Kirk, Scotland
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Sarah Margaret /Ferguson/
+1 SEX F
+1 BIRT
+2 DATE 15 OCT 1959
+2 PLAC London, England
+1 TITL Duchess of York
+1 NOTE Sarah, Duchess of York. Former wife of Prince Andrew. Author and television personality.
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F9@ FAM
+1 HUSB @I16@
+1 WIFE @I22@
+1 MARR
+2 DATE 23 JUL 1986
+2 PLAC Westminster Abbey, London, England
+1 DIV
+2 DATE 30 MAY 1996
+1 CHIL @I23@
+1 CHIL @I24@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Beatrice Elizabeth Mary /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 8 AUG 1988
+2 PLAC Portland Hospital, London, England
+1 TITL Princess
+1 NOTE Princess Beatrice. Daughter of Prince Andrew.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Eugenie Victoria Helena /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 23 MAR 1990
+2 PLAC Portland Hospital, London, England
+1 TITL Princess
+1 NOTE Princess Eugenie. Daughter of Prince Andrew. Works in art world.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Sophie Helen /Rhys-Jones/
+1 SEX F
+1 BIRT
+2 DATE 20 JAN 1965
+2 PLAC Oxford, England
+1 TITL Duchess of Edinburgh
+1 NOTE Sophie, Duchess of Edinburgh. Former public relations executive. Wife of Prince Edward.
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F10@ FAM
+1 HUSB @I17@
+1 WIFE @I25@
+1 MARR
+2 DATE 19 JUN 1999
+2 PLAC St George's Chapel, Windsor Castle, England
+1 CHIL @I26@
+1 CHIL @I27@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Louise Alice Elizabeth Mary /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 8 NOV 2003
+2 PLAC Frimley Park Hospital, England
+1 TITL Lady
+1 NOTE Lady Louise Windsor. Daughter of Prince Edward. Uses courtesy title instead of Princess.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME James Alexander Philip Theo /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 17 DEC 2007
+2 PLAC Frimley Park Hospital, England
+1 TITL Earl of Wessex
+1 NOTE James, Earl of Wessex. Son of Prince Edward. Uses courtesy title instead of Prince.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME George /VI/
+1 SEX M
+1 BIRT
+2 DATE 14 DEC 1895
+2 PLAC Sandringham, England
+1 DEAT
+2 DATE 6 FEB 1952
+2 PLAC Sandringham, England
+1 TITL King of the United Kingdom
+1 NOTE King George VI. Reigned 1936-1952. Became king after his brother Edward VIII abdicated. Father of Elizabeth II. Subject of film "The King's Speech".
+1 FAMC @F11@
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Elizabeth Angela Marguerite /Bowes-Lyon/
+1 SEX F
+1 BIRT
+2 DATE 4 AUG 1900
+2 PLAC London, England
+1 DEAT
+2 DATE 30 MAR 2002
+2 PLAC Windsor Castle, England
+1 TITL Queen Consort, Queen Mother
+1 NOTE Queen Elizabeth The Queen Mother. Wife of George VI, mother of Elizabeth II. Lived to 101 years old.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I28@
+1 WIFE @I29@
+1 MARR
+2 DATE 26 APR 1923
+2 PLAC Westminster Abbey, London, England
+1 CHIL @I13@
+1 CHIL @I30@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Margaret Rose /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 21 AUG 1930
+2 PLAC Glamis Castle, Scotland
+1 DEAT
+2 DATE 9 FEB 2002
+2 PLAC London, England
+1 TITL Princess
+1 NOTE Princess Margaret. Younger sister of Elizabeth II. Known for glamorous lifestyle and controversial relationship with Group Captain Peter Townsend.
+1 FAMC @F6@
+1 FAMS @F12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Antony Charles Robert /Armstrong-Jones/
+1 SEX M
+1 BIRT
+2 DATE 7 MAR 1930
+2 PLAC London, England
+1 DEAT
+2 DATE 13 JAN 2017
+2 PLAC London, England
+1 TITL Earl of Snowdon
+1 NOTE Lord Snowdon. Photographer and filmmaker. First commoner in 400 years to marry king's daughter.
+1 FAMS @F12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F12@ FAM
+1 HUSB @I31@
+1 WIFE @I30@
+1 MARR
+2 DATE 6 MAY 1960
+2 PLAC Westminster Abbey, London, England
+1 DIV
+2 DATE 11 JUL 1978
+1 CHIL @I32@
+1 CHIL @I33@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME David Albert Charles /Armstrong-Jones/
+1 SEX M
+1 BIRT
+2 DATE 3 NOV 1961
+2 PLAC Clarence House, London, England
+1 TITL Earl of Snowdon
+1 NOTE David Armstrong-Jones, 2nd Earl of Snowdon. Son of Princess Margaret. Furniture maker and chairman.
+1 FAMC @F12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I33@ INDI
+1 NAME Sarah Frances Elizabeth /Armstrong-Jones/
+1 SEX F
+1 BIRT
+2 DATE 1 MAY 1964
+2 PLAC Kensington Palace, London, England
+1 TITL Lady
+1 NOTE Lady Sarah Chatto. Daughter of Princess Margaret. Artist and painter.
+1 FAMC @F12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I34@ INDI
+1 NAME George /V/
+1 SEX M
+1 BIRT
+2 DATE 3 JUN 1865
+2 PLAC Marlborough House, London, England
+1 DEAT
+2 DATE 20 JAN 1936
+2 PLAC Sandringham, England
+1 TITL King of the United Kingdom
+1 NOTE King George V. Reigned 1910-1936. Changed royal house name from Saxe-Coburg-Gotha to Windsor during WWI. Father of Edward VIII and George VI.
+1 FAMS @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I35@ INDI
+1 NAME Mary /of Teck/
+1 SEX F
+1 BIRT
+2 DATE 26 MAY 1867
+2 PLAC Kensington Palace, London, England
+1 DEAT
+2 DATE 24 MAR 1953
+2 PLAC Marlborough House, London, England
+1 TITL Queen Consort
+1 NOTE Queen Mary. Wife of George V. Known for her regal bearing and extensive collection of jewels.
+1 FAMS @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F11@ FAM
+1 HUSB @I34@
+1 WIFE @I35@
+1 MARR
+2 DATE 6 JUL 1893
+2 PLAC Chapel Royal, St James's Palace, London
+1 CHIL @I36@
+1 CHIL @I28@
+1 CHIL @I37@
+1 CHIL @I38@
+1 CHIL @I39@
+1 CHIL @I40@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I36@ INDI
+1 NAME Edward Albert Christian George Andrew Patrick David /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 23 JUN 1894
+2 PLAC White Lodge, Richmond Park, England
+1 DEAT
+2 DATE 28 MAY 1972
+2 PLAC Paris, France
+1 TITL King Edward VIII, Duke of Windsor
+1 NOTE King Edward VIII. Reigned 11 Dec 1936 - 11 Dec 1936 (325 days). Abdicated to marry American divorcée Wallis Simpson. Only British monarch to voluntarily abdicate.
+1 FAMC @F11@
+1 FAMS @F13@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I37@ INDI
+1 NAME Mary /Windsor/
+1 SEX F
+1 BIRT
+2 DATE 25 APR 1897
+2 PLAC York Cottage, Sandringham, England
+1 DEAT
+2 DATE 28 MAR 1965
+2 PLAC Harewood House, Yorkshire, England
+1 TITL Princess Royal
+1 NOTE Princess Mary. Only daughter of George V. Served as Princess Royal.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I38@ INDI
+1 NAME Henry William Frederick Albert /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 31 MAR 1900
+2 PLAC York Cottage, Sandringham, England
+1 DEAT
+2 DATE 10 JUN 1974
+2 PLAC Barnwell Manor, England
+1 TITL Duke of Gloucester
+1 NOTE Prince Henry, Duke of Gloucester. Third son of George V.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I39@ INDI
+1 NAME George Edward Alexander Edmund /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 20 DEC 1902
+2 PLAC York Cottage, Sandringham, England
+1 DEAT
+2 DATE 25 AUG 1942
+2 PLAC Morven, Scotland
+1 TITL Duke of Kent
+1 NOTE Prince George, Duke of Kent. Fourth son of George V. Died in military plane crash during WWII.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I40@ INDI
+1 NAME John Charles Francis /Windsor/
+1 SEX M
+1 BIRT
+2 DATE 12 JUL 1905
+2 PLAC York Cottage, Sandringham, England
+1 DEAT
+2 DATE 18 JAN 1919
+2 PLAC Wood Farm, Sandringham, England
+1 TITL Prince
+1 NOTE Prince John. Youngest son of George V. Suffered from epilepsy and lived in seclusion. Died at age 13.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I41@ INDI
+1 NAME Wallis /Simpson/
+1 SEX F
+1 BIRT
+2 DATE 19 JUN 1896
+2 PLAC Blue Ridge Summit, Pennsylvania, USA
+1 DEAT
+2 DATE 24 APR 1986
+2 PLAC Paris, France
+1 TITL Duchess of Windsor
+1 NOTE Wallis Simpson, Duchess of Windsor. American socialite. Edward VIII abdicated to marry her, causing constitutional crisis.
+1 FAMS @F13@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F13@ FAM
+1 HUSB @I36@
+1 WIFE @I41@
+1 MARR
+2 DATE 3 JUN 1937
+2 PLAC Château de Candé, France
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

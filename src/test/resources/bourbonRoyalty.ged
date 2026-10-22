@@ -1,0 +1,875 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Felipe /VI/
+1 SEX M
+1 BIRT
+2 DATE 30 JAN 1968
+2 PLAC Madrid, Spain
+1 TITL King of Spain
+1 OCCU Monarch
+1 NOTE King Felipe VI. Ascended to throne on 19 June 2014 after father's abdication. First Spanish monarch born after restoration of democracy.
+1 FAMC @F1@
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Letizia /Ortiz Rocasolano/
+1 SEX F
+1 BIRT
+2 DATE 15 SEP 1972
+2 PLAC Oviedo, Spain
+1 TITL Queen of Spain
+1 NOTE Queen Letizia. Former journalist and news anchor. First commoner queen consort of Spain.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 22 MAY 2004
+2 PLAC Almudena Cathedral, Madrid, Spain
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Leonor /de Borbón y Ortiz/
+1 SEX F
+1 BIRT
+2 DATE 31 OCT 2005
+2 PLAC Madrid, Spain
+1 TITL Princess of Asturias
+1 NOTE Princess Leonor. Heir presumptive to Spanish throne. First female heir since 1833.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Sofía /de Borbón y Ortiz/
+1 SEX F
+1 BIRT
+2 DATE 29 APR 2007
+2 PLAC Madrid, Spain
+1 TITL Infanta of Spain
+1 NOTE Infanta Sofía. Second daughter of King Felipe VI.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Juan Carlos /I/
+1 SEX M
+1 BIRT
+2 DATE 5 JAN 1938
+2 PLAC Rome, Italy
+1 TITL King of Spain (1975-2014)
+1 NOTE King Juan Carlos I. Reigned 1975-2014. Restored Spanish monarchy after Franco's dictatorship. Instrumental in stopping 1981 coup attempt. Abdicated amid financial scandals.
+1 FAMC @F3@
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Sofía /of Greece/
+1 SEX F
+1 BIRT
+2 DATE 2 NOV 1938
+2 PLAC Athens, Greece
+1 TITL Queen of Spain
+1 NOTE Queen Sofía. Princess of Greece and Denmark by birth. Sister of deposed King Constantine II of Greece.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I5@
+1 WIFE @I6@
+1 MARR
+2 DATE 14 MAY 1962
+2 PLAC Athens, Greece
+1 CHIL @I7@
+1 CHIL @I1@
+1 CHIL @I8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Elena María Isabel Dominica /de Borbón y Grecia/
+1 SEX F
+1 BIRT
+2 DATE 20 DEC 1963
+2 PLAC Madrid, Spain
+1 TITL Duchess of Lugo
+1 NOTE Infanta Elena. Eldest child of Juan Carlos I. First Spanish royal woman to earn university degree.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Cristina Federica Victoria Antonia /de Borbón y Grecia/
+1 SEX F
+1 BIRT
+2 DATE 13 JUN 1965
+2 PLAC Madrid, Spain
+1 TITL Infanta of Spain
+1 NOTE Infanta Cristina. Younger daughter of Juan Carlos I. Olympic sailor (1988). Involved in husband's corruption scandal.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Juan /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 20 JUN 1913
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 1 APR 1993
+2 PLAC Pamplona, Spain
+1 TITL Count of Barcelona
+1 NOTE Don Juan, Count of Barcelona. Legitimate heir to Spanish throne but never reigned. Father of Juan Carlos I. Franco bypassed him for succession.
+1 FAMC @F4@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME María de las Mercedes /of Bourbon-Two Sicilies/
+1 SEX F
+1 BIRT
+2 DATE 23 DEC 1910
+2 PLAC Madrid, Spain
+1 DEAT
+2 DATE 2 JAN 2000
+2 PLAC Pamplona, Spain
+1 TITL Countess of Barcelona
+1 NOTE Countess María. Princess of Bourbon-Two Sicilies. Mother of Juan Carlos I.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 MARR
+2 DATE 12 OCT 1935
+2 PLAC Rome, Italy
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHIL @I5@
+1 CHIL @I13@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME María del Pilar Alfonsa Juana Victoria Luisa Ignacia /de Borbón y Battenberg/
+1 SEX F
+1 BIRT
+2 DATE 30 SEP 1936
+2 PLAC Cannes, France
+1 DEAT
+2 DATE 8 JAN 2020
+2 PLAC Madrid, Spain
+1 TITL Infanta of Spain
+1 NOTE Infanta Pilar. Eldest child and sister of Juan Carlos I.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Margarita María de la Victoria Esperanza Jacoba Felicidad Perpetua /de Borbón y Battenberg/
+1 SEX F
+1 BIRT
+2 DATE 6 MAR 1939
+2 PLAC Rome, Italy
+1 TITL Infanta of Spain
+1 NOTE Infanta Margarita. Second daughter of Count of Barcelona. Sister of Juan Carlos I.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Alfonso /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 3 OCT 1941
+2 PLAC Rome, Italy
+1 DEAT
+2 DATE 29 MAR 1956
+2 PLAC Estoril, Portugal
+1 TITL Infante of Spain
+1 NOTE Infante Alfonso. Younger brother of Juan Carlos I. Died at 14 in shooting accident involving his brother.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Alfonso /XIII/
+1 SEX M
+1 BIRT
+2 DATE 17 MAY 1886
+2 PLAC Madrid, Spain
+1 DEAT
+2 DATE 28 FEB 1941
+2 PLAC Rome, Italy
+1 TITL King of Spain
+1 NOTE King Alfonso XIII. Reigned 1886-1931. Born posthumously as king. Left Spain in 1931 after Republican victory. Died in exile. Grandfather of Juan Carlos I.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Victoria Eugenie /of Battenberg/
+1 SEX F
+1 BIRT
+2 DATE 24 OCT 1887
+2 PLAC Balmoral Castle, Scotland
+1 DEAT
+2 DATE 15 APR 1969
+2 PLAC Lausanne, Switzerland
+1 TITL Queen of Spain
+1 NOTE Queen Victoria Eugenie "Ena". Princess of Battenberg, granddaughter of Queen Victoria. Carried hemophilia gene. Lived in exile after 1931.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I14@
+1 WIFE @I15@
+1 MARR
+2 DATE 31 MAY 1906
+2 PLAC Madrid, Spain
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHIL @I18@
+1 CHIL @I9@
+1 CHIL @I19@
+1 CHIL @I20@
+1 CHIL @I21@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Alfonso Pío Cristino Eduardo Francisco Guillermo Carlos Enrique Eugenio Fernando Antonio Venancio /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 10 MAY 1907
+2 PLAC Madrid, Spain
+1 DEAT
+2 DATE 6 SEP 1938
+2 PLAC Miami, Florida, USA
+1 TITL Prince of Asturias
+1 NOTE Alfonso, Prince of Asturias. Eldest son of Alfonso XIII. Renounced rights due to hemophilia. Died in car accident in USA.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Jaime Luitpold Isabelino Enrique Alberto Alfonso Víctor Acisclo Pedro Pablo María /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 23 JUN 1908
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 20 MAR 1975
+2 PLAC St. Gallen, Switzerland
+1 TITL Duke of Segovia
+1 NOTE Infante Jaime. Deaf and mute from childhood mastoiditis. Renounced succession rights.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Beatriz Isabel Federica Alfonsa Eugenia Cristina María Teresa Bienvenida Ladislaa /de Borbón y Battenberg/
+1 SEX F
+1 BIRT
+2 DATE 22 JUN 1909
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 22 NOV 2002
+2 PLAC Rome, Italy
+1 TITL Infanta of Spain
+1 NOTE Infanta Beatriz. Third child of Alfonso XIII. Married Prince Alessandro Torlonia.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME María Cristina Teresa Alejandra Guadalupe María de la Concepción Ildefonsa Victoria Eugenia /de Borbón y Battenberg/
+1 SEX F
+1 BIRT
+2 DATE 12 DEC 1911
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 23 DEC 1996
+2 PLAC Madrid, Spain
+1 TITL Infanta of Spain
+1 NOTE Infanta María Cristina. Fifth child of Alfonso XIII. Married Count Enrico Marone-Cinzano.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Juan Carlos Teresa Silverio Alfonso /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 7 OCT 1913
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 21 AUG 1934
+2 PLAC Krumpendorf, Austria
+1 TITL Infante of Spain
+1 NOTE Infante Juan. Had hemophilia. Died at age 20 from internal bleeding after minor car accident.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Gonzalo Manuel María Bernardo Narciso Alfonso Mauricio /de Borbón y Battenberg/
+1 SEX M
+1 BIRT
+2 DATE 24 OCT 1914
+2 PLAC La Granja, Spain
+1 DEAT
+2 DATE 13 AUG 1934
+2 PLAC Krumpendorf, Austria
+1 TITL Infante of Spain
+1 NOTE Infante Gonzalo. Youngest son of Alfonso XIII. Had hemophilia. Died at 19 in car accident one week before brother Juan.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Louis /XIV/
+1 SEX M
+1 BIRT
+2 DATE 5 SEP 1638
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 1 SEP 1715
+2 PLAC Versailles, France
+1 TITL King of France
+1 NOTE King Louis XIV "The Sun King". Reigned 1643-1715 (72 years). Longest-reigning sovereign monarch in European history. Built Palace of Versailles. Epitome of absolute monarchy.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Maria Theresa /of Spain/
+1 SEX F
+1 BIRT
+2 DATE 10 SEP 1638
+2 PLAC El Escorial, Spain
+1 DEAT
+2 DATE 30 JUL 1683
+2 PLAC Versailles, France
+1 TITL Queen of France
+1 NOTE Queen Maria Theresa. Spanish Infanta, daughter of Philip IV. Wife of Louis XIV. Mother of Grand Dauphin.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I22@
+1 WIFE @I23@
+1 MARR
+2 DATE 9 JUN 1660
+2 PLAC Saint-Jean-de-Luz, France
+1 CHIL @I24@
+1 CHIL @I25@
+1 CHIL @I26@
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHIL @I29@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Louis /Grand Dauphin/
+1 SEX M
+1 BIRT
+2 DATE 1 NOV 1661
+2 PLAC Fontainebleau, France
+1 DEAT
+2 DATE 14 APR 1711
+2 PLAC Meudon, France
+1 TITL Dauphin of France
+1 NOTE Louis, Grand Dauphin. Eldest surviving son of Louis XIV. Never reigned as he predeceased his father. Father of Philip V of Spain.
+1 FAMC @F5@
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Anne Élisabeth /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 18 NOV 1662
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 30 DEC 1662
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL Princess of France
+1 NOTE Princess Anne Élisabeth. Died in infancy at 6 weeks old.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Marie Anne /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 16 NOV 1664
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 26 DEC 1664
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL Princess of France
+1 NOTE Princess Marie Anne. Died in infancy at 5 weeks old.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Marie Thérèse /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 2 JAN 1667
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 1 MAR 1672
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL Princess of France
+1 NOTE Princess Marie Thérèse. Died in childhood at age 5.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Philippe Charles /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 5 AUG 1668
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 10 JUL 1671
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL Duke of Anjou
+1 NOTE Duke Philippe. Died in childhood at age 2.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Louis François /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 14 JUN 1672
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 4 NOV 1672
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL Duke of Anjou
+1 NOTE Duke Louis François. Died in infancy at 4 months old.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Maria Anna Victoria /of Bavaria/
+1 SEX F
+1 BIRT
+2 DATE 28 NOV 1660
+2 PLAC Munich, Bavaria
+1 DEAT
+2 DATE 20 APR 1690
+2 PLAC Versailles, France
+1 TITL Dauphine of France
+1 NOTE Maria Anna Victoria. Princess of Bavaria. Wife of Grand Dauphin. Mother of Philip V of Spain and Louis, Duke of Burgundy.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I24@
+1 WIFE @I30@
+1 MARR
+2 DATE 7 MAR 1680
+2 PLAC Châlons-en-Champagne, France
+1 CHIL @I31@
+1 CHIL @I32@
+1 CHIL @I33@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Louis /Duke of Burgundy/
+1 SEX M
+1 BIRT
+2 DATE 16 AUG 1682
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 18 FEB 1712
+2 PLAC Versailles, France
+1 TITL Duke of Burgundy
+1 NOTE Louis, Duke of Burgundy. Grandson of Louis XIV. Father of Louis XV. Predeceased both his father and grandfather. Died of measles.
+1 FAMC @F6@
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME Philip /V/ of Spain
+1 SEX M
+1 BIRT
+2 DATE 19 DEC 1683
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 9 JUL 1746
+2 PLAC Madrid, Spain
+1 TITL King of Spain
+1 NOTE King Philip V of Spain. First Bourbon king of Spain. Grandson of Louis XIV. His succession caused War of Spanish Succession (1701-1714). Founded modern Bourbon dynasty of Spain.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I33@ INDI
+1 NAME Charles /Duke of Berry/
+1 SEX M
+1 BIRT
+2 DATE 31 AUG 1686
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 4 MAY 1714
+2 PLAC Versailles, France
+1 TITL Duke of Berry
+1 NOTE Charles, Duke of Berry. Youngest son of Grand Dauphin. Died following hunting accident.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I34@ INDI
+1 NAME Marie Adélaïde /of Savoy/
+1 SEX F
+1 BIRT
+2 DATE 6 DEC 1685
+2 PLAC Turin, Italy
+1 DEAT
+2 DATE 12 FEB 1712
+2 PLAC Versailles, France
+1 TITL Duchess of Burgundy
+1 NOTE Marie Adélaïde. Princess of Savoy. Beloved by Louis XIV. Mother of Louis XV. Died of measles six days before her husband.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I31@
+1 WIFE @I34@
+1 MARR
+2 DATE 7 DEC 1697
+2 PLAC Versailles, France
+1 CHIL @I35@
+1 CHIL @I36@
+1 CHIL @I37@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I35@ INDI
+1 NAME Louis /Duke of Brittany/
+1 SEX M
+1 BIRT
+2 DATE 25 JUN 1704
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 13 APR 1705
+2 PLAC Versailles, France
+1 TITL Duke of Brittany
+1 NOTE Louis, Duke of Brittany. Died in infancy. Elder brother of Louis XV.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I36@ INDI
+1 NAME Louis /XV/
+1 SEX M
+1 BIRT
+2 DATE 15 FEB 1710
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 10 MAY 1774
+2 PLAC Versailles, France
+1 TITL King of France
+1 NOTE King Louis XV "Louis the Beloved". Reigned 1715-1774 (59 years). Great-grandson and successor of Louis XIV. Lost Seven Years' War. His death heralded decline leading to Revolution.
+1 FAMC @F7@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I37@ INDI
+1 NAME Louis /Duke of Brittany (2)/
+1 SEX M
+1 BIRT
+2 DATE 8 APR 1707
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 8 MAR 1712
+2 PLAC Versailles, France
+1 TITL Duke of Brittany
+1 NOTE Louis, Duke of Brittany. Briefly Dauphin after father's death. Died of measles one month after his parents.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I38@ INDI
+1 NAME Marie /Leszczyńska/
+1 SEX F
+1 BIRT
+2 DATE 23 JUN 1703
+2 PLAC Trzebnica, Poland
+1 DEAT
+2 DATE 24 JUN 1768
+2 PLAC Versailles, France
+1 TITL Queen of France
+1 NOTE Queen Marie. Daughter of deposed Polish king. Wife of Louis XV. Mother of Louis XVI's father.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I36@
+1 WIFE @I38@
+1 MARR
+2 DATE 4 SEP 1725
+2 PLAC Fontainebleau, France
+1 CHIL @I39@
+1 CHIL @I40@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I39@ INDI
+1 NAME Louis Ferdinand /Dauphin/
+1 SEX M
+1 BIRT
+2 DATE 4 SEP 1729
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 20 DEC 1765
+2 PLAC Fontainebleau, France
+1 TITL Dauphin of France
+1 NOTE Louis, Dauphin. Son of Louis XV. Father of Louis XVI, Louis XVIII, and Charles X. Never reigned, died before his father.
+1 FAMC @F8@
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I40@ INDI
+1 NAME Elisabeth /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 14 AUG 1727
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 6 DEC 1759
+2 PLAC Versailles, France
+1 TITL Madame Elisabeth
+1 NOTE Madame Elisabeth. Twin sister of another Elisabeth who died young. Eldest daughter of Louis XV.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I41@ INDI
+1 NAME Maria Josepha /of Saxony/
+1 SEX F
+1 BIRT
+2 DATE 4 NOV 1731
+2 PLAC Dresden, Saxony
+1 DEAT
+2 DATE 13 MAR 1767
+2 PLAC Versailles, France
+1 TITL Dauphine of France
+1 NOTE Maria Josepha. Princess of Saxony. Wife of Dauphin Louis Ferdinand. Mother of Louis XVI.
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F9@ FAM
+1 HUSB @I39@
+1 WIFE @I41@
+1 MARR
+2 DATE 9 FEB 1747
+2 PLAC Versailles, France
+1 CHIL @I42@
+1 CHIL @I43@
+1 CHIL @I44@
+1 CHIL @I45@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I42@ INDI
+1 NAME Louis /XVI/
+1 SEX M
+1 BIRT
+2 DATE 23 AUG 1754
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 21 JAN 1793
+2 PLAC Place de la Révolution, Paris, France
+1 TITL King of France
+1 NOTE King Louis XVI. Reigned 1774-1792. Last King of France before Revolution. Executed by guillotine during French Revolution. Married Marie Antoinette.
+1 FAMC @F9@
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I43@ INDI
+1 NAME Louis Stanislas Xavier /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 17 NOV 1755
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 16 SEP 1824
+2 PLAC Paris, France
+1 TITL King Louis XVIII
+1 NOTE King Louis XVIII. Reigned 1814-1824 (with brief interruption during Hundred Days). Brother of Louis XVI. Restored to throne after Napoleon's defeat.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I44@ INDI
+1 NAME Charles Philippe /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 9 OCT 1757
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 6 NOV 1836
+2 PLAC Görz, Austria
+1 TITL King Charles X
+1 NOTE King Charles X. Reigned 1824-1830. Brother of Louis XVI and Louis XVIII. Last Bourbon king of France. Overthrown in July Revolution of 1830.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I45@ INDI
+1 NAME Madame Élisabeth /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 3 MAY 1764
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 10 MAY 1794
+2 PLAC Place de la Révolution, Paris, France
+1 TITL Madame Élisabeth
+1 NOTE Madame Élisabeth. Sister of Louis XVI. Executed by guillotine during Reign of Terror. Known for her piety and devotion to her brother.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I46@ INDI
+1 NAME Marie Antoinette /of Austria/
+1 SEX F
+1 BIRT
+2 DATE 2 NOV 1755
+2 PLAC Vienna, Austria
+1 DEAT
+2 DATE 16 OCT 1793
+2 PLAC Place de la Révolution, Paris, France
+1 TITL Queen of France
+1 NOTE Queen Marie Antoinette. Daughter of Empress Maria Theresa of Austria. Wife of Louis XVI. Famous for "Let them eat cake" (never actually said). Executed by guillotine nine months after husband.
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F10@ FAM
+1 HUSB @I42@
+1 WIFE @I46@
+1 MARR
+2 DATE 16 MAY 1770
+2 PLAC Versailles, France
+1 CHIL @I47@
+1 CHIL @I48@
+1 CHIL @I49@
+1 CHIL @I50@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I47@ INDI
+1 NAME Marie Thérèse Charlotte /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 19 DEC 1778
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 19 OCT 1851
+2 PLAC Frohsdorf, Austria
+1 TITL Madame Royale
+1 NOTE Madame Royale. Eldest child of Louis XVI and Marie Antoinette. Only member of immediate family to survive Revolution. Later Dauphine of France.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I48@ INDI
+1 NAME Louis Joseph Xavier François /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 22 OCT 1781
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 4 JUN 1789
+2 PLAC Versailles, France
+1 TITL Dauphin of France
+1 NOTE Louis Joseph. First Dauphin, eldest son of Louis XVI. Died of tuberculosis just before Revolution began.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I49@ INDI
+1 NAME Louis Charles /de Bourbon/
+1 SEX M
+1 BIRT
+2 DATE 27 MAR 1785
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 8 JUN 1795
+2 PLAC Temple Prison, Paris, France
+1 TITL Louis XVII (titular)
+1 NOTE Louis XVII (titular). Second Dauphin. Became titular king after father's execution. Died in prison at age 10. Royalists recognize him as King Louis XVII though he never reigned.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I50@ INDI
+1 NAME Sophie Hélène Béatrice /de Bourbon/
+1 SEX F
+1 BIRT
+2 DATE 9 JUL 1786
+2 PLAC Versailles, France
+1 DEAT
+2 DATE 19 JUN 1787
+2 PLAC Versailles, France
+1 TITL Madame Sophie
+1 NOTE Madame Sophie. Youngest child of Louis XVI and Marie Antoinette. Died in infancy before the Revolution.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

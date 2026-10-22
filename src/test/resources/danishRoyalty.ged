@@ -1,0 +1,520 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/gen
+3 ADDR https://github.com/ghosthack/gen
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Frederik /X/
+1 SEX M
+1 BIRT
+2 DATE 26 MAY 1968
+2 PLAC Copenhagen, Denmark
+1 TITL King of Denmark
+1 OCCU Monarch
+1 NOTE King Frederik X. Ascended to the throne on 14 January 2024 after his mother's abdication. Crown Prince for over 50 years before becoming king.
+1 FAMC @F1@
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Mary Elizabeth /Donaldson/
+1 SEX F
+1 BIRT
+2 DATE 5 FEB 1972
+2 PLAC Hobart, Tasmania, Australia
+1 TITL Queen of Denmark
+1 NOTE Queen Mary. Originally from Australia. Met Frederik at the 2000 Summer Olympics in Sydney. First Australian-born queen consort.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 14 MAY 2004
+2 PLAC Copenhagen Cathedral, Denmark
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHIL @I5@
+1 CHIL @I6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Christian Valdemar Henri John /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 15 OCT 2005
+2 PLAC Copenhagen, Denmark
+1 TITL Crown Prince of Denmark
+1 NOTE Crown Prince Christian. Heir apparent to the Danish throne. Second in line at birth, became Crown Prince in 2024.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Isabella Henrietta Ingrid Margrethe /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 21 APR 2007
+2 PLAC Copenhagen, Denmark
+1 TITL Princess of Denmark
+1 NOTE Princess Isabella. Second child of King Frederik X and Queen Mary.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Vincent Frederik Minik Alexander /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 8 JAN 2011
+2 PLAC Copenhagen, Denmark
+1 TITL Prince of Denmark
+1 NOTE Prince Vincent. Twin brother of Princess Josephine. Named Minik after his Greenlandic heritage.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Josephine Sophia Ivalo Mathilda /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 8 JAN 2011
+2 PLAC Copenhagen, Denmark
+1 TITL Princess of Denmark
+1 NOTE Princess Josephine. Twin sister of Prince Vincent. Named Ivalo after her Greenlandic heritage.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Margrethe /II/
+1 SEX F
+1 BIRT
+2 DATE 16 APR 1940
+2 PLAC Amalienborg Palace, Copenhagen, Denmark
+1 TITL Queen of Denmark (1972-2024)
+1 NOTE Queen Margrethe II. Reigned from 14 January 1972 to 14 January 2024 (52 years). First female Danish monarch since Margrethe I. Abdicated in favor of her son Frederik.
+1 FAMC @F3@
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Henri Marie Jean André /de Laborde de Monpezat/
+1 SEX M
+1 BIRT
+2 DATE 11 JUN 1934
+2 PLAC Talence, France
+1 DEAT
+2 DATE 13 FEB 2018
+2 PLAC Fredensborg Palace, Denmark
+1 TITL Prince Consort of Denmark
+1 NOTE Prince Henrik. Born in France as Count Henri de Laborde de Monpezat. Married Queen Margrethe II in 1967. Never given the title of King Consort, which caused controversy.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I8@
+1 WIFE @I7@
+1 MARR
+2 DATE 10 JUN 1967
+2 PLAC Holmen Church, Copenhagen, Denmark
+1 CHIL @I1@
+1 CHIL @I9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Joachim Holger Waldemar Christian /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 7 JUN 1969
+2 PLAC Copenhagen, Denmark
+1 TITL Prince of Denmark
+1 NOTE Prince Joachim. Younger brother of King Frederik X. His children lost their prince/princess titles in 2023.
+1 FAMC @F1@
+1 FAMS @F4@
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Alexandra Christina /Manley/
+1 SEX F
+1 BIRT
+2 DATE 30 JUN 1964
+2 PLAC Hong Kong
+1 NOTE Alexandra, Countess of Frederiksborg. First wife of Prince Joachim. Born in Hong Kong to British father and Austrian-Czech mother.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 MARR
+2 DATE 18 NOV 1995
+2 PLAC Frederiksborg Palace Chapel, Denmark
+1 DIV
+2 DATE 8 APR 2005
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME Nikolai William Alexander Frederik /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 28 AUG 1999
+2 PLAC Copenhagen, Denmark
+1 NOTE Count of Monpezat (formerly Prince). Lost prince title in 2023. Works as a model and businessman.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Felix Henrik Valdemar Christian /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 22 JUL 2002
+2 PLAC Copenhagen, Denmark
+1 NOTE Count of Monpezat (formerly Prince). Lost prince title in 2023.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Marie Agathe Odile /Cavallier/
+1 SEX F
+1 BIRT
+2 DATE 6 FEB 1976
+2 PLAC Paris, France
+1 TITL Princess of Denmark
+1 NOTE Princess Marie. Second wife of Prince Joachim. Born in France.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I9@
+1 WIFE @I13@
+1 MARR
+2 DATE 24 MAY 2008
+2 PLAC Møgeltønder Church, Denmark
+1 CHIL @I14@
+1 CHIL @I15@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Henrik Carl Joachim Alain /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 4 MAY 2009
+2 PLAC Copenhagen, Denmark
+1 NOTE Count of Monpezat (formerly Prince). Lost prince title in 2023.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Athena Marguerite Françoise Marie /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 24 JAN 2012
+2 PLAC Copenhagen, Denmark
+1 NOTE Countess of Monpezat (formerly Princess). Lost princess title in 2023.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Frederik /IX/
+1 SEX M
+1 BIRT
+2 DATE 11 MAR 1899
+2 PLAC Sorgenfri Palace, Denmark
+1 DEAT
+2 DATE 14 JAN 1972
+2 PLAC Copenhagen, Denmark
+1 TITL King of Denmark
+1 NOTE King Frederik IX. Reigned 1947-1972. Father of Queen Margrethe II. Changed succession law to allow his daughter to inherit the throne.
+1 FAMC @F6@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Ingrid /of Sweden/
+1 SEX F
+1 BIRT
+2 DATE 28 MAR 1910
+2 PLAC Stockholm, Sweden
+1 DEAT
+2 DATE 7 NOV 2000
+2 PLAC Fredensborg Palace, Denmark
+1 TITL Queen of Denmark
+1 NOTE Queen Ingrid. Princess of Sweden before marriage. Mother of Queen Margrethe II.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I16@
+1 WIFE @I17@
+1 MARR
+2 DATE 24 MAY 1935
+2 PLAC Stockholm, Sweden
+1 CHIL @I7@
+1 CHIL @I18@
+1 CHIL @I19@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Benedikte Astrid Ingeborg Ingrid /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 29 APR 1944
+2 PLAC Amalienborg Palace, Copenhagen, Denmark
+1 TITL Princess of Denmark
+1 NOTE Princess Benedikte. Sister of Queen Margrethe II. Married to Prince Richard of Sayn-Wittgenstein-Berleburg.
+1 FAMC @F3@
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Anne-Marie /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 30 AUG 1946
+2 PLAC Amalienborg Palace, Copenhagen, Denmark
+1 TITL Princess of Denmark, Queen of Greece
+1 NOTE Princess Anne-Marie. Sister of Queen Margrethe II. Former Queen of Greece (married to deposed King Constantine II).
+1 FAMC @F3@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Richard Casimir Karl August Robert Konstantin /of Sayn-Wittgenstein-Berleburg/
+1 SEX M
+1 BIRT
+2 DATE 29 OCT 1934
+2 PLAC Giessen, Germany
+1 DEAT
+2 DATE 13 MAR 2017
+2 PLAC Bad Berleburg, Germany
+1 TITL Prince of Sayn-Wittgenstein-Berleburg
+1 NOTE Prince Richard. Husband of Princess Benedikte.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I20@
+1 WIFE @I18@
+1 MARR
+2 DATE 3 FEB 1968
+2 PLAC Fredensborg Palace Chapel, Denmark
+1 CHIL @I21@
+1 CHIL @I22@
+1 CHIL @I23@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Gustav Friedrich Philip Richard /of Sayn-Wittgenstein-Berleburg/
+1 SEX M
+1 BIRT
+2 DATE 12 JAN 1969
+2 PLAC Frankfurt, Germany
+1 NOTE Prince Gustav. Son of Princess Benedikte.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Alexandra Rosemarie Ingrid Benedikte /of Sayn-Wittgenstein-Berleburg/
+1 SEX F
+1 BIRT
+2 DATE 20 NOV 1970
+2 PLAC Copenhagen, Denmark
+1 NOTE Princess Alexandra. Daughter of Princess Benedikte.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Nathalie Xenia Margareta Benedikte /of Sayn-Wittgenstein-Berleburg/
+1 SEX F
+1 BIRT
+2 DATE 2 MAY 1975
+2 PLAC Copenhagen, Denmark
+1 NOTE Princess Nathalie. Daughter of Princess Benedikte.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Constantine /II/ of Greece
+1 SEX M
+1 BIRT
+2 DATE 2 JUN 1940
+2 PLAC Psychiko, Athens, Greece
+1 DEAT
+2 DATE 10 JAN 2023
+2 PLAC Athens, Greece
+1 TITL King of Greece (deposed)
+1 NOTE King Constantine II of Greece. Last King of Greece (1964-1973). Husband of Princess Anne-Marie.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I24@
+1 WIFE @I19@
+1 MARR
+2 DATE 18 SEP 1964
+2 PLAC Athens, Greece
+1 CHIL @I25@
+1 CHIL @I26@
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHIL @I29@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Alexia /of Greece/
+1 SEX F
+1 BIRT
+2 DATE 10 JUL 1965
+2 PLAC Corfu, Greece
+1 TITL Princess of Greece and Denmark
+1 NOTE Princess Alexia. Daughter of King Constantine II and Princess Anne-Marie.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Pavlos /of Greece/
+1 SEX M
+1 BIRT
+2 DATE 20 MAY 1967
+2 PLAC Tatoi Palace, Greece
+1 TITL Crown Prince of Greece
+1 NOTE Crown Prince Pavlos. Heir to the defunct Greek throne. Married to Marie-Chantal Miller.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Nikolaos /of Greece/
+1 SEX M
+1 BIRT
+2 DATE 1 OCT 1969
+2 PLAC Rome, Italy
+1 TITL Prince of Greece and Denmark
+1 NOTE Prince Nikolaos. Son of King Constantine II and Princess Anne-Marie.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Theodora /of Greece/
+1 SEX F
+1 BIRT
+2 DATE 9 JUN 1983
+2 PLAC London, England
+1 TITL Princess of Greece and Denmark
+1 NOTE Princess Theodora. Daughter of King Constantine II and Princess Anne-Marie.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Philippos /of Greece/
+1 SEX M
+1 BIRT
+2 DATE 26 APR 1986
+2 PLAC London, England
+1 TITL Prince of Greece and Denmark
+1 NOTE Prince Philippos. Youngest son of King Constantine II and Princess Anne-Marie.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Christian /X/
+1 SEX M
+1 BIRT
+2 DATE 26 SEP 1870
+2 PLAC Charlottenlund Palace, Denmark
+1 DEAT
+2 DATE 20 APR 1947
+2 PLAC Amalienborg Palace, Copenhagen, Denmark
+1 TITL King of Denmark and Iceland
+1 NOTE King Christian X. Reigned 1912-1947. Father of King Frederik IX. Known for riding through Copenhagen during Nazi occupation.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Alexandrine /of Mecklenburg-Schwerin/
+1 SEX F
+1 BIRT
+2 DATE 24 DEC 1879
+2 PLAC Schwerin, Germany
+1 DEAT
+2 DATE 28 DEC 1952
+2 PLAC Copenhagen, Denmark
+1 TITL Queen of Denmark
+1 NOTE Queen Alexandrine. Mother of King Frederik IX.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I30@
+1 WIFE @I31@
+1 MARR
+2 DATE 26 APR 1898
+2 PLAC Cannes, France
+1 CHIL @I16@
+1 CHIL @I32@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME Knud /of Denmark/
+1 SEX M
+1 BIRT
+2 DATE 27 JUL 1900
+2 PLAC Sorgenfri Palace, Denmark
+1 DEAT
+2 DATE 14 JUN 1976
+2 PLAC Gentofte, Denmark
+1 TITL Prince of Denmark
+1 NOTE Prince Knud. Brother of King Frederik IX. Was heir presumptive until succession law was changed to allow Margrethe to inherit.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

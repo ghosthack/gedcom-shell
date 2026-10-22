@@ -1,0 +1,829 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Nicholas /II/
+1 SEX M
+1 BIRT
+2 DATE 18 MAY 1868
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Nicholas II. Last Tsar of Russia. Reigned 1894-1917. Abdicated during February Revolution. Executed with entire family by Bolsheviks. Canonized as martyr by Russian Orthodox Church.
+1 FAMC @F1@
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Alexandra Feodorovna /of Hesse/
+1 SEX F
+1 BIRT
+2 DATE 6 JUN 1872
+2 PLAC Darmstadt, Germany
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Alexandra. Princess Alix of Hesse, granddaughter of Queen Victoria. Influenced by Rasputin. Executed with family. Canonized as martyr. Carrier of hemophilia gene.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 26 NOV 1894
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHIL @I5@
+1 CHIL @I6@
+1 CHIL @I7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Olga Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 15 NOV 1895
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Olga. Eldest daughter of Nicholas II. Executed with family at age 22. Canonized as passion bearer by Russian Orthodox Church.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Tatiana Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 10 JUN 1897
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Tatiana. Second daughter of Nicholas II. Known as "the governess" for organizing sisters. Executed with family at age 21. Canonized as passion bearer.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Maria Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 26 JUN 1899
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Maria. Third daughter of Nicholas II. Known for friendliness and kindness. Executed with family at age 19. Canonized as passion bearer.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Anastasia Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 18 JUN 1901
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Anastasia. Youngest daughter of Nicholas II. Subject of numerous impostor claims (Anna Anderson). DNA evidence confirmed 2007 death. Executed at age 17. Canonized as passion bearer.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Alexei Nikolaevich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 12 AUG 1904
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 17 JUL 1918
+2 PLAC Yekaterinburg, Russia
+1 TITL Tsarevich
+1 NOTE Tsarevich Alexei. Only son and heir of Nicholas II. Suffered from hemophilia. His illness led mother to Rasputin. Executed with family at age 13. Canonized as passion bearer.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Alexander /III/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1845
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 DEAT
+2 DATE 1 NOV 1894
+2 PLAC Livadia Palace, Crimea, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Alexander III. Reigned 1881-1894. Father of Nicholas II. Known as "The Peacemaker" for avoiding wars. Reversed many liberal reforms. Died of kidney disease at 49.
+1 FAMC @F3@
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Maria Feodorovna /of Denmark/
+1 SEX F
+1 BIRT
+2 DATE 26 NOV 1847
+2 PLAC Copenhagen, Denmark
+1 DEAT
+2 DATE 13 OCT 1928
+2 PLAC Hvidøre, Denmark
+1 TITL Empress of Russia
+1 NOTE Empress Maria Feodorovna. Born Princess Dagmar of Denmark. Sister of Queen Alexandra of UK. Originally engaged to Alexander's elder brother. Escaped Russia after Revolution, died in Denmark.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I8@
+1 WIFE @I9@
+1 MARR
+2 DATE 9 NOV 1866
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 CHIL @I1@
+1 CHIL @I10@
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHIL @I13@
+1 CHIL @I14@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Alexander Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 7 JUN 1869
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 2 MAY 1870
+2 PLAC St. Petersburg, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Alexander. Second son of Alexander III. Died in infancy from meningitis.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME George Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 9 MAY 1871
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 9 AUG 1899
+2 PLAC Abastumani, Georgia
+1 TITL Grand Duke
+1 NOTE Grand Duke George. Third son of Alexander III. Heir to throne before Nicholas's marriage. Died of tuberculosis at age 28.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Xenia Alexandrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 6 APR 1875
+2 PLAC Anichkov Palace, St. Petersburg, Russia
+1 DEAT
+2 DATE 20 APR 1960
+2 PLAC Hampton Court Palace, England
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Xenia. Elder sister of Nicholas II. Escaped Russia after Revolution. Lived in exile in England. Had seven children, preserving Romanov line.
+1 FAMC @F1@
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Michael Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 4 DEC 1878
+2 PLAC Anichkov Palace, St. Petersburg, Russia
+1 DEAT
+2 DATE 13 JUN 1918
+2 PLAC Perm, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Michael. Younger brother of Nicholas II. Briefly heir after Nicholas's abdication. Refused throne. Executed by Bolsheviks two weeks before Imperial Family.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Olga Alexandrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 13 JUN 1882
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 24 NOV 1960
+2 PLAC Toronto, Canada
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Olga. Younger sister of Nicholas II. Talented artist. Escaped Russia, lived in Denmark then Canada. Last Romanov born in imperial Russia.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Alexander Mikhailovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 13 APR 1866
+2 PLAC Tiflis, Georgia
+1 DEAT
+2 DATE 26 FEB 1933
+2 PLAC Roquebrune-Cap-Martin, France
+1 TITL Grand Duke
+1 NOTE Grand Duke Alexander Mikhailovich. Naval officer and historian. Husband of Grand Duchess Xenia. Escaped Russia with family.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I15@
+1 WIFE @I12@
+1 MARR
+2 DATE 6 AUG 1894
+2 PLAC Peterhof Palace, Russia
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHIL @I18@
+1 CHIL @I19@
+1 CHIL @I20@
+1 CHIL @I21@
+1 CHIL @I22@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Irina Alexandrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 15 JUL 1895
+2 PLAC Peterhof Palace, Russia
+1 DEAT
+2 DATE 26 FEB 1970
+2 PLAC Paris, France
+1 TITL Princess
+1 NOTE Princess Irina. Daughter of Xenia. Married Prince Felix Yusupov, who assassinated Rasputin. Successfully sued MGM over Rasputin film.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Alexander Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 13 AUG 1897
+2 PLAC Gatchina Palace, Russia
+1 DEAT
+2 DATE 26 OCT 1981
+2 PLAC Roquebrune-Cap-Martin, France
+1 TITL Prince
+1 NOTE Prince Alexander. Second son of Xenia. Lived in exile in France and England.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Xenia Alexandrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 22 AUG 1903
+2 PLAC Gatchina Palace, Russia
+1 DEAT
+2 DATE 17 SEP 1965
+2 PLAC Toronto, Canada
+1 TITL Princess
+1 NOTE Princess Xenia. Fourth child of Grand Duchess Xenia. Moved to Canada. Named after her mother.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Andrew Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 24 JAN 1897
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 8 MAY 1981
+2 PLAC Kent, England
+1 TITL Prince
+1 NOTE Prince Andrew. Third son of Grand Duchess Xenia. Lived in England. Father of Prince Alexis Romanov.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Feodor Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 23 DEC 1898
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 30 NOV 1968
+2 PLAC London, England
+1 TITL Prince
+1 NOTE Prince Feodor. Fourth son of Grand Duchess Xenia. Lived in England.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Nikita Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 16 JAN 1900
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 12 SEP 1974
+2 PLAC Cap d'Antibes, France
+1 TITL Prince
+1 NOTE Prince Nikita. Fifth son of Grand Duchess Xenia. Lived in France.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Dmitri Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 15 AUG 1901
+2 PLAC Gatchina Palace, Russia
+1 DEAT
+2 DATE 7 JUL 1980
+2 PLAC London, England
+1 TITL Prince
+1 NOTE Prince Dmitri. Youngest son of Grand Duchess Xenia. Lived in England.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Alexander /II/
+1 SEX M
+1 BIRT
+2 DATE 29 APR 1818
+2 PLAC Moscow, Russia
+1 DEAT
+2 DATE 13 MAR 1881
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Alexander II "The Liberator". Reigned 1855-1881. Freed serfs in 1861. Implemented major reforms. Assassinated by Narodnaya Volya terrorists after multiple attempts.
+1 FAMC @F5@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Maria Alexandrovna /of Hesse/
+1 SEX F
+1 BIRT
+2 DATE 8 AUG 1824
+2 PLAC Darmstadt, Germany
+1 DEAT
+2 DATE 3 JUN 1880
+2 PLAC St. Petersburg, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Maria Alexandrovna. Princess Marie of Hesse. Mother of Alexander III. Promoted education and culture. Died year before husband's assassination.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I23@
+1 WIFE @I24@
+1 MARR
+2 DATE 28 APR 1841
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 CHIL @I25@
+1 CHIL @I8@
+1 CHIL @I26@
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHIL @I29@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Alexandra Alexandrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 30 AUG 1842
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 16 JUL 1849
+2 PLAC Tsarskoye Selo, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Alexandra. Eldest child of Alexander II. Died in childhood at age 6.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Vladimir Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 22 APR 1847
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 17 FEB 1909
+2 PLAC St. Petersburg, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Vladimir. Third son of Alexander II. Military commander and patron of arts. His branch challenged succession rights.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Alexei Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 14 JAN 1850
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 14 NOV 1908
+2 PLAC Paris, France
+1 TITL Grand Duke
+1 NOTE Grand Duke Alexei. Fourth son of Alexander II. Admiral General of Russian Imperial Navy.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Sergei Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 11 MAY 1857
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 17 FEB 1905
+2 PLAC Moscow, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Sergei. Fifth son of Alexander II. Governor-General of Moscow. Assassinated by Socialist Revolutionary Ivan Kalyayev.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Paul Alexandrovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 3 OCT 1860
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 30 JAN 1919
+2 PLAC St. Petersburg, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Paul. Youngest son of Alexander II. Executed by Bolsheviks, last Romanov grand duke to be killed.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Nicholas /I/
+1 SEX M
+1 BIRT
+2 DATE 6 JUL 1796
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 2 MAR 1855
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Nicholas I. Reigned 1825-1855. Known for conservatism and autocracy. Led Russia in Crimean War. Died during siege of Sevastopol.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Alexandra Feodorovna /of Prussia/
+1 SEX F
+1 BIRT
+2 DATE 13 JUL 1798
+2 PLAC Berlin, Prussia
+1 DEAT
+2 DATE 1 NOV 1860
+2 PLAC Tsarskoye Selo, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Alexandra Feodorovna. Born Princess Charlotte of Prussia. Wife of Nicholas I. Mother of Alexander II.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I30@
+1 WIFE @I31@
+1 MARR
+2 DATE 13 JUL 1817
+2 PLAC St. Petersburg, Russia
+1 CHIL @I23@
+1 CHIL @I32@
+1 CHIL @I33@
+1 CHIL @I34@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME Maria Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 18 AUG 1819
+2 PLAC Pavlovsk, Russia
+1 DEAT
+2 DATE 21 FEB 1876
+2 PLAC St. Petersburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Maria. Daughter of Nicholas I. Married Duke Maximilian of Leuchtenberg.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I33@ INDI
+1 NAME Olga Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 11 SEP 1822
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 30 OCT 1892
+2 PLAC Stuttgart, Germany
+1 TITL Grand Duchess, Queen of Württemberg
+1 NOTE Grand Duchess Olga. Daughter of Nicholas I. Became Queen of Württemberg through marriage.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I34@ INDI
+1 NAME Alexandra Nikolaevna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 24 JUN 1825
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 10 AUG 1844
+2 PLAC Tsarskoye Selo, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Alexandra. Youngest daughter of Nicholas I. Died in childbirth at age 19.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I35@ INDI
+1 NAME Peter /I/ The Great
+1 SEX M
+1 BIRT
+2 DATE 9 JUN 1672
+2 PLAC Moscow, Russia
+1 DEAT
+2 DATE 8 FEB 1725
+2 PLAC St. Petersburg, Russia
+1 TITL Emperor of Russia
+1 NOTE Peter I "The Great". Ruled 1682-1725 (de facto from 1689). Transformed Russia into major European power. Founded St. Petersburg. Modernized Russia. One of greatest Russian rulers.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I36@ INDI
+1 NAME Catherine /I/
+1 SEX F
+1 BIRT
+2 DATE 15 APR 1684
+2 PLAC Jakobstadt, Courland
+1 DEAT
+2 DATE 17 MAY 1727
+2 PLAC St. Petersburg, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Catherine I. Born Marta Skavronskaya, peasant origin. Second wife of Peter the Great. First woman to rule Imperial Russia (1725-1727).
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I35@
+1 WIFE @I36@
+1 MARR
+2 DATE 19 FEB 1712
+2 PLAC St. Petersburg, Russia
+1 CHIL @I37@
+1 CHIL @I38@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I37@ INDI
+1 NAME Anna Petrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 27 JAN 1708
+2 PLAC Moscow, Russia
+1 DEAT
+2 DATE 15 MAY 1728
+2 PLAC Kiel, Germany
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Anna Petrovna. Daughter of Peter the Great. Mother of Peter III. Died in childbirth.
+1 FAMC @F6@
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I38@ INDI
+1 NAME Elizabeth Petrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 29 DEC 1709
+2 PLAC Kolomenskoye, Russia
+1 DEAT
+2 DATE 5 JAN 1762
+2 PLAC St. Petersburg, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Elizabeth. Ruled 1741-1762. Daughter of Peter the Great. Came to power via coup. Founded Academy of Arts. Never married.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I39@ INDI
+1 NAME Charles Frederick /of Holstein-Gottorp/
+1 SEX M
+1 BIRT
+2 DATE 30 APR 1700
+2 PLAC Stockholm, Sweden
+1 DEAT
+2 DATE 18 JUN 1739
+2 PLAC Rolfshagen, Germany
+1 TITL Duke of Holstein-Gottorp
+1 NOTE Duke Charles Frederick. Father of Peter III. Married Anna Petrovna, daughter of Peter the Great.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I39@
+1 WIFE @I37@
+1 MARR
+2 DATE 1 JUN 1725
+2 PLAC St. Petersburg, Russia
+1 CHIL @I40@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I40@ INDI
+1 NAME Peter /III/
+1 SEX M
+1 BIRT
+2 DATE 21 FEB 1728
+2 PLAC Kiel, Germany
+1 DEAT
+2 DATE 17 JUL 1762
+2 PLAC Ropsha, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Peter III. Reigned 6 months in 1762. Grandson of Peter the Great. Overthrown by wife Catherine II. Likely murdered. Unpopular for pro-Prussian policies.
+1 FAMC @F7@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I41@ INDI
+1 NAME Catherine /II/ The Great
+1 SEX F
+1 BIRT
+2 DATE 2 MAY 1729
+2 PLAC Stettin, Prussia
+1 DEAT
+2 DATE 17 NOV 1796
+2 PLAC Winter Palace, St. Petersburg, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Catherine II "The Great". Ruled 1762-1796 (34 years). Born Princess Sophie of Anhalt-Zerbst. Came to power via coup against husband. Expanded Russian Empire. Enlightened despot. One of greatest rulers.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I40@
+1 WIFE @I41@
+1 MARR
+2 DATE 21 AUG 1745
+2 PLAC St. Petersburg, Russia
+1 CHIL @I42@
+1 CHIL @I43@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I42@ INDI
+1 NAME Paul /I/
+1 SEX M
+1 BIRT
+2 DATE 1 OCT 1754
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 23 MAR 1801
+2 PLAC St. Michael's Castle, St. Petersburg
+1 TITL Emperor of Russia
+1 NOTE Emperor Paul I. Reigned 1796-1801. Son of Catherine the Great and (officially) Peter III. Erratic ruler. Assassinated in palace coup. Changed succession law to primogeniture.
+1 FAMC @F8@
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I43@ INDI
+1 NAME Anna Petrovna /Romanova/
+1 SEX F
+1 BIRT
+2 DATE 9 DEC 1757
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 8 MAR 1759
+2 PLAC St. Petersburg, Russia
+1 TITL Grand Duchess
+1 NOTE Grand Duchess Anna Petrovna. Daughter of Catherine II and Peter III. Died in infancy. Paternity questioned.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I44@ INDI
+1 NAME Maria Feodorovna /of Württemberg/
+1 SEX F
+1 BIRT
+2 DATE 25 OCT 1759
+2 PLAC Stettin, Prussia
+1 DEAT
+2 DATE 5 NOV 1828
+2 PLAC Pavlovsk, Russia
+1 TITL Empress of Russia
+1 NOTE Empress Maria Feodorovna. Born Princess Sophie Dorothea of Württemberg. Wife of Paul I. Mother of Alexander I and Nicholas I. Founded charitable institutions.
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F9@ FAM
+1 HUSB @I42@
+1 WIFE @I44@
+1 MARR
+2 DATE 7 OCT 1776
+2 PLAC St. Petersburg, Russia
+1 CHIL @I45@
+1 CHIL @I46@
+1 CHIL @I30@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I45@ INDI
+1 NAME Alexander /I/
+1 SEX M
+1 BIRT
+2 DATE 23 DEC 1777
+2 PLAC St. Petersburg, Russia
+1 DEAT
+2 DATE 1 DEC 1825
+2 PLAC Taganrog, Russia
+1 TITL Emperor of Russia
+1 NOTE Emperor Alexander I. Reigned 1801-1825. Defeated Napoleon's invasion in 1812. Key figure in Congress of Vienna. Died mysteriously, spawning "Alexander as hermit" legend.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I46@ INDI
+1 NAME Constantine Pavlovich /Romanov/
+1 SEX M
+1 BIRT
+2 DATE 8 MAY 1779
+2 PLAC Tsarskoye Selo, Russia
+1 DEAT
+2 DATE 27 JUN 1831
+2 PLAC Vitebsk, Russia
+1 TITL Grand Duke
+1 NOTE Grand Duke Constantine. Second son of Paul I. Renounced succession rights. His confusion over succession led to Decembrist Revolt of 1825.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

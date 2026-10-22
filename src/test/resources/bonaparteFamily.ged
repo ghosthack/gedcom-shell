@@ -1,0 +1,654 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Napoleon /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 15 AUG 1769
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 5 MAY 1821
+2 PLAC St. Helena, British Empire
+1 TITL Emperor of the French
+1 OCCU Military Leader, Emperor
+1 NOTE Napoleon I. Emperor 1804-1814, 1815. One of greatest military commanders. Napoleonic Code. Reformed France. Lost at Waterloo. Died in exile on St. Helena.
+1 FAMC @F1@
+1 FAMS @F2@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Joséphine /de Beauharnais/
+1 SEX F
+1 BIRT
+2 DATE 23 JUN 1763
+2 PLAC Martinique, France
+1 DEAT
+2 DATE 29 MAY 1814
+2 PLAC Rueil-Malmaison, France
+1 TITL Empress of the French
+1 NOTE Empress Joséphine. First wife of Napoleon. Widow with two children. Famous for her gardens. Marriage annulled due to lack of heir.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 9 MAR 1796
+2 PLAC Paris, France
+1 DIV
+2 DATE 10 JAN 1810
+1 NOTE No children together. Marriage annulled so Napoleon could marry and produce heir.
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Marie Louise /of Austria/
+1 SEX F
+1 BIRT
+2 DATE 12 DEC 1791
+2 PLAC Vienna, Austria
+1 DEAT
+2 DATE 17 DEC 1847
+2 PLAC Parma, Italy
+1 TITL Empress of the French
+1 NOTE Marie Louise. Second wife of Napoleon. Archduchess of Austria, daughter of Emperor Francis I. Mother of Napoleon II. Became Duchess of Parma after Napoleon's fall.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I1@
+1 WIFE @I3@
+1 MARR
+2 DATE 1 APR 1810
+2 PLAC Paris, France
+1 CHIL @I4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Napoleon François Charles Joseph /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 20 MAR 1811
+2 PLAC Paris, France
+1 DEAT
+2 DATE 22 JUL 1832
+2 PLAC Vienna, Austria
+1 TITL King of Rome, Napoleon II (nominal)
+1 NOTE Napoleon II. Son of Napoleon I and Marie Louise. King of Rome. Never actually ruled. Proclaimed Emperor by Bonapartists after father's abdication. Lived in Vienna. Died of tuberculosis at 21.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Carlo /Buonaparte/
+1 SEX M
+1 BIRT
+2 DATE 27 MAR 1746
+2 PLAC Ajaccio, Corsica
+1 DEAT
+2 DATE 24 FEB 1785
+2 PLAC Montpellier, France
+1 NOTE Carlo Buonaparte. Father of Napoleon. Corsican lawyer and politician. Representative to court of Louis XVI.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Letizia /Ramolino/
+1 SEX F
+1 BIRT
+2 DATE 24 AUG 1750
+2 PLAC Ajaccio, Corsica
+1 DEAT
+2 DATE 2 FEB 1836
+2 PLAC Rome, Italy
+1 TITL Madame Mère
+1 NOTE Letizia Ramolino "Madame Mère". Mother of Napoleon. Strong-willed matriarch. Mother of 13 children, 8 survived. Lived to see son's rise and fall.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I5@
+1 WIFE @I6@
+1 MARR
+2 DATE 2 JUN 1764
+2 PLAC Ajaccio, Corsica
+1 CHIL @I7@
+1 CHIL @I1@
+1 CHIL @I8@
+1 CHIL @I9@
+1 CHIL @I10@
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHIL @I13@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Joseph /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 7 JAN 1768
+2 PLAC Corte, Corsica, France
+1 DEAT
+2 DATE 28 JUL 1844
+2 PLAC Florence, Italy
+1 TITL King of Naples, King of Spain
+1 NOTE Joseph Bonaparte. Elder brother of Napoleon. King of Naples (1806-1808), King of Spain (1808-1813). Lived in USA after Waterloo. Returned to Europe later.
+1 FAMC @F1@
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Lucien /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 21 MAY 1775
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 29 JUN 1840
+2 PLAC Viterbo, Italy
+1 TITL Prince of Canino
+1 NOTE Lucien Bonaparte. Brother of Napoleon. Politician during Revolution. Helped Napoleon's coup. Later broke with Napoleon over second marriage. Prince of Canino.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Elisa /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 3 JAN 1777
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 7 AUG 1820
+2 PLAC Villa Vicentina, Italy
+1 TITL Grand Duchess of Tuscany
+1 NOTE Elisa Bonaparte. Sister of Napoleon. Princess of Lucca and Piombino, Grand Duchess of Tuscany. Patron of arts.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Louis /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 2 SEP 1778
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 25 JUL 1846
+2 PLAC Livorno, Italy
+1 TITL King of Holland
+1 NOTE Louis Bonaparte. Brother of Napoleon. King of Holland (1806-1810). Married Joséphine's daughter Hortense. Father of Napoleon III. Abdicated when he put Dutch interests before Napoleon's.
+1 FAMC @F1@
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME Pauline /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 20 OCT 1780
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 9 JUN 1825
+2 PLAC Florence, Italy
+1 TITL Princess Borghese
+1 NOTE Pauline Bonaparte. Sister of Napoleon. Famed beauty. Princess Borghese. Subject of Canova's sculpture "Venus Victrix". Most devoted to Napoleon in exile.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Caroline /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 25 MAR 1782
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 18 MAY 1839
+2 PLAC Florence, Italy
+1 TITL Queen of Naples
+1 NOTE Caroline Bonaparte. Youngest sister of Napoleon. Married Joachim Murat. Queen of Naples. Ambitious and political. Betrayed Napoleon to keep throne.
+1 FAMC @F1@
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Jérôme /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 15 NOV 1784
+2 PLAC Ajaccio, Corsica, France
+1 DEAT
+2 DATE 24 JUN 1860
+2 PLAC Vilgénis, France
+1 TITL King of Westphalia
+1 NOTE Jérôme Bonaparte. Youngest brother of Napoleon. King of Westphalia (1807-1813). Married American Elizabeth Patterson (annulled), then Catharina of Württemberg. Grandfather of Napoleon IV.
+1 FAMC @F1@
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Julie /Clary/
+1 SEX F
+1 BIRT
+2 DATE 26 DEC 1771
+2 PLAC Marseille, France
+1 DEAT
+2 DATE 7 APR 1845
+2 PLAC Florence, Italy
+1 TITL Queen of Naples, Queen of Spain
+1 NOTE Julie Clary. Wife of Joseph Bonaparte. Queen of Naples and Spain. Sister was engaged to Napoleon before Joséphine.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I7@
+1 WIFE @I14@
+1 MARR
+2 DATE 1 AUG 1794
+2 PLAC Cuges, France
+1 CHIL @I15@
+1 CHIL @I16@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Zénaïde /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 8 JUL 1801
+2 PLAC Paris, France
+1 DEAT
+2 DATE 8 SEP 1854
+2 PLAC Florence, Italy
+1 TITL Princess
+1 NOTE Princess Zénaïde. Daughter of Joseph. Married cousin Charles Lucien Bonaparte (Lucien's son). Ornithologist.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Charlotte /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 31 OCT 1802
+2 PLAC Paris, France
+1 DEAT
+2 DATE 3 MAR 1839
+2 PLAC Florence, Italy
+1 TITL Princess
+1 NOTE Princess Charlotte. Daughter of Joseph. Married cousin Napoleon Louis Bonaparte (Louis's son).
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Hortense /de Beauharnais/
+1 SEX F
+1 BIRT
+2 DATE 10 APR 1783
+2 PLAC Paris, France
+1 DEAT
+2 DATE 5 OCT 1837
+2 PLAC Arenenberg, Switzerland
+1 TITL Queen of Holland
+1 NOTE Hortense de Beauharnais. Daughter of Joséphine. Stepdaughter of Napoleon. Queen of Holland as wife of Louis Bonaparte. Mother of Napoleon III.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I10@
+1 WIFE @I17@
+1 MARR
+2 DATE 4 JAN 1802
+2 PLAC Paris, France
+1 CHIL @I18@
+1 CHIL @I19@
+1 CHIL @I20@
+1 NOTE Unhappy marriage arranged by Napoleon between his brother and stepdaughter.
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Napoleon Charles /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 10 OCT 1802
+2 PLAC Paris, France
+1 DEAT
+2 DATE 5 MAY 1807
+2 PLAC The Hague, Netherlands
+1 NOTE Napoleon Charles. Eldest son of Louis and Hortense. Briefly heir to Napoleon I. Died of croup at age 4.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Napoleon Louis /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 11 OCT 1804
+2 PLAC Paris, France
+1 DEAT
+2 DATE 17 MAR 1831
+2 PLAC Forlì, Italy
+1 NOTE Napoleon Louis. Second son. Died of measles during Italian revolutionary uprisings. Brother of Napoleon III.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Charles Louis Napoleon /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 20 APR 1808
+2 PLAC Paris, France
+1 DEAT
+2 DATE 9 JAN 1873
+2 PLAC Chislehurst, England
+1 TITL Emperor of the French (Napoleon III)
+1 NOTE Napoleon III. Emperor 1852-1870. Son of Louis Bonaparte and Hortense. Grew up in exile. President of France 1848-1852. Modernized Paris. Defeated in Franco-Prussian War, lost throne.
+1 FAMC @F5@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Joachim /Murat/
+1 SEX M
+1 BIRT
+2 DATE 25 MAR 1767
+2 PLAC Labastide-Murat, France
+1 DEAT
+2 DATE 13 OCT 1815
+2 PLAC Pizzo, Italy
+1 TITL King of Naples, Marshal of France
+1 NOTE Joachim Murat. Napoleon's cavalry commander and brother-in-law. King of Naples (1808-1815). Dashing and flamboyant. Executed after trying to reclaim Naples.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I21@
+1 WIFE @I12@
+1 MARR
+2 DATE 20 JAN 1800
+2 PLAC Paris, France
+1 CHIL @I22@
+1 CHIL @I23@
+1 CHIL @I24@
+1 CHIL @I25@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Achille /Murat/
+1 SEX M
+1 BIRT
+2 DATE 21 JAN 1801
+2 PLAC Paris, France
+1 DEAT
+2 DATE 15 APR 1847
+2 PLAC Tallahassee, Florida, USA
+1 TITL Prince Murat
+1 NOTE Prince Achille Murat. Eldest son. Moved to USA, became American citizen. Settled in Florida. Married great-grandniece of George Washington.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Letizia /Murat/
+1 SEX F
+1 BIRT
+2 DATE 26 APR 1802
+2 PLAC Paris, France
+1 DEAT
+2 DATE 12 MAR 1859
+2 PLAC Bologna, Italy
+1 NOTE Princess Letizia. Daughter of Joachim and Caroline. Named after grandmother.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Lucien Charles Joseph Napoléon /Murat/
+1 SEX M
+1 BIRT
+2 DATE 16 MAY 1803
+2 PLAC Paris, France
+1 DEAT
+2 DATE 10 APR 1878
+2 PLAC Paris, France
+1 TITL Prince Murat
+1 NOTE Prince Lucien Murat. Second son. French politician and soldier.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Louise Julie Caroline /Murat/
+1 SEX F
+1 BIRT
+2 DATE 22 MAR 1805
+2 PLAC Paris, France
+1 DEAT
+2 DATE 22 APR 1889
+2 PLAC Ravenna, Italy
+1 NOTE Princess Louise. Youngest child. Lived longest of all Bonaparte nephews/nieces.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Catharina /of Württemberg/
+1 SEX F
+1 BIRT
+2 DATE 24 AUG 1783
+2 PLAC Saint Petersburg, Russia
+1 DEAT
+2 DATE 29 NOV 1835
+2 PLAC Lausanne, Switzerland
+1 TITL Queen of Westphalia
+1 NOTE Princess Catharina. Second wife of Jérôme. Queen of Westphalia. Mother of Prince Napoleon.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I13@
+1 WIFE @I26@
+1 MARR
+2 DATE 22 AUG 1807
+2 PLAC Paris, France
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHIL @I29@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Jérôme Napoleon Charles /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 24 AUG 1814
+2 PLAC Trieste, Italy
+1 DEAT
+2 DATE 12 MAY 1847
+2 PLAC Florence, Italy
+1 TITL Prince
+1 NOTE Prince Jérôme. Son of Jérôme Bonaparte. Died young.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Mathilde Laetitia Wilhelmine /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 27 MAY 1820
+2 PLAC Trieste, Italy
+1 DEAT
+2 DATE 2 JAN 1904
+2 PLAC Paris, France
+1 TITL Princess
+1 NOTE Princess Mathilde. Daughter of Jérôme. Famous salonnière in Paris. Patron of arts and literature. Close to cousin Napoleon III.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Napoleon Joseph Charles Paul /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 9 SEP 1822
+2 PLAC Trieste, Italy
+1 DEAT
+2 DATE 17 MAR 1891
+2 PLAC Rome, Italy
+1 TITL Prince Napoleon, "Plon-Plon"
+1 NOTE Prince Napoleon "Plon-Plon". Son of Jérôme. Pretender to French throne. Republican despite heritage. Controversial figure.
+1 FAMC @F7@
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Eugénie /de Montijo/
+1 SEX F
+1 BIRT
+2 DATE 5 MAY 1826
+2 PLAC Granada, Spain
+1 DEAT
+2 DATE 11 JUL 1920
+2 PLAC Madrid, Spain
+1 TITL Empress of the French
+1 NOTE Empress Eugénie. Wife of Napoleon III. Spanish noblewoman. Last Empress of France. Lived to 94, outliving dynasty. Influential in politics and fashion.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I20@
+1 WIFE @I30@
+1 MARR
+2 DATE 30 JAN 1853
+2 PLAC Paris, France
+1 CHIL @I31@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Napoleon Eugène Louis Jean Joseph /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 16 MAR 1856
+2 PLAC Paris, France
+1 DEAT
+2 DATE 1 JUN 1879
+2 PLAC Zululand, South Africa
+1 TITL Prince Imperial
+1 NOTE Prince Imperial. Only child of Napoleon III. Bonapartist pretender after father's death. Killed by Zulus in South Africa while serving with British Army. End of direct line.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME Maria Clotilde /of Savoy/
+1 SEX F
+1 BIRT
+2 DATE 2 MAR 1843
+2 PLAC Turin, Italy
+1 DEAT
+2 DATE 25 JUN 1911
+2 PLAC Moncalieri, Italy
+1 TITL Princess
+1 NOTE Princess Clotilde. Daughter of Victor Emmanuel II of Italy. Wife of Prince Napoleon.
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F9@ FAM
+1 HUSB @I29@
+1 WIFE @I32@
+1 MARR
+2 DATE 30 JAN 1859
+2 PLAC Turin, Italy
+1 CHIL @I33@
+1 CHIL @I34@
+1 CHIL @I35@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I33@ INDI
+1 NAME Napoleon Victor Jérôme Frédéric /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 18 JUL 1862
+2 PLAC Paris, France
+1 DEAT
+2 DATE 3 MAY 1926
+2 PLAC Brussels, Belgium
+1 TITL Prince Napoleon
+1 NOTE Prince Victor. Eldest son of Prince Napoleon. Bonapartist pretender after Prince Imperial's death. "Napoleon V" to supporters.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I34@ INDI
+1 NAME Louis Joseph Jérôme Napoléon /Bonaparte/
+1 SEX M
+1 BIRT
+2 DATE 16 JUL 1864
+2 PLAC Paris, France
+1 DEAT
+2 DATE 14 MAY 1932
+2 PLAC Prangins, Switzerland
+1 TITL Prince Napoleon
+1 NOTE Prince Louis. Second son. Rival claimant to brother Victor. "Napoleon VI" to his supporters. Last male Bonaparte in direct line from Jérôme.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I35@ INDI
+1 NAME Maria Letizia Eugénie Catherine Adélaïde /Bonaparte/
+1 SEX F
+1 BIRT
+2 DATE 20 DEC 1866
+2 PLAC Paris, France
+1 DEAT
+2 DATE 25 OCT 1926
+2 PLAC Paris, France
+1 TITL Princess
+1 NOTE Princess Letizia. Daughter of Prince Napoleon. Married Duke of Aosta.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

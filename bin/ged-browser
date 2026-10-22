@@ -1,0 +1,9 @@
+#!/bin/sh
+# Launcher: runs the jar built by `mvn package`, from any directory.
+here=$(cd "$(dirname "$0")/.." && pwd)
+jar="$here/target/ged-browser.jar"
+if [ ! -f "$jar" ]; then
+  echo "ged-browser: $jar not found; run 'mvn package' in $here first" >&2
+  exit 2
+fi
+exec java -jar "$jar" "$@"

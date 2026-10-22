@@ -1,0 +1,137 @@
+0 HEAD
+1 SOUR GED
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/ged
+3 ADDR https://github.com/ghosthack/ged
+1 DEST ANY
+1 DATE 17 JUN 2007
+2 TIME 20:29:59
+1 SUBM @B0@
+1 FILE genealogyJohnDoe.ged
+1 GEDC
+2 VERS 5.5
+2 FORM Lineage-Linked
+1 CHAR ANSEL
+0 @I0@ INDI
+1 NAME John /Doe/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1980
+2 PLAC 90210, Beverly Hills, California, USA
+1 RESI
+2 DATE 1979
+2 ADDR 90210, Beverly Hills, California, USA
+3 CTRY USA
+1 FAMC @F0@
+1 CHAN
+2 DATE 16 JUN 2007
+3 TIME 17:07:01
+0 @I2@ INDI
+1 NAME John Senior /Doe/
+1 SEX M
+1 BIRT
+2 DATE 12 AUG 1946
+2 PLAC Capital City, Country A
+1 GRAD
+2 TYPE Teaching Certificate
+2 DATE 1963
+1 BAPM
+2 NOTE St. Joseph's Church
+1 FCOM
+2 NOTE St. Joseph's Church
+1 NOTE Born at 123 Oak Street, later transferred to General Hospital.
+2 CONT
+2 CONT -Adult Education Specialist
+2 CONT -Archivist
+2 CONT -Librarian
+1 FAMC @F13@
+1 FAMS @F0@
+1 OBJE
+2 TITL Teacher
+1 CHAN
+2 DATE 17 JUN 2007
+3 TIME 23:16:45
+0 @F0@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 NCHI 2
+1 MARR
+2 DATE 5 MAY 1978
+2 PLAC Riverside, State of Example, Country A
+1 CHIL @I0@
+1 CHIL @I126@
+1 NOTE Community Church
+2 CONT Civil Registry
+1 CHAN
+2 DATE 17 JUN 2007
+3 TIME 22:30:47
+0 @I3@ INDI
+1 NAME Jane Marie /Smith/
+1 SEX F
+1 BIRT
+2 DATE 23 MAR 1956
+2 PLAC Riverside, State of Example, Country A
+1 GRAD
+2 TYPE High School Diploma
+2 DATE 30 NOV 1973
+2 NOTE Central High School
+1 GRAD
+2 TYPE Teaching Certificate
+2 DATE NOV 1987
+2 NOTE Regional Teachers College, Main Campus
+1 GRAD
+2 TYPE Arts Education Certificate
+2 DATE 2007
+2 NOTE State Arts Institute
+1 BAPM
+2 DATE 5 DEC 1968
+2 NOTE Community Church
+1 FCOM
+2 DATE 5 DEC 1968
+2 NOTE Community Church
+1 FAMC @F1@
+1 FAMS @F0@
+1 OBJE
+2 TITL Teacher
+1 CHAN
+2 DATE 17 JUN 2007
+3 TIME 21:52:01
+0 @I4@ INDI
+1 NAME Robert James /Johnson/
+1 SEX M
+1 BIRT
+2 DATE 27 FEB 1921
+2 PLAC Capital City, Country A
+1 FAMC @F8@
+1 FAMS @F1@
+1 OBJE
+2 TITL Merchant
+1 CHAN
+2 DATE 17 JUN 2007
+3 TIME 22:29:15
+0 @F1@ FAM
+1 HUSB @I4@
+1 WIFE @I5@
+1 MARR
+2 DATE 5 NOV 1949
+2 PLAC Hillside, State of Example, Country A
+1 CHIL @I3@
+1 CHIL @I46@
+1 NOTE Civil Registry
+1 CHAN
+2 DATE 17 JUN 2007
+3 TIME 22:28:30
+0 @I5@ INDI
+1 NAME Elizabeth Anne /Williams/
+1 SEX F
+1 BIRT
+2 DATE 26 APR 1924
+2 PLAC Riverside, State of Example, Country A
+1 NOTE Born on Main Street between First Avenue and Second Avenue
+1 FAMC @F3@
+1 FAMS @F1@
+1 CHAN
+2 DATE 11 FEB 2007
+3 TIME 01:24:10
+0 TRLR

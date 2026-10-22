@@ -1,0 +1,826 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Cosimo /de' Medici/ the Elder
+1 SEX M
+1 BIRT
+2 DATE 27 SEP 1389
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 1 AUG 1464
+2 PLAC Careggi, Florence, Italy
+1 TITL Pater Patriae (Father of the Fatherland)
+1 OCCU Banker, Statesman
+1 NOTE Cosimo the Elder. Established Medici dominance in Florence. Patron of arts and architecture. Founded Platonic Academy. De facto ruler without official title.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Contessina /de' Bardi/
+1 SEX F
+1 BIRT
+2 DATE 1390
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 1473
+2 PLAC Florence, Italy
+1 NOTE Wife of Cosimo the Elder. From prominent Bardi banking family.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 1414
+2 PLAC Florence, Italy
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Piero /de' Medici/ the Gouty
+1 SEX M
+1 BIRT
+2 DATE 1416
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 2 DEC 1469
+2 PLAC Florence, Italy
+1 TITL Lord of Florence
+1 NOTE Piero the Gouty. Suffered from gout. Brief rule 1464-1469. Father of Lorenzo the Magnificent. Patron of arts.
+1 FAMC @F1@
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Giovanni /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 1421
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 1463
+2 PLAC Florence, Italy
+1 NOTE Second son of Cosimo the Elder. Predeceased his father.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Lucrezia /Tornabuoni/
+1 SEX F
+1 BIRT
+2 DATE 22 JUN 1427
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 25 MAR 1482
+2 PLAC Florence, Italy
+1 NOTE Poet and patron of arts. Wife of Piero. Mother of Lorenzo the Magnificent.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I3@
+1 WIFE @I5@
+1 MARR
+2 DATE 1444
+2 PLAC Florence, Italy
+1 CHIL @I6@
+1 CHIL @I7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Lorenzo /de' Medici/ the Magnificent
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1449
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 8 APR 1492
+2 PLAC Careggi, Florence, Italy
+1 TITL Lord of Florence
+1 OCCU Statesman, Poet, Patron
+1 NOTE Lorenzo the Magnificent. Golden age of Florence. Greatest Medici patron of Renaissance arts. Friend of Michelangelo, Botticelli, da Vinci. Survived Pazzi conspiracy. Diplomat and poet.
+1 FAMC @F2@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Giuliano /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 25 OCT 1453
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 26 APR 1478
+2 PLAC Florence Cathedral, Italy
+1 NOTE Giuliano. Brother of Lorenzo. Murdered in Pazzi conspiracy in Florence Cathedral. Subject of Botticelli's painting.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Clarice /Orsini/
+1 SEX F
+1 BIRT
+2 DATE 1453
+2 PLAC Rome, Italy
+1 DEAT
+2 DATE 30 JUL 1488
+2 PLAC Florence, Italy
+1 NOTE Roman noblewoman. Wife of Lorenzo the Magnificent. From powerful Orsini family.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I6@
+1 WIFE @I8@
+1 MARR
+2 DATE 4 JUN 1469
+2 PLAC Florence, Italy
+1 CHIL @I9@
+1 CHIL @I10@
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Piero /de' Medici/ the Unfortunate
+1 SEX M
+1 BIRT
+2 DATE 15 FEB 1472
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 28 DEC 1503
+2 PLAC Garigliano River, Italy
+1 TITL Lord of Florence
+1 NOTE Piero the Unfortunate. Eldest son of Lorenzo. Weak ruler. Expelled from Florence in 1494 after surrendering to French. Drowned in battle.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Giovanni /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 11 DEC 1475
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 1 DEC 1521
+2 PLAC Rome, Italy
+1 TITL Pope Leo X
+1 OCCU Pope
+1 NOTE Pope Leo X. Reigned 1513-1521. Second son of Lorenzo. First Medici Pope. Famous for patronage of Raphael and Michelangelo. Excommunicated Martin Luther. "God has given us the papacy, let us enjoy it."
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME Giuliano /de' Medici/ Duke of Nemours
+1 SEX M
+1 BIRT
+2 DATE 12 MAR 1479
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 17 MAR 1516
+2 PLAC Florence, Italy
+1 TITL Duke of Nemours
+1 NOTE Giuliano, Duke of Nemours. Third son of Lorenzo. Made Duke by brother Pope Leo X. Subject of Michelangelo's tomb sculpture.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Giulio /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 26 MAY 1478
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 25 SEP 1534
+2 PLAC Rome, Italy
+1 TITL Pope Clement VII
+1 OCCU Pope
+1 NOTE Pope Clement VII. Reigned 1523-1534. Illegitimate son of Giuliano (murdered in Pazzi plot). Cousin of Leo X. Second Medici Pope. His refusal to annul Henry VIII's marriage led to English Reformation.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Cosimo /I/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 12 JUN 1519
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 21 APR 1574
+2 PLAC Castello, Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Cosimo I. First Grand Duke of Tuscany (1569). From cadet branch. Consolidated Medici power. Conquered Siena. Patron of Vasari and Cellini. Established Uffizi.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Eleonora /di Toledo/
+1 SEX F
+1 BIRT
+2 DATE 1522
+2 PLAC Naples, Italy
+1 DEAT
+2 DATE 17 DEC 1562
+2 PLAC Pisa, Italy
+1 TITL Grand Duchess of Tuscany
+1 NOTE Eleonora of Toledo. Spanish noblewoman. Wife of Cosimo I. Subject of famous Bronzino portrait. Mother of Grand Dukes.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I13@
+1 WIFE @I14@
+1 MARR
+2 DATE 1539
+2 PLAC Florence, Italy
+1 CHIL @I15@
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHIL @I18@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Francesco /I/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 25 MAR 1541
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 19 OCT 1587
+2 PLAC Poggio a Caiano, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Francesco I. Second Grand Duke of Tuscany. Patron of sciences and alchemy. Died mysteriously with his second wife, possibly poisoned.
+1 FAMC @F4@
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Isabella /de' Medici/
+1 SEX F
+1 BIRT
+2 DATE 31 AUG 1542
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 16 JUL 1576
+2 PLAC Cerreto Guidi, Italy
+1 NOTE Isabella. Daughter of Cosimo I. Intelligent and cultured. Murdered by her husband on brother Francesco's orders.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Giovanni /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 21 SEP 1543
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 20 NOV 1562
+2 PLAC Livorno, Italy
+1 TITL Cardinal
+1 NOTE Cardinal Giovanni. Son of Cosimo I. Made cardinal at age 17. Died young from malaria.
+1 FAMC @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Ferdinando /I/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 30 JUL 1549
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 7 FEB 1609
+2 PLAC Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Ferdinando I. Third Grand Duke. Cardinal before becoming Grand Duke. Effective administrator. Promoted arts and sciences. Expanded Livorno port.
+1 FAMC @F4@
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Joanna /of Austria/
+1 SEX F
+1 BIRT
+2 DATE 24 JAN 1547
+2 PLAC Prague, Bohemia
+1 DEAT
+2 DATE 10 APR 1578
+2 PLAC Florence, Italy
+1 TITL Grand Duchess of Tuscany
+1 NOTE Archduchess Joanna of Austria. Daughter of Emperor Ferdinand I. First wife of Francesco I.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I15@
+1 WIFE @I19@
+1 MARR
+2 DATE 1565
+2 PLAC Florence, Italy
+1 CHIL @I20@
+1 CHIL @I21@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Eleonora /de' Medici/
+1 SEX F
+1 BIRT
+2 DATE 28 FEB 1567
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 9 SEP 1611
+2 PLAC Mantua, Italy
+1 TITL Duchess of Mantua
+1 NOTE Eleonora. Daughter of Francesco I. Became Duchess of Mantua through marriage.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Maria /de' Medici/
+1 SEX F
+1 BIRT
+2 DATE 26 APR 1575
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 3 JUL 1642
+2 PLAC Cologne, Germany
+1 TITL Queen of France
+1 NOTE Marie de' Medici. Queen of France as wife of Henry IV. Regent for son Louis XIII. Patron of Rubens. Power struggle with Richelieu. Subject of famous Rubens cycle.
+1 FAMC @F5@
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Henry /IV/ of France
+1 SEX M
+1 BIRT
+2 DATE 13 DEC 1553
+2 PLAC Pau, France
+1 DEAT
+2 DATE 14 MAY 1610
+2 PLAC Paris, France
+1 TITL King of France
+1 NOTE King Henry IV "Good King Henry". First Bourbon king. Converted from Protestant to Catholic ("Paris is worth a mass"). Issued Edict of Nantes. Assassinated by Ravaillac.
+1 FAMS @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F7@ FAM
+1 HUSB @I22@
+1 WIFE @I21@
+1 MARR
+2 DATE 17 DEC 1600
+2 PLAC Lyon, France
+1 CHIL @I23@
+1 CHIL @I24@
+1 CHIL @I25@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Louis /XIII/
+1 SEX M
+1 BIRT
+2 DATE 27 SEP 1601
+2 PLAC Fontainebleau, France
+1 DEAT
+2 DATE 14 MAY 1643
+2 PLAC Saint-Germain-en-Laye, France
+1 TITL King of France
+1 NOTE King Louis XIII "Louis the Just". Reigned 1610-1643. Son of Henry IV and Marie de' Medici. Worked with Cardinal Richelieu. Father of Louis XIV.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Elisabeth /of France/
+1 SEX F
+1 BIRT
+2 DATE 22 NOV 1602
+2 PLAC Fontainebleau, France
+1 DEAT
+2 DATE 6 OCT 1644
+2 PLAC Madrid, Spain
+1 TITL Queen of Spain
+1 NOTE Elisabeth. Daughter of Henry IV and Marie de' Medici. Became Queen of Spain as wife of Philip IV.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Henrietta Maria /of France/
+1 SEX F
+1 BIRT
+2 DATE 25 NOV 1609
+2 PLAC Paris, France
+1 DEAT
+2 DATE 10 SEP 1669
+2 PLAC Colombes, France
+1 TITL Queen of England
+1 NOTE Queen Henrietta Maria. Youngest daughter of Henry IV and Marie de' Medici. Queen consort of England as wife of Charles I. Mother of Charles II and James II.
+1 FAMC @F7@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Christine /of Lorraine/
+1 SEX F
+1 BIRT
+2 DATE 16 AUG 1565
+2 PLAC Nancy, France
+1 DEAT
+2 DATE 19 DEC 1637
+2 PLAC Florence, Italy
+1 TITL Grand Duchess of Tuscany
+1 NOTE Christine of Lorraine. Granddaughter of Catherine de' Medici. Wife of Ferdinando I. Effective regent. Patron of Galileo.
+1 FAMS @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F6@ FAM
+1 HUSB @I18@
+1 WIFE @I26@
+1 MARR
+2 DATE 1589
+2 PLAC Florence, Italy
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Cosimo /II/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 12 MAY 1590
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 28 FEB 1621
+2 PLAC Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Cosimo II. Fourth Grand Duke. Patron of Galileo Galilei. Named Jupiter's moons "Medicean stars" in his honor. Died young of tuberculosis.
+1 FAMC @F6@
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Francesco Maria /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 16 OCT 1594
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 14 FEB 1614
+2 PLAC Florence, Italy
+1 TITL Cardinal
+1 NOTE Cardinal Francesco Maria. Second son of Ferdinando I. Became cardinal. Died young.
+1 FAMC @F6@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Maria Maddalena /of Austria/
+1 SEX F
+1 BIRT
+2 DATE 7 OCT 1589
+2 PLAC Graz, Austria
+1 DEAT
+2 DATE 1 NOV 1631
+2 PLAC Passau, Germany
+1 TITL Grand Duchess of Tuscany
+1 NOTE Archduchess Maria Maddalena of Austria. Wife of Cosimo II. Regent for son. From Habsburg family.
+1 FAMS @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F8@ FAM
+1 HUSB @I27@
+1 WIFE @I29@
+1 MARR
+2 DATE 1608
+2 PLAC Florence, Italy
+1 CHIL @I30@
+1 CHIL @I31@
+1 CHIL @I32@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Ferdinando /II/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 14 JUL 1610
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 23 MAY 1670
+2 PLAC Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Ferdinando II. Fifth Grand Duke. Patron of science. Protected Galileo. Founded Accademia del Cimento, first scientific society.
+1 FAMC @F8@
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I31@ INDI
+1 NAME Giancarlo /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 24 JUL 1611
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 22 JAN 1663
+2 PLAC Florence, Italy
+1 TITL Cardinal
+1 NOTE Cardinal Giancarlo. Son of Cosimo II. Made cardinal. Governor of Siena.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I32@ INDI
+1 NAME Leopoldo /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 6 NOV 1617
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 10 NOV 1675
+2 PLAC Florence, Italy
+1 TITL Cardinal
+1 NOTE Cardinal Leopoldo. Youngest son of Cosimo II. Art collector and patron. Founded Accademia della Crusca.
+1 FAMC @F8@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I33@ INDI
+1 NAME Vittoria /della Rovere/
+1 SEX F
+1 BIRT
+2 DATE 7 FEB 1622
+2 PLAC Pesaro, Italy
+1 DEAT
+2 DATE 5 MAR 1694
+2 PLAC Pisa, Italy
+1 TITL Grand Duchess of Tuscany
+1 NOTE Vittoria della Rovere. Last heir of Duchy of Urbino. Wife of Ferdinando II. Brought della Rovere art collection to Florence (now in Uffizi).
+1 FAMS @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F9@ FAM
+1 HUSB @I30@
+1 WIFE @I33@
+1 MARR
+2 DATE 1634
+2 PLAC Florence, Italy
+1 CHIL @I34@
+1 CHIL @I35@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I34@ INDI
+1 NAME Cosimo /III/ de' Medici
+1 SEX M
+1 BIRT
+2 DATE 14 AUG 1642
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 31 OCT 1723
+2 PLAC Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Cosimo III. Sixth Grand Duke. Longest reign (53 years). Religious zealot. His mismanagement led to Tuscany's decline. Last competent male Medici.
+1 FAMC @F9@
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I35@ INDI
+1 NAME Francesco Maria /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 12 NOV 1660
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 3 FEB 1711
+2 PLAC Florence, Italy
+1 TITL Cardinal
+1 NOTE Cardinal Francesco Maria. Son of Ferdinando II. Last Medici cardinal.
+1 FAMC @F9@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I36@ INDI
+1 NAME Marguerite Louise /d'Orléans/
+1 SEX F
+1 BIRT
+2 DATE 28 JUL 1645
+2 PLAC Paris, France
+1 DEAT
+2 DATE 17 SEP 1721
+2 PLAC Paris, France
+1 TITL Grand Duchess of Tuscany
+1 NOTE Marguerite Louise d'Orléans. French princess. Unhappy marriage to Cosimo III. Returned to France and lived in convent.
+1 FAMS @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F10@ FAM
+1 HUSB @I34@
+1 WIFE @I36@
+1 MARR
+2 DATE 1661
+2 PLAC Florence, Italy
+1 CHIL @I37@
+1 CHIL @I38@
+1 CHIL @I39@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I37@ INDI
+1 NAME Ferdinando /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 9 AUG 1663
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 31 OCT 1713
+2 PLAC Florence, Italy
+1 TITL Grand Prince of Tuscany
+1 NOTE Grand Prince Ferdinando. Eldest son of Cosimo III. Talented musician and patron. Died before father, never reigned. Syphilis ended the line.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I38@ INDI
+1 NAME Anna Maria Luisa /de' Medici/
+1 SEX F
+1 BIRT
+2 DATE 11 AUG 1667
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 18 FEB 1743
+2 PLAC Florence, Italy
+1 TITL Electress Palatine
+1 NOTE Anna Maria Luisa. Last of the Medici line. Electress Palatine. Left entire Medici art collection to Tuscany in perpetuity (Patto di Famiglia). Savior of Renaissance heritage.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I39@ INDI
+1 NAME Gian Gastone /de' Medici/
+1 SEX M
+1 BIRT
+2 DATE 24 MAY 1671
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 9 JUL 1737
+2 PLAC Florence, Italy
+1 TITL Grand Duke of Tuscany
+1 NOTE Gian Gastone. Seventh and last Medici Grand Duke. Reigned 1723-1737. Unhappy marriage. Reclusive. With his death, Medici dynasty ended after 300 years of rule.
+1 FAMC @F10@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I40@ INDI
+1 NAME Catherine /de' Medici/
+1 SEX F
+1 BIRT
+2 DATE 13 APR 1519
+2 PLAC Florence, Italy
+1 DEAT
+2 DATE 5 JAN 1589
+2 PLAC Blois, France
+1 TITL Queen of France
+1 NOTE Catherine de' Medici. Queen of France as wife of Henry II. Regent and power behind throne during sons' reigns. Central figure in French Wars of Religion. Blamed for St. Bartholomew's Day Massacre.
+1 FAMS @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I41@ INDI
+1 NAME Henry /II/ of France
+1 SEX M
+1 BIRT
+2 DATE 31 MAR 1519
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 10 JUL 1559
+2 PLAC Paris, France
+1 TITL King of France
+1 NOTE King Henry II. Reigned 1547-1559. Son of Francis I. Died from jousting wound. Father of three French kings.
+1 FAMS @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F11@ FAM
+1 HUSB @I41@
+1 WIFE @I40@
+1 MARR
+2 DATE 28 OCT 1533
+2 PLAC Marseille, France
+1 CHIL @I42@
+1 CHIL @I43@
+1 CHIL @I44@
+1 CHIL @I45@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I42@ INDI
+1 NAME Francis /II/ of France
+1 SEX M
+1 BIRT
+2 DATE 19 JAN 1544
+2 PLAC Fontainebleau, France
+1 DEAT
+2 DATE 5 DEC 1560
+2 PLAC Orléans, France
+1 TITL King of France
+1 NOTE King Francis II. Reigned 1559-1560. Eldest son of Henry II and Catherine. Married Mary Queen of Scots. Died young after brief reign.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I43@ INDI
+1 NAME Charles /IX/ of France
+1 SEX M
+1 BIRT
+2 DATE 27 JUN 1550
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 30 MAY 1574
+2 PLAC Vincennes, France
+1 TITL King of France
+1 NOTE King Charles IX. Reigned 1560-1574. Second son to reign. Weak king dominated by mother Catherine. King during St. Bartholomew's Day Massacre.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I44@ INDI
+1 NAME Henry /III/ of France
+1 SEX M
+1 BIRT
+2 DATE 19 SEP 1551
+2 PLAC Fontainebleau, France
+1 DEAT
+2 DATE 2 AUG 1589
+2 PLAC Saint-Cloud, France
+1 TITL King of France
+1 NOTE King Henry III. Reigned 1574-1589. Last Valois king. King of Poland before France. Assassinated by Catholic fanatic. With his death, Valois dynasty ended.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I45@ INDI
+1 NAME Margaret /of Valois/
+1 SEX F
+1 BIRT
+2 DATE 14 MAY 1553
+2 PLAC Saint-Germain-en-Laye, France
+1 DEAT
+2 DATE 27 MAR 1615
+2 PLAC Paris, France
+1 TITL Queen of Navarre
+1 NOTE Margaret of Valois "Queen Margot". Daughter of Catherine de' Medici. Married Henry of Navarre (later Henry IV). Marriage annulled. Famous beauty and writer.
+1 FAMC @F11@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+

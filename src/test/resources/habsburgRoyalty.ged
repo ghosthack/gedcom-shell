@@ -1,0 +1,507 @@
+0 HEAD
+1 SOUR GEN
+2 VERS 1.0
+2 NAME Genealogy Viewer
+2 CORP GitHub ghosthack/family-tree
+3 ADDR https://github.com/ghosthack/family-tree
+1 DEST ANY
+1 DATE 06 NOV 2025
+2 TIME 12:00:00
+1 GEDC
+2 VERS 5.5.1
+2 FORM Lineage-Linked
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Karl /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 11 JAN 1961
+2 PLAC Starnberg, Bavaria, Germany
+1 TITL Archduke of Austria
+1 NOTE Archduke Karl of Austria. Current head of House of Habsburg. Former MEP (Member of European Parliament). Heir to defunct Austro-Hungarian throne.
+1 FAMC @F1@
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I2@ INDI
+1 NAME Francesca /Thyssen-Bornemisza/
+1 SEX F
+1 BIRT
+2 DATE 7 JUN 1958
+2 PLAC Lausanne, Switzerland
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Francesca. Wife of Archduke Karl. Baroness by birth.
+1 FAMS @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F2@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 31 JAN 1993
+2 PLAC Mariazell, Austria
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHIL @I5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I3@ INDI
+1 NAME Ferdinand Zvonimir Maria Balthus Keith Michael Otto Antal Bahnam Leonhard /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 21 JUN 1997
+2 PLAC Salzburg, Austria
+1 TITL Archduke of Austria
+1 NOTE Archduke Ferdinand. Heir apparent to House of Habsburg. Race car driver.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I4@ INDI
+1 NAME Gloria Maria Josefine Ottonia Gabriele Roberta Michaela Raphaela /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 15 OCT 1999
+2 PLAC Geneva, Switzerland
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Gloria. Daughter of Archduke Karl.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I5@ INDI
+1 NAME Eleonore Maria del Pilar Iona Justine /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 28 FEB 2002
+2 PLAC Geneva, Switzerland
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Eleonore. Youngest daughter of Archduke Karl.
+1 FAMC @F2@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I6@ INDI
+1 NAME Otto /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 20 NOV 1912
+2 PLAC Reichenau an der Rax, Austria
+1 DEAT
+2 DATE 4 JUL 2011
+2 PLAC Pöcking, Bavaria, Germany
+1 TITL Archduke of Austria, Crown Prince
+1 NOTE Otto von Habsburg. Last Crown Prince of Austria-Hungary. MEP for 20 years. Prominent pan-European activist. Opposed Nazis and Communists.
+1 FAMC @F3@
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I7@ INDI
+1 NAME Regina /of Saxe-Meiningen/
+1 SEX F
+1 BIRT
+2 DATE 6 JAN 1925
+2 PLAC Würzburg, Bavaria, Germany
+1 DEAT
+2 DATE 3 FEB 2010
+2 PLAC Pöcking, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Regina. Princess of Saxe-Meiningen by birth. Wife of Otto von Habsburg.
+1 FAMS @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F1@ FAM
+1 HUSB @I6@
+1 WIFE @I7@
+1 MARR
+2 DATE 10 MAY 1951
+2 PLAC Nancy, France
+1 CHIL @I8@
+1 CHIL @I1@
+1 CHIL @I9@
+1 CHIL @I10@
+1 CHIL @I11@
+1 CHIL @I12@
+1 CHIL @I13@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I8@ INDI
+1 NAME Andrea Maria /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 30 MAY 1953
+2 PLAC Würzburg, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Andrea. Eldest child of Otto von Habsburg.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I9@ INDI
+1 NAME Monika Maria Roberta Antonia Raphaela /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 13 SEP 1954
+2 PLAC Würzburg, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Monika. Third child of Otto von Habsburg.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I10@ INDI
+1 NAME Michaela Maria Madeleine Kiliana /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 13 SEP 1954
+2 PLAC Würzburg, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Michaela. Twin sister of Monika. Fourth child of Otto von Habsburg.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I11@ INDI
+1 NAME Gabriela Maria Tatjana Antonia /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 14 OCT 1956
+2 PLAC Würzburg, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Gabriela. Fifth child of Otto von Habsburg.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I12@ INDI
+1 NAME Walburga Maria Katharina Helene /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 5 OCT 1958
+2 PLAC Berg, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Walburga. Sixth child of Otto von Habsburg. Politician and member of Swedish Parliament.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I13@ INDI
+1 NAME Michael /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 8 OCT 1942
+2 PLAC Washington D.C., USA
+1 DEAT
+2 DATE 30 JUL 2022
+2 PLAC Viechtach, Bavaria, Germany
+1 TITL Archduke of Austria
+1 NOTE Archduke Michael. Youngest child of Otto von Habsburg. Born in USA while family was in exile.
+1 FAMC @F1@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I14@ INDI
+1 NAME Karl /I/
+1 SEX M
+1 BIRT
+2 DATE 17 AUG 1887
+2 PLAC Persenbeug Castle, Austria
+1 DEAT
+2 DATE 1 APR 1922
+2 PLAC Funchal, Madeira, Portugal
+1 TITL Emperor of Austria, King of Hungary
+1 NOTE Emperor Karl I of Austria, King Charles IV of Hungary. Last ruler of Austria-Hungary (1916-1918). Beatified by Catholic Church in 2004. Died in exile.
+1 FAMC @F4@
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I15@ INDI
+1 NAME Zita /of Bourbon-Parma/
+1 SEX F
+1 BIRT
+2 DATE 9 MAY 1892
+2 PLAC Villa Pianore, Italy
+1 DEAT
+2 DATE 14 MAR 1989
+2 PLAC Zizers, Switzerland
+1 TITL Empress of Austria
+1 NOTE Empress Zita. Last Empress of Austria and Queen of Hungary. Lived to 96, outliving her husband by 67 years. Cause for beatification opened.
+1 FAMS @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F3@ FAM
+1 HUSB @I14@
+1 WIFE @I15@
+1 MARR
+2 DATE 21 OCT 1911
+2 PLAC Schwarzau Castle, Austria
+1 CHIL @I6@
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHIL @I18@
+1 CHIL @I19@
+1 CHIL @I20@
+1 CHIL @I21@
+1 CHIL @I22@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I16@ INDI
+1 NAME Adelheid Maria Rainera Elisabeth Kunigunde /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 3 JAN 1914
+2 PLAC Hetzendorf Palace, Vienna, Austria
+1 DEAT
+2 DATE 2 OCT 1971
+2 PLAC Pöcking, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Adelheid. Second child of Emperor Karl I.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I17@ INDI
+1 NAME Robert Karl Ludwig Maximilian Michael Maria Anton Franz Ferdinand Joseph Otto Hubert Georg Pius Johannes Marcus /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 8 FEB 1915
+2 PLAC Schönbrunn Palace, Vienna, Austria
+1 DEAT
+2 DATE 7 FEB 1996
+2 PLAC Basel, Switzerland
+1 TITL Archduke of Austria
+1 NOTE Archduke Robert. Third child of Emperor Karl I. Had 12 children, ensuring continuation of Habsburg line.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I18@ INDI
+1 NAME Felix Friedrich August Maria vom Siege Franz Joseph Peter Karl Anton Robert Otto Pius Michael Benedikt Sebastian Ignatius Marcus /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 31 MAY 1916
+2 PLAC Schönbrunn Palace, Vienna, Austria
+1 DEAT
+2 DATE 6 SEP 2011
+2 PLAC Saltillo, Mexico
+1 TITL Archduke of Austria
+1 NOTE Archduke Felix. Fourth child of Emperor Karl I. Lived in Mexico for many years.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I19@ INDI
+1 NAME Carl Ludwig Maria Franz Joseph Michael Gabriel Antonius Robert Stephan Pius Gregor Ignatius Markus /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1918
+2 PLAC Baden bei Wien, Austria
+1 DEAT
+2 DATE 11 DEC 2007
+2 PLAC Brussels, Belgium
+1 TITL Archduke of Austria
+1 NOTE Archduke Carl Ludwig. Fifth child of Emperor Karl I. Worked at Vatican Library.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I20@ INDI
+1 NAME Rudolph Franz Karl Joseph Maria Anna /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 5 NOV 1919
+2 PLAC Prangins, Switzerland
+1 DEAT
+2 DATE 15 MAY 2010
+2 PLAC Brussels, Belgium
+1 TITL Archduke of Austria
+1 NOTE Archduke Rudolph. Sixth child of Emperor Karl I. Banker in Belgium.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I21@ INDI
+1 NAME Charlotte Marie Adelaide Walpurga /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 1 MAR 1921
+2 PLAC Prangins, Switzerland
+1 DEAT
+2 DATE 23 JUL 1989
+2 PLAC Stuttgart, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Charlotte. Seventh child of Emperor Karl I. Became Duchess of Mecklenburg through marriage.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I22@ INDI
+1 NAME Elisabeth Charlotte Alphonsa Christina Theresia Antonia Josepha Roberta Ottonia Franziska Isabella Pia Marcus /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 31 MAY 1922
+2 PLAC El Pardo Royal Palace, Madrid, Spain
+1 DEAT
+2 DATE 6 JAN 1993
+2 PLAC Waldburg, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Elisabeth. Youngest child of Emperor Karl I. Born in Spain during family's exile.
+1 FAMC @F3@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I23@ INDI
+1 NAME Franz Ferdinand Karl Ludwig Joseph Maria /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 18 DEC 1863
+2 PLAC Graz, Austria
+1 DEAT
+2 DATE 28 JUN 1914
+2 PLAC Sarajevo, Bosnia
+1 TITL Archduke of Austria
+1 NOTE Archduke Franz Ferdinand. Heir presumptive to Austro-Hungarian throne. His assassination in Sarajevo triggered World War I. Uncle of Karl I.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I24@ INDI
+1 NAME Sophie Marie Josephine Albina /Chotek von Chotkow/
+1 SEX F
+1 BIRT
+2 DATE 1 MAR 1868
+2 PLAC Stuttgart, Germany
+1 DEAT
+2 DATE 28 JUN 1914
+2 PLAC Sarajevo, Bosnia
+1 TITL Duchess of Hohenberg
+1 NOTE Duchess Sophie. Morganatic wife of Archduke Franz Ferdinand. Killed with him in Sarajevo assassination. Their children excluded from succession.
+1 FAMS @F4@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F4@ FAM
+1 HUSB @I23@
+1 WIFE @I24@
+1 MARR
+2 DATE 1 JUL 1900
+2 PLAC Reichstadt, Bohemia
+1 CHIL @I14@
+1 NOTE Morganatic marriage. Children not in line of succession to throne.
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I25@ INDI
+1 NAME Franz Joseph /I/
+1 SEX M
+1 BIRT
+2 DATE 18 AUG 1830
+2 PLAC Schönbrunn Palace, Vienna, Austria
+1 DEAT
+2 DATE 21 NOV 1916
+2 PLAC Schönbrunn Palace, Vienna, Austria
+1 TITL Emperor of Austria
+1 NOTE Emperor Franz Joseph I. Reigned 1848-1916 (68 years). One of longest-reigning European monarchs. Led Austria-Hungary into WWI. Uncle of Franz Ferdinand.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I26@ INDI
+1 NAME Elisabeth Amalie Eugenie /of Bavaria/
+1 SEX F
+1 BIRT
+2 DATE 24 DEC 1837
+2 PLAC Munich, Bavaria
+1 DEAT
+2 DATE 10 SEP 1898
+2 PLAC Geneva, Switzerland
+1 TITL Empress of Austria
+1 NOTE Empress Elisabeth "Sisi". Famous for her beauty and tragic life. Assassinated by Italian anarchist. Subject of many films and musicals.
+1 FAMS @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @F5@ FAM
+1 HUSB @I25@
+1 WIFE @I26@
+1 MARR
+2 DATE 24 APR 1854
+2 PLAC Vienna, Austria
+1 CHIL @I27@
+1 CHIL @I28@
+1 CHIL @I29@
+1 CHIL @I30@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I27@ INDI
+1 NAME Sophie Friederike /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 5 MAR 1855
+2 PLAC Vienna, Austria
+1 DEAT
+2 DATE 29 MAY 1857
+2 PLAC Budapest, Hungary
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Sophie. First child of Franz Joseph and Elisabeth. Died at age 2.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I28@ INDI
+1 NAME Gisela Louise Marie /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 12 JUL 1856
+2 PLAC Laxenburg, Austria
+1 DEAT
+2 DATE 27 JUL 1932
+2 PLAC Munich, Bavaria, Germany
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Gisela. Second daughter of Franz Joseph and Elisabeth. Married Prince Leopold of Bavaria.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I29@ INDI
+1 NAME Rudolf Franz Karl Joseph /von Habsburg/
+1 SEX M
+1 BIRT
+2 DATE 21 AUG 1858
+2 PLAC Laxenburg, Austria
+1 DEAT
+2 DATE 30 JAN 1889
+2 PLAC Mayerling, Austria
+1 TITL Crown Prince of Austria
+1 NOTE Crown Prince Rudolf. Only son and heir of Franz Joseph. Died in apparent murder-suicide pact with mistress at Mayerling hunting lodge. The "Mayerling Incident".
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 @I30@ INDI
+1 NAME Marie Valerie Mathilde Amalie /von Habsburg/
+1 SEX F
+1 BIRT
+2 DATE 22 APR 1868
+2 PLAC Buda, Hungary
+1 DEAT
+2 DATE 6 SEP 1924
+2 PLAC Wallsee, Austria
+1 TITL Archduchess of Austria
+1 NOTE Archduchess Marie Valerie. Youngest child of Franz Joseph and Elisabeth. Elisabeth's favorite daughter.
+1 FAMC @F5@
+1 CHAN
+2 DATE 06 NOV 2025
+3 TIME 12:00:00
+0 TRLR
+
