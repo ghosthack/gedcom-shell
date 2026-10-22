@@ -20,7 +20,7 @@ Requires JDK 26 and Maven 3.9+. No runtime dependencies.
 
 ```
 mvn package                         # builds target/ged-browser.jar, runs tests
-bin/ged-browser FILE.ged            # interactive (line editing + history)
+bin/ged-browser FILE.ged            # interactive prompt (↑/↓ history, line editing)
 bin/ged-browser FILE.ged -c 'find maria; show /found/1'
 echo 'tree -a -n 5' | bin/ged-browser FILE.ged
 ```
@@ -28,6 +28,25 @@ echo 'tree -a -n 5' | bin/ged-browser FILE.ged
 Options: `-c CMDS` run and exit · `-H ID` home person (default: first in
 file) · `--no-color` (also honours `NO_COLOR`). Exit status is 1 if any
 command failed, 2 for usage errors, which makes it scriptable.
+
+## The prompt
+
+| Key                     | Action                                   |
+|-------------------------|------------------------------------------|
+| ↑ / ↓ (Ctrl-P / Ctrl-N) | previous / next command                  |
+| ← / → (Ctrl-B / Ctrl-F) | move; Ctrl/Alt + ← / → move by word      |
+| Home / End (Ctrl-A / E) | start / end of line                      |
+| Backspace / Delete      | delete before / under the cursor         |
+| Ctrl-U / Ctrl-K / Ctrl-W| delete to start / to end / previous word |
+| Ctrl-L                  | clear the screen                         |
+| Ctrl-C                  | discard the line                         |
+| Ctrl-D                  | quit (on an empty line)                  |
+
+History is kept in `~/.ged_browser_history` (last 1000 commands). Start a
+command with a space to keep it out of history. The editor is built in: it
+uses `stty` to switch the terminal to raw mode only while you type, so it
+needs no libraries. Without `stty` (Windows) it falls back to the console's
+own line input, which on Windows already recalls commands with ↑/↓.
 
 ## The filesystem
 
@@ -158,14 +177,15 @@ ged.text     Style (ANSI, width-aware), Table
   children, siblings, ancestors and descendants. Ancestor and descendant
   walks are cycle-safe, since malformed files can make someone their own
   ancestor.
-- **Zero dependencies.** JDK 22+'s `System.console()` already provides line
-  editing and history. Style and tables work out display width themselves,
-  so accented and CJK names line up.
+- **Zero dependencies.** The prompt's line editor (`LineEditor`, ~250 lines)
+  replaces what JLine would provide. Its key handling is separate from the
+  terminal setup, so it's unit-tested with byte streams. Style and tables
+  work out display width themselves, so accented and CJK names line up.
 
 ## Not (yet) supported
 
 Editing families (marriage details, adding or linking people), editing
-other events (baptism, residence…), tab completion (would need JLine), half-siblings through
+other events (baptism, residence…), tab completion, half-siblings through
 separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.

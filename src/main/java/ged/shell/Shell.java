@@ -5,7 +5,6 @@ import ged.text.Style;
 import ged.vfs.Location;
 import ged.vfs.Navigator;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
@@ -130,20 +129,15 @@ public final class Shell {
         return where + (ctx.g().isDirty() ? s.yellow(" *") : "") + s.cyan(" › ");
     }
 
-    /// Interactive loop. Uses the JDK console (line editing + history)
-    /// when attached to a terminal, otherwise reads lines from `in`.
-    public int repl(BufferedReader in, boolean interactive) throws IOException {
-        var console = interactive ? System.console() : null;
+    /// Reads and runs lines until `exit` or end of input. With
+    /// `interactive`, shows a prompt and, at Ctrl-D with unsaved edits,
+    /// warns once before quitting.
+    public int repl(LineInput input, boolean interactive) throws IOException {
         boolean allOk = true;
         while (!exitRequested) {
-            String line;
-            if (console != null) {
-                line = console.readLine("%s", prompt());
-            } else {
-                line = in.readLine();
-            }
+            var line = input.readLine(interactive ? prompt() : "");
             if (line == null) {
-                if (console != null && ctx.g().isDirty() && !exitWarned) {
+                if (interactive && ctx.g().isDirty() && !exitWarned) {
                     ctx.out().println();
                     execute("exit");
                     continue;
@@ -153,7 +147,7 @@ public final class Shell {
             if (line.isBlank()) continue;
             allOk &= execute(line);
         }
-        if (console != null) ctx.out().println();
+        if (interactive) ctx.out().println();
         warnIfDirty();
         return allOk ? 0 : 1;
     }

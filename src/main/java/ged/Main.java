@@ -2,6 +2,7 @@ package ged;
 
 import ged.model.Genealogy;
 import ged.model.Person;
+import ged.shell.LineInput;
 import ged.shell.Shell;
 import ged.text.Style;
 import ged.vfs.FileSystem;
@@ -96,8 +97,10 @@ public final class Main {
             out.println(style.dim("Type 'help' for commands. Home: ")
                     + home.map(Person::label).orElse("(no people)"));
         }
-        var in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-        return shell.repl(in, interactive);
+        var input = interactive
+                ? LineInput.terminal(Path.of(System.getProperty("user.home"), ".ged_browser_history"), out)
+                : LineInput.of(new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8)));
+        return shell.repl(input, interactive);
     }
 
     private static int usage(PrintStream err, String problem) {
