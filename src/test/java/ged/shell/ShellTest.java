@@ -7,10 +7,12 @@ import ged.vfs.FileSystem;
 import ged.vfs.Navigator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -208,5 +210,38 @@ class ShellTest {
             assertTrue(shell.execute("ls; show; tree -n 4; tree -a -n 4; ls /people -s birthday; show /"), name + ": " + errors());
             assertFalse(out.toString(StandardCharsets.UTF_8).contains("�"), name + " has decoding errors");
         }
+    }
+
+    @Test
+    void chartWritesASelfContainedPage(@TempDir Path dir) throws Exception {
+        var file = dir.resolve("elena.html");
+        assertTrue(shell.execute("chart -n 2 -o '" + file + "'"), errors());
+        assertTrue(out.toString(StandardCharsets.UTF_8).contains("wrote " + file), out.toString(StandardCharsets.UTF_8));
+        var html = Files.readString(file);
+        assertTrue(html.contains("Family tree of Elena Rossi"));
+        assertTrue(html.contains("Luca Rossi") && html.contains("Giovanni Rossi"), "2 generations of ancestors");
+
+        var svg = dir.resolve("elena.svg");
+        assertTrue(shell.execute("chart -a --lang es -o '" + svg + "' ~"), errors());
+        assertTrue(Files.readString(svg).startsWith("<?xml") && Files.readString(svg).contains("ABUELOS"));
+    }
+
+    @Test
+    void chartRefusesToOverwriteGedcomAndBadOptions() {
+        assertFalse(shell.execute("chart -o family.ged"));
+        assertTrue(errors().contains("refusing"), errors());
+        assertFalse(shell.execute("chart --lang fr -o x.html"));
+        assertTrue(errors().contains("unknown language"), errors());
+        assertFalse(shell.execute("chart -a -d"));
+    }
+
+    @Test
+    void chartWritesPng(@TempDir Path dir) throws Exception {
+        var file = dir.resolve("elena.png");
+        assertTrue(shell.execute("chart -n 2 --scale 1 -o '" + file + "'"), errors());
+        var img = javax.imageio.ImageIO.read(file.toFile());
+        assertTrue(img != null && img.getWidth() > 500 && img.getHeight() > 200, "a real PNG");
+        assertFalse(shell.execute("chart --scale 9 -o x.png"));
+        assertTrue(errors().contains("scale must be between"), errors());
     }
 }
