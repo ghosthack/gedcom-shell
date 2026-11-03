@@ -244,4 +244,14 @@ class ShellTest {
         assertFalse(shell.execute("chart --scale 9 -o x.png"));
         assertTrue(errors().contains("scale must be between"), errors());
     }
+
+    @Test
+    void chartTimeline(@TempDir Path dir) throws Exception {
+        var file = dir.resolve("vidas.html");
+        assertTrue(shell.execute("chart --timeline --lang es -o '" + file + "'"), errors());
+        var html = Files.readString(file);
+        assertTrue(html.contains("Línea de tiempo familiar de Elena Rossi") && html.contains(">HOY<"), "Spanish timeline");
+        assertFalse(shell.execute("chart --timeline --theme classic -o x.html"));
+        assertTrue(errors().contains("modern"), errors());
+    }
 }
