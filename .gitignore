@@ -5,11 +5,20 @@ target/
 .DS_Store
 src/test/resources/genealogiaAdrianFernandez.ged
 
-# chart output written to the project root (chart -o NAME.html/.png/.svg)
-/*.html
-/*.png
-/*.svg
-/*.zip
-/*.pdf
-/*.jpg
-/*.jpeg
+# chart output and saved pictures, wherever they land (chart -o NAME.html/.png/.svg, Save as PDF)
+*.html
+*.png
+*.svg
+*.zip
+*.pdf
+*.jpg
+*.jpeg
+# ...except test fixtures, which may need to be committed (extension by extension, so the
+# family .ged above stays ignored)
+!/src/test/resources/**/*.html
+!/src/test/resources/**/*.png
+!/src/test/resources/**/*.svg
+!/src/test/resources/**/*.zip
+!/src/test/resources/**/*.pdf
+!/src/test/resources/**/*.jpg
+!/src/test/resources/**/*.jpeg
