@@ -261,4 +261,20 @@ class ShellTest {
         assertTrue(Files.readString(dir.resolve("arms.svg")).contains("arms-"));
         assertTrue(errors().contains("modern"), errors());
     }
+
+    @Test
+    void chartSephirotStartsDark(@TempDir Path dir) throws Exception {
+        var dark = dir.resolve("plate.png");
+        assertTrue(shell.execute("chart --theme sephirot --scale 1 -o '" + dark + "'"), errors());
+        assertEquals(0x0b0a09, javax.imageio.ImageIO.read(dark.toFile()).getRGB(3, 3) & 0xffffff);
+        var light = dir.resolve("print.png");
+        assertTrue(shell.execute("chart --theme sephirot --light --scale 1 -o '" + light + "'"), errors());
+        assertEquals(0xefe6d2, javax.imageio.ImageIO.read(light.toFile()).getRGB(3, 3) & 0xffffff);
+        var html = dir.resolve("plate.html");
+        assertTrue(shell.execute("chart --theme sephirot -o '" + html + "'"), errors());
+        assertTrue(Files.readString(html).contains("<html lang=\"en\" data-theme=\"dark\">"));
+        assertFalse(shell.execute("chart --theme sephirot --dark --light -o x.html"));
+        assertFalse(shell.execute("chart --timeline --theme sephirot -o x.html"));
+        assertTrue(errors().contains("sephirot"), errors());
+    }
 }
