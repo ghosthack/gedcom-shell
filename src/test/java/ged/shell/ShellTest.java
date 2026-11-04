@@ -218,7 +218,7 @@ class ShellTest {
         assertTrue(shell.execute("chart -n 2 -o '" + file + "'"), errors());
         assertTrue(out.toString(StandardCharsets.UTF_8).contains("wrote " + file), out.toString(StandardCharsets.UTF_8));
         var html = Files.readString(file);
-        assertTrue(html.contains("Family tree of Elena Rossi"));
+        assertTrue(html.contains("<h1>Elena Rossi</h1>") && html.contains("Family tree with "));
         assertTrue(html.contains("Luca Rossi") && html.contains("Giovanni Rossi"), "2 generations of ancestors");
 
         var svg = dir.resolve("elena.svg");
@@ -250,8 +250,15 @@ class ShellTest {
         var file = dir.resolve("vidas.html");
         assertTrue(shell.execute("chart --timeline --lang es -o '" + file + "'"), errors());
         var html = Files.readString(file);
-        assertTrue(html.contains("Línea de tiempo familiar de Elena Rossi") && html.contains(">HOY<"), "Spanish timeline");
+        assertTrue(html.contains("<h1>Elena Rossi</h1>") && html.contains("Línea de tiempo familiar con ") && html.contains(">HOY<"), "Spanish timeline");
+        var png = dir.resolve("old.png");
+        assertTrue(shell.execute("chart --timeline --theme baroque --dark --scale 1 -o '" + png + "'"), errors());
+        assertTrue(javax.imageio.ImageIO.read(png.toFile()).getWidth() > 500);
         assertFalse(shell.execute("chart --timeline --theme classic -o x.html"));
+        assertFalse(shell.execute("chart --arms -o x.html"));
+        assertTrue(errors().contains("baroque"), errors());
+        assertTrue(shell.execute("chart --theme baroque --arms -o '" + dir.resolve("arms.svg") + "'"), errors());
+        assertTrue(Files.readString(dir.resolve("arms.svg")).contains("arms-"));
         assertTrue(errors().contains("modern"), errors());
     }
 }
