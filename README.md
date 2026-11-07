@@ -129,6 +129,15 @@ edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
 bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
 ```
 
+A family opens the same way, with its marriage and divorce (the partners
+and children are listed at the top for reference):
+
+```
+edit /families/F4
+edit @F2@ married="12 jun 1870" marriage.place="Genova, Italia"
+edit @F2@ divorced=no divorce.date= divorce.place=
+```
+
 - **Dates are checked and normalised**: `12 june 1850` and `1850-06-12`
   become `12 JUN 1850`, and `circa 1850` becomes `ABT 1850`. `BEF`, `AFT`,
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
@@ -138,6 +147,8 @@ bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
   `deceased: yes`. `deceased: yes` with no details writes `1 DEAT Y`.
   `deceased: no` removes the death record, but refuses if that record has
   sources or notes, or there is a burial record, so nothing is lost silently.
+  Divorce works the same way: a divorce date or place implies `divorced:
+  yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
   are unsaved changes, and `exit` (or Ctrl-D) warns once before discarding them.
 - **Saving produces a minimal diff.** Records you didn't edit are copied byte for
@@ -193,7 +204,7 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing families (marriage details, adding or linking people), editing
+Adding people or linking them into families, editing
 other events (baptism, residence…), half-siblings through
 separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the

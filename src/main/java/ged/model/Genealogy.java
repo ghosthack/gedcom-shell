@@ -138,6 +138,15 @@ public final class Genealogy {
         return fresh;
     }
 
+    /// Re-reads a family after its record's nodes were edited, marks the
+    /// record dirty, and returns the fresh [Family].
+    public Family updated(Family f) {
+        var fresh = Family.of(f.node());
+        families.put(fresh.id(), fresh);
+        dirty.add(f.node());
+        return fresh;
+    }
+
     public boolean isDirty() { return !dirty.isEmpty(); }
 
     public int dirtyCount() { return dirty.size(); }

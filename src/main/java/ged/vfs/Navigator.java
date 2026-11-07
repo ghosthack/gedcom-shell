@@ -68,6 +68,8 @@ public final class Navigator {
         return switch (loc) {
             case Location.PersonDir(var p) -> new Location.PersonDir(g.person(p.id()).orElse(p));
             case Location.Group(var p, var r) -> new Location.Group(g.person(p.id()).orElse(p), r);
+            case Location.FamilyDir(var f) -> new Location.FamilyDir(g.family(f.id()).orElse(f));
+            case Location.FamilyChildren(var f) -> new Location.FamilyChildren(g.family(f.id()).orElse(f));
             default -> loc;
         };
     }
