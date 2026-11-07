@@ -34,6 +34,8 @@ public final class Genealogy {
     private final List<String> rawRecords;
     private final GedcomParser.Layout layout;
     private final Set<Node> dirty = new LinkedHashSet<>();
+    /// Records that were in the file and have been deleted since the last save.
+    private int deleted;
     private final Node header;
     private final Charsets.Decoded encoding;
     private final List<String> warnings;
@@ -151,9 +153,65 @@ public final class Genealogy {
         return fresh;
     }
 
-    public boolean isDirty() { return !dirty.isEmpty(); }
+    /// Adds a family with no members yet.
+    public Family newFamily() {
+        var fresh = Family.of(newRecord("FAM", "F", families.keySet()));
+        families.put(fresh.id(), fresh);
+        return fresh;
+    }
 
-    public int dirtyCount() { return dirty.size(); }
+    /// Adds a person with a NAME line (`Maria /Rossi/`) and SEX.
+    public Person newPerson(String name, Person.Sex sex) {
+        var rec = newRecord("INDI", "I", people.keySet());
+        rec.insert(0, "NAME", name);
+        rec.insert(1, "SEX", sex == Person.Sex.UNKNOWN ? "U" : sex.code);
+        var fresh = Person.of(rec);
+        people.put(fresh.id(), fresh);
+        searchText.put(fresh.id(), fold(fresh.name().full()));
+        return fresh;
+    }
+
+    /// A new level-0 record, placed before the trailer and marked dirty.
+    /// Its id follows the file's own style: the prefix most of `ids` use
+    /// (`I`, `P`, …; `fallback` if none), numbered after the highest in use.
+    private Node newRecord(String tag, String fallback, Set<String> ids) {
+        var prefixes = new LinkedHashMap<String, Integer>();
+        for (var id : ids) {
+            var m = ID.matcher(id);
+            if (m.matches()) prefixes.merge(m.group(1), 1, Integer::sum);
+        }
+        var prefix = prefixes.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(fallback);
+        int max = 0;
+        for (var r : records) {
+            var m = r.xref() == null ? null : ID.matcher(r.xref());
+            if (m != null && m.matches() && m.group(1).equals(prefix)) max = Math.max(max, Integer.parseInt(m.group(2)));
+        }
+        var node = Node.record("@" + prefix + (max + 1) + "@", tag);
+        int at = records.size();
+        if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
+        records.add(at, node);
+        rawRecords.add(at, "");
+        dirty.add(node);
+        return node;
+    }
+
+    private static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("@([A-Za-z_]*)(\\d{1,9})@");
+
+    /// Deletes a family record (used when unlinking leaves it empty).
+    public void removeFamily(Family f) {
+        int i = records.indexOf(f.node());
+        if (i < 0) return;
+        boolean wasInFile = !rawRecords.get(i).isEmpty();
+        records.remove(i);
+        rawRecords.remove(i);
+        dirty.remove(f.node());
+        families.remove(f.id());
+        if (wasInFile) deleted++;
+    }
+
+    public boolean isDirty() { return !dirty.isEmpty() || deleted > 0; }
+
+    public int dirtyCount() { return dirty.size() + deleted; }
 
     /// The whole file as text, with untouched records verbatim.
     public String render() {
@@ -218,6 +276,7 @@ public final class Genealogy {
             // what's on disk now is the baseline for later saves
             for (int i = 0; i < records.size(); i++) rawRecords.set(i, recordText(i));
             dirty.clear();
+            deleted = 0;
         }
     }
 

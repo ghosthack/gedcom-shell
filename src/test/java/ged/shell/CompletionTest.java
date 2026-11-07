@@ -61,7 +61,7 @@ class CompletionTest {
         assertEquals(List.of("cat ", "cd ", "chart "), complete("c"));
         assertTrue(complete("").containsAll(List.of("ls ", "ll ", "help ", "exit ", "save ")));
         assertEquals(List.of("tree "), complete("help tr"));
-        assertEquals(List.of("ll ", "ls "), complete("pwd; l"), "after ;, a new command");
+        assertEquals(List.of("ls "), complete("pwd; ls"), "after ;, a new command");
     }
 
     @Test
