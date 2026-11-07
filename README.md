@@ -163,6 +163,13 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
   you leave unchanged is never rewritten, even if its existing form is
   unusual.
+- **Julian, Hebrew and French Republican dates** (`@#DJULIAN@ 4 OCT 1582`,
+  `HEBREW 1 TSH 5785`, `@#DFRENCH R@ 18 BRUM 8`, GEDCOM 5.5.1 escape or
+  GEDCOM 7 keyword) are checked against their own months and shown as
+  written, but sorted, filtered and aged by the Gregorian day they mean. A
+  year or month alone counts as the Gregorian year or month holding its
+  middle (Hebrew 5785 → 2025). Old Style dual years (`11 FEB 1731/32`) are
+  read as Julian.
 - **Death and deceased are kept consistent**: a death, burial or cremation
   date or place implies `deceased: yes`. `deceased: yes` with no details
   writes `1 DEAT Y`. `deceased: no` removes the death record (and a bare
@@ -300,6 +307,5 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 ## Not (yet) supported
 
 Editing an event or fact other than the first of its kind, custom `EVEN`
-and `FACT` records, and family events beyond marriage and divorce; non-Gregorian
-calendar arithmetic (dates are shown verbatim), and export/convert from the
-JS version.
+and `FACT` records, and family events beyond marriage and divorce; and
+export/convert from the JS version.
