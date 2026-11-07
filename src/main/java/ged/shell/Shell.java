@@ -30,7 +30,7 @@ public final class Shell {
         this.ctx = new Context(nav, out, style, editor);
         this.err = err;
         for (var c : List.of(new LsCommand(), new CdCommand(), new PwdCommand(), new ShowCommand(),
-                new TreeCommand(), new ChartCommand(), new FindCommand(), new EditCommand(), new LinkCommand(), new UnlinkCommand(), new SaveCommand())) {
+                new TreeCommand(), new ChartCommand(), new FindCommand(), new EditCommand(), new AddCommand(), new LinkCommand(), new UnlinkCommand(), new SaveCommand())) {
             commands.put(c.name(), c);
         }
     }

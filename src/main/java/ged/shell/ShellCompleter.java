@@ -52,7 +52,12 @@ final class ShellCompleter implements Completer {
             return flags.stream().filter(f -> f.name().startsWith(word))
                     .map(f -> new Candidate(f.name(), " ", f.name(), ctx.style().dim(f.help()))).toList();
         }
-        return cmd.takesPaths() ? paths(word) : List.of();
+        var out = new ArrayList<Candidate>();
+        if (words.size() == 1) {
+            cmd.firstWords().stream().filter(w -> w.startsWith(word)).forEach(w -> out.add(new Candidate(w, " ")));
+        }
+        if (cmd.takesPaths()) out.addAll(paths(word));
+        return out;
     }
 
     private List<Candidate> commandNames(String word, boolean withAliases) {
