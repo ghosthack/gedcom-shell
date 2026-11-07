@@ -126,7 +126,15 @@ final class UnlinkCommand implements Command {
             case "children" -> g.familiesAsSpouse(p).stream().filter(f -> f.children().contains(x.id())).toList();
             case "spouses" -> g.familiesAsSpouse(p).stream().filter(f -> f.partnerOf(p.id()).filter(x.id()::equals).isPresent()).toList();
             case "parents" -> g.familiesAsChild(p).stream().filter(f -> isPartner(f, x)).toList();
-            case "siblings" -> g.familiesAsChild(p).stream().filter(f -> f.children().contains(x.id())).toList();
+            case "siblings" -> {
+                var shared = g.familiesAsChild(p).stream().filter(f -> f.children().contains(x.id())).toList();
+                if (!shared.isEmpty()) yield shared;
+                // a half-sibling leaves the family that gives them the shared parent
+                var parents = g.parents(p);
+                yield g.familiesAsChild(x).stream()
+                        .filter(f -> parents.stream().anyMatch(par -> isPartner(f, par)))
+                        .toList();
+            }
             default -> List.of();
         };
     }
