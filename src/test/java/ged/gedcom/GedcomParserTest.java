@@ -38,6 +38,31 @@ class GedcomParserTest {
     }
 
     @Test
+    void continuationAfterASubLineStaysThereWhenTheRecordIsRewritten() {
+        var text = """
+                0 HEAD
+                0 @I1@ INDI
+                1 NAME Ann /Lee/
+                1 NOTE first
+                2 SOUR @S1@
+                2 CONT second
+                1 BIRT
+                2 DATE 1900
+                0 TRLR
+                """;
+        var g = Genealogy.of(text);
+        var p = g.person("I1").orElseThrow();
+        assertEquals("first\nsecond", p.node().first("NOTE").orElseThrow().value());
+        g.updated(p); // marked dirty, so the record is written from its nodes
+        assertEquals(text, g.render());
+
+        // removing the sub-line keeps the continuation with its note
+        var note = p.node().first("NOTE").orElseThrow();
+        note.remove(note.first("SOUR").orElseThrow());
+        assertEquals(text.replace("2 SOUR @S1@\n", ""), g.render());
+    }
+
+    @Test
     void tabAfterTagSeparatesTheValue() {
         var g = Genealogy.of("0 HEAD\n0 @I1@ INDI\n1 NAME\tJohn /Smith/\n1 SEX M\n0 TRLR\n");
         assertEquals("John Smith", g.person("I1").orElseThrow().name().full());
