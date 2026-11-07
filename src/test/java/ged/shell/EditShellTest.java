@@ -128,6 +128,47 @@ class EditShellTest {
         assertTrue(Files.readString(file).contains("1 DEAT\n2 DATE 1990\n"));
     }
 
+    // ---- the rarer events and attributes ----------------------------------
+
+    @Test
+    void rarerEventsByAssignment() {
+        load(Fixtures.cousins());
+        var r = run("edit census.date=1881 census.place=London emigrated=1890 religion=Methodist");
+        assertTrue(r.contains("Elena Rossi  I9  4 changes"), r);
+        assertTrue(r.contains("census.place     (empty) → London"), r);
+        assertTrue(r.contains("emigration.date  (empty) → 1890"), r);
+        var show = run("show");
+        assertTrue(show.contains("Census          1881, London"), show);
+        assertTrue(show.contains("Religion        Methodist"), show);
+        r = run("edit cremated=1990");
+        assertTrue(r.contains("cremation.date  (empty) → 1990"), r);
+        assertTrue(run("edit deceased=no").contains("cremation date or place is given"));
+    }
+
+    @Test
+    void rarerEventsInTheEditor() {
+        load(Fixtures.cousins());
+        editorSteps.add(form -> form + "naturalisation.date: 1 mar 1935\nnationality: Italian\n");
+        var r = run("edit");
+        assertFalse(formsShown.getFirst().contains("\nnaturalisation.date:"), formsShown.getFirst());
+        assertTrue(formsShown.getFirst().contains("naturalisation"), "offered in a comment");
+        assertTrue(r.contains("naturalisation.date  (empty) → 1 MAR 1935"), r);
+
+        editorSteps.add(set("naturalisation.place", "Roma"));
+        run("edit");
+        assertTrue(formsShown.get(1).contains("\nnaturalisation.date:  1 MAR 1935\n"), formsShown.get(1));
+        assertTrue(formsShown.get(1).contains("\nnationality:          Italian\n"), formsShown.get(1));
+        assertTrue(g.render().contains("1 NATU\n2 DATE 1 MAR 1935\n2 PLAC Roma\n"), g.render());
+    }
+
+    @Test
+    void addTakesTheRarerFieldsToo() {
+        load(Fixtures.cousins());
+        var r = run("add child \"Bea Rossi\" emigrated=1960 religion=Catholic");
+        assertTrue(r.contains("emigration.date: 1960 · religion: Catholic"), r);
+        assertTrue(run("help edit").contains("More events, each as NAME.date and NAME.place"));
+    }
+
     @Test
     void aliasesForVimFingers() {
         load(Fixtures.cousins());

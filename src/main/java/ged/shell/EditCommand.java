@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 final class EditCommand implements Command {
     @Override public String name() { return "edit"; }
     @Override public boolean takesPaths() { return true; }
-    @Override public String summary() { return "change a person's name, sex, life events and occupation, or a family's marriage and divorce"; }
+    @Override public String summary() { return "change a person's name, sex, events and facts, or a family's marriage and divorce"; }
 
     @Override
     public String usage() {
@@ -41,6 +41,8 @@ final class EditCommand implements Command {
                   edit @I12@ deceased=yes
                   edit christened="20 jun 1850" buried=1920 burialplace=Staglieno
                   edit occupation=Sailor residence=Livorno
+                  edit census.date=1881 census.place=London religion=Methodist
+                  edit emigrated=1890 cremated=1950
                   edit surname=Rossi given="Maria Luisa"
                   edit families/F4 married="12 jun 1870" marriage.place=Roma
                   edit @F2@ divorced=yes
@@ -48,17 +50,33 @@ final class EditCommand implements Command {
                 Changes are held in memory (the prompt shows *) until you run `save`.
                 To change who belongs to a family, see `help link` and `help unlink`.
 
-                Person fields: %s
+                Person fields:
+                %s
                   aliases: first, last, gender, born, birthplace, died, deathplace, dead,
                   baptism, christened, baptismplace, buried, burialplace, job, residence
-                  occupation and residence edit the first one recorded; others are kept
+                More events, each as NAME.date and NAME.place (census.date=1881):
+                %s
+                More facts, with a value (religion=Catholic):
+                %s
+                  aliases: an event's verb or GEDCOM tag (emigrated, cremated, cens),
+                  NAMEplace (emigratedplace); the form shows these once recorded
+                Occupation, residence and the events and facts above edit the first
+                one recorded; others are kept.
                 Family fields: %s
                   aliases: married, wedding, marriageplace, divorce, divorceplace
                 Dates: %s
                 """.formatted(
-                Arrays.stream(PersonForm.Field.values()).map(f -> f.key).collect(Collectors.joining(", ")),
+                Style.wrap(personFields(f -> !f.isExtra(), false), "  ", 76),
+                Style.wrap(personFields(f -> f.isExtra() && !f.isAttribute(), true), "  ", 76),
+                Style.wrap(personFields(f -> f.isExtra() && f.isAttribute(), true), "  ", 76),
                 Arrays.stream(FamilyForm.Field.values()).map(f -> f.key).collect(Collectors.joining(", ")),
                 ged.model.GedDate.EXAMPLES);
+    }
+
+    /// Person field keys, or with `nouns` each event's name once.
+    private static List<String> personFields(java.util.function.Predicate<PersonForm.Field> which, boolean nouns) {
+        return Arrays.stream(PersonForm.Field.values()).filter(which)
+                .map(f -> nouns ? f.noun() : f.key).distinct().toList();
     }
 
     @Override
