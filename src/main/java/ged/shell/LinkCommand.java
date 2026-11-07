@@ -62,7 +62,9 @@ final class LinkCommand implements Command {
         throw new CommandException(path + " is not a person (" + ctx.fs().describe(loc) + ")");
     }
 
-    private String link(Context ctx, Genealogy g, Person x, String where) {
+    /// Links `x` as `where` says; returns what happened, in a sentence.
+    /// Checks come before changes, so a refusal leaves the tree as it was.
+    static String link(Context ctx, Genealogy g, Person x, String where) {
         var s = ctx.style();
         var name = s.bold(x.name().display()) + " " + s.dim(x.key());
 
@@ -136,7 +138,7 @@ final class LinkCommand implements Command {
 
     /// `x` becomes `p`'s father or mother: in `p`'s family as a child, or a
     /// new one if `p` has none.
-    private String asParent(Genealogy g, Person x, Person p, Slot slot, String name) {
+    private static String asParent(Genealogy g, Person x, Person p, Slot slot, String name) {
         var word = slot == Slot.HUSB ? "father" : "mother";
         if (Slot.of(x) == slot.other()) {
             throw new IllegalArgumentException(x.name().display() + " is recorded as " + (slot == Slot.HUSB ? "female" : "male")
@@ -168,7 +170,7 @@ final class LinkCommand implements Command {
 
     /// `x` and `p` become partners: filling the empty slot of `p`'s only
     /// half-empty family, or in a new family.
-    private String asPartner(Context ctx, Genealogy g, Person x, Person p, String name) {
+    private static String asPartner(Context ctx, Genealogy g, Person x, Person p, String name) {
         if (g.spouses(p).contains(x)) throw new IllegalArgumentException(x.name().display() + " is already a partner of " + p.name().display());
         var open = g.familiesAsSpouse(p).stream().filter(f -> f.husband().isEmpty() || f.wife().isEmpty()).toList();
         Family f;

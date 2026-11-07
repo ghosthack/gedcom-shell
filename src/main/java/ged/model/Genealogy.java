@@ -209,6 +209,20 @@ public final class Genealogy {
         if (wasInFile) deleted++;
     }
 
+    /// Deletes a person record that nothing points at any more (used to
+    /// undo an `add` that couldn't be completed).
+    public void removePerson(Person p) {
+        int i = records.indexOf(p.node());
+        if (i < 0) return;
+        boolean wasInFile = !rawRecords.get(i).isEmpty();
+        records.remove(i);
+        rawRecords.remove(i);
+        dirty.remove(p.node());
+        people.remove(p.id());
+        searchText.remove(p.id());
+        if (wasInFile) deleted++;
+    }
+
     public boolean isDirty() { return !dirty.isEmpty() || deleted > 0; }
 
     public int dirtyCount() { return dirty.size() + deleted; }

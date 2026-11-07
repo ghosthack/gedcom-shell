@@ -97,6 +97,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 
 | `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth/death date and place, deceased; or a family's marriage and divorce. See below. |
+| `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
 | `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
 | `save` | `save [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone. |
@@ -191,6 +192,30 @@ unlink father                  the father leaves your parents' family
 - `link` refuses what it can't do cleanly: a slot that's taken ("already
   has a father"), a man linked as a mother, a link that already exists.
 
+### Adding people
+
+`add` creates a person and links them in one step, with any of `edit`'s
+fields:
+
+```
+add child "Maria Rossi" sex=F born="12 jun 1850"
+add father "Giovanni /Rossi/" birthplace=Genova
+add spouse "Juan /Pérez García/" sex=M
+add families/F3/children Bea
+add person "Ana Ruiz"                 not linked to anyone yet
+```
+
+- **Surnames go between slashes**, as in GEDCOM. Without slashes the last
+  word is taken as the surname, so a compound one needs them:
+  `"Juan /Pérez García/"`. The confirmation shows how the name was split.
+- Fathers are recorded as male and mothers as female unless `sex=` says
+  otherwise. Where the person goes follows `link`'s rules, so a new
+  family is started when needed.
+- **All or nothing.** If the name, a field or the link is refused, no
+  record is created and the next id stays free.
+- New records are numbered after the file's own ids and written just
+  before the trailer.
+
 ### Changes from the JS navigator
 
 - `tree -a` replaces both `tree N ancestors` and `ancestors`. `ls -s birthday`
@@ -237,8 +262,7 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Adding new people, editing
-other events (baptism, residence…), half-siblings through
+Editing other events (baptism, residence…), half-siblings through
 separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.
