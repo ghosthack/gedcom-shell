@@ -354,6 +354,19 @@ public final class Genealogy {
                 .filter(id -> !id.equals(p.id())));
     }
 
+    /// Children of a parent's other families: they share one parent with
+    /// `p` but not a family. Full siblings (and `p`) are left out.
+    public List<Person> halfSiblings(Person p) {
+        var own = p.childOf();
+        var full = siblings(p);
+        return resolve(parents(p).stream()
+                .flatMap(parent -> familiesAsSpouse(parent).stream())
+                .filter(f -> !own.contains(f.id()))
+                .flatMap(f -> f.children().stream())
+                .filter(id -> !id.equals(p.id())))
+                .stream().filter(x -> !full.contains(x)).toList();
+    }
+
     public List<Person> members(Family f) {
         return resolve(Stream.of(f.husband().stream(), f.wife().stream(), f.children().stream()).flatMap(s -> s));
     }
