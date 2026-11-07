@@ -96,7 +96,10 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme modern\|classic\|baroque\|sephirot] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share: one self-contained HTML file (no internet needed) with ancestors to the left, descendants and their partners to the right, and one labelled column per generation. Click a person for dates, places and relatives; Print fits it to a landscape page, or use "Save as PDF". `-o x.png` writes a picture to text or email (drawn at 2×, or `--scale N`; huge charts are drawn smaller to keep the file manageable), and `-o x.svg` a scalable image. Default: 4 generations each way, saved as `NAME-tree.html`. Notes are left out unless you pass `--notes`. Birthplaces get a small country flag, worked out from the place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`); flags are drawn as shapes, not emoji, so they show on Windows and in PNGs. Cards show initials tinted by sex, a large flag, age (at death, or today's for the living), and the record id (`I30`); partners are joined by a marriage badge. The HTML follows the viewer's light/dark setting, with a switch, and always prints light; `--dark` makes a dark PNG/SVG (or starts the page dark). `--theme classic` is the plainer warm-paper look (light only, small flags, no ages or ids). `--theme baroque` is a 19th-century engraved look on parchment: cartouche cards with corner scrollwork, the birth country's flag as a medallion on the top edge (or a crest tinted by sex when there's none; `--arms` bears it on a shield for men or a lozenge for women instead, as old heraldry did), and the id on a plate, a double-ruled page border with corner arabesques, and a script title over a flourish (all drawn as vector paths, so identical in HTML, SVG and PNG); its dark version is candlelit. `--theme sephirot` draws the tree like an old engraved Tree of Life, ivory on black (`--light` for black on cream): one round medallion per person with the birth and death set around its ring, the relation (`Grandmother`) above it and the old sign ♂/♀ beside it; ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person, the sun of the plate, to every ancestor from the grandparents up (except where one would pass behind another medallion), opening into the channels they cross like streets at a crossroads; descendants hang below, fanning out from under their parents. `--timeline` draws the same people on a time axis instead (`NAME-timeline.html`): one bar per life, from birth to death or today, so longer lives are longer bars; children branch off their parents' bars in the year they were born, partners are joined at their marriage year, and dates missing from the file are estimated from relatives and drawn pale. |
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 
-| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change name, sex, birth/death date and place, deceased. See below. |
+| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth/death date and place, deceased; or a family's marriage and divorce. See below. |
+| `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
+| `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
+| `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
 | `save` | `save [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone. |
 
 Aliases: `ll` = `ls -l`, `cat` = `show`, `search` = `find`, `quit` = `exit`, `vi` = `edit`, `w` = `save`.
@@ -129,6 +132,15 @@ edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
 bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
 ```
 
+A family opens the same way, with its marriage and divorce (the partners
+and children are listed at the top for reference):
+
+```
+edit /families/F4
+edit @F2@ married="12 jun 1870" marriage.place="Genova, Italia"
+edit @F2@ divorced=no divorce.date= divorce.place=
+```
+
 - **Dates are checked and normalised**: `12 june 1850` and `1850-06-12`
   become `12 JUN 1850`, and `circa 1850` becomes `ABT 1850`. `BEF`, `AFT`,
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
@@ -138,6 +150,8 @@ bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
   `deceased: yes`. `deceased: yes` with no details writes `1 DEAT Y`.
   `deceased: no` removes the death record, but refuses if that record has
   sources or notes, or there is a burial record, so nothing is lost silently.
+  Divorce works the same way: a divorce date or place implies `divorced:
+  yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
   are unsaved changes, and `exit` (or Ctrl-D) warns once before discarding them.
 - **Saving produces a minimal diff.** Records you didn't edit are copied byte for
@@ -146,6 +160,61 @@ bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
   and permissions. The record's existing `CHAN` date is updated, as
   genealogy programs do. A character the file's encoding can't hold is
   refused before anything is written. The write is atomic.
+
+### Linking people
+
+`link PERSON WHERE` puts someone already in the file into a family, as
+seen from where you are; `unlink PATH` takes them out again. Both sides of
+each link are written together: the family's `HUSB`/`WIFE`/`CHIL` line and
+the person's `FAMS`/`FAMC` line.
+
+```
+link I12 children              a child of the current person
+link I12 spouses               a partner: a new family for the two of you
+link I12 father                the father (or mother, parents)
+link I12 siblings              a child of your parents' family
+link I12 families/F3/children  when you have several families, say which
+unlink children/I12            I12 is no longer your child
+unlink father                  the father leaves your parents' family
+```
+
+- **Families are created when needed.** A first child, a new partner, or a
+  parent for someone who has none starts a new family, numbered after the
+  file's own ids (`F12`, or `@P…@`-style if that's what the file uses). It is
+  written just before the trailer.
+- **`unlink` cuts the last person in the path loose.** `unlink father`
+  takes him out of your parents' family, so he is no longer the father of
+  your siblings either. To detach only yourself, unlink from his side:
+  `cd father; unlink children/I9`.
+- **Families that connect nobody are deleted.** Once a family has one
+  member or none and records nothing else (no marriage date, note or
+  source), it is removed, along with the last member's pointer to it.
+- `link` refuses what it can't do cleanly: a slot that's taken ("already
+  has a father"), a man linked as a mother, a link that already exists.
+
+### Adding people
+
+`add` creates a person and links them in one step, with any of `edit`'s
+fields:
+
+```
+add child "Maria Rossi" sex=F born="12 jun 1850"
+add father "Giovanni /Rossi/" birthplace=Genova
+add spouse "Juan /Pérez García/" sex=M
+add families/F3/children Bea
+add person "Ana Ruiz"                 not linked to anyone yet
+```
+
+- **Surnames go between slashes**, as in GEDCOM. Without slashes the last
+  word is taken as the surname, so a compound one needs them:
+  `"Juan /Pérez García/"`. The confirmation shows how the name was split.
+- Fathers are recorded as male and mothers as female unless `sex=` says
+  otherwise. Where the person goes follows `link`'s rules, so a new
+  family is started when needed.
+- **All or nothing.** If the name, a field or the link is refused, no
+  record is created and the next id stays free.
+- New records are numbered after the file's own ids and written just
+  before the trailer.
 
 ### Changes from the JS navigator
 
@@ -193,8 +262,7 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing families (marriage details, adding or linking people), editing
-other events (baptism, residence…), half-siblings through
+Editing other events (baptism, residence…), half-siblings through
 separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.
