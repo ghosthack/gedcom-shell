@@ -311,4 +311,179 @@ class PersonFormTest {
         assertEquals(Field.OCCUPATION, Field.parse("job").orElseThrow());
         assertEquals(Field.RESIDENCE_PLACE, Field.parse("residence").orElseThrow());
     }
+
+    // ---- the rarer events and attributes -----------------------------------
+
+    private static Genealogy record(String lines) {
+        return Genealogy.of("0 @I1@ INDI\n1 NAME A /B/\n" + lines + "1 FAMS @F1@\n0 TRLR\n");
+    }
+
+    private static String applied(Genealogy g, Map<Field, String> values) {
+        var p = g.person("I1").orElseThrow();
+        PersonForm.apply(g, p, PersonForm.diff(p, values));
+        return g.person("I1").orElseThrow().node().toString();
+    }
+
+    @Test
+    void extraEventsAndAttributesGoInConventionalPlaces() {
+        var fresh = edit("I1", Map.of(Field.CENSUS_DATE, "1881", Field.CENSUS_PLACE, "Genova",
+                Field.EMIGRATION_DATE, "1890", Field.ADOPTION_DATE, "1851", Field.RELIGION, "Catholic",
+                Field.DEATH_DATE, "1920", Field.PROBATE_DATE, "1921", Field.OCCUPATION, "Sailor"));
+        assertEquals("""
+                0 @I1@ INDI
+                1 NAME Marco /Rossi/
+                2 GIVN Marco
+                2 SURN Rossi
+                1 SEX M
+                1 BIRT
+                2 DATE 12 JUN 1850
+                2 PLAC Genova
+                1 ADOP
+                2 DATE 1851
+                1 EMIG
+                2 DATE 1890
+                1 CENS
+                2 DATE 1881
+                2 PLAC Genova
+                1 DEAT
+                2 DATE 1920
+                1 PROB
+                2 DATE 1921
+                1 OCCU Sailor
+                1 RELI Catholic
+                1 FAMS @F1@
+                """, raw("I1").replaceFirst("1 CHAN[\\s\\S]*", ""));
+        assertEquals("Emigrated", fresh.event("EMIG").orElseThrow().label());
+        var form = PersonForm.render(fresh, null);
+        assertTrue(form.contains("\ncensus.date:      1881\ncensus.place:     Genova\n"), form);
+        assertTrue(form.contains("\nreligion:         Catholic\n"), form);
+        assertTrue(PersonForm.diff(fresh, PersonForm.parse(form)).isEmpty(), "and the form reads back unchanged");
+    }
+
+    @Test
+    void extraFieldsAreShownOnlyWhenRecorded() {
+        var form = PersonForm.render(p("I1"), null);
+        assertFalse(form.contains("census.date:"), form);
+        assertFalse(form.contains("religion:"), form);
+        assertTrue(form.contains("#   to add an event"), form);
+        assertTrue(form.contains(" census,"), "the missing ones are listed\n" + form);
+        assertTrue(form.contains(" religion,"), form);
+        assertTrue(form.lines().allMatch(l -> l.length() <= 80), form);
+
+        var g2 = record("1 NATU\n2 DATE 1901\n1 TITL Count\n1 TITL Baron\n");
+        var shown = PersonForm.render(g2.person("I1").orElseThrow(), null);
+        assertTrue(shown.contains("\nnaturalisation.date:  1901\nnaturalisation.place:\n"), "the column widens\n" + shown);
+        assertTrue(shown.contains("\ntitle:                Count\n"), shown);
+        assertFalse(shown.matches("(?s).*#[^\\n]*naturalisation.*"), "not offered again\n" + shown);
+        assertFalse(shown.contains("title,"), shown);
+    }
+
+    @Test
+    void anEventCanBeAddedThroughTheForm() {
+        var form = PersonForm.render(p("I2"), null) + "census.date: 1881\ncensus.place: Leeds\nreligion: Methodist\n";
+        var changes = PersonForm.diff(p("I2"), PersonForm.parse(form));
+        assertEquals(3, changes.size(), changes.toString());
+        PersonForm.apply(g, p("I2"), changes);
+        assertEquals("0 @I2@ INDI\n1 NAME Anna\n1 CENS\n2 DATE 1881\n2 PLAC Leeds\n1 RELI Methodist\n1 FAMC @F1@\n", raw("I2"));
+    }
+
+    @Test
+    void extraFieldsEditTheFirstAndKeepTheRest() {
+        var g2 = record("1 CENS\n2 DATE 1871\n1 CENS\n2 DATE 1881\n1 RELI Catholic\n1 RELI Anglican\n");
+        assertEquals("1871", PersonForm.values(g2.person("I1").orElseThrow()).get(Field.CENSUS_DATE));
+        assertEquals("""
+                0 @I1@ INDI
+                1 NAME A /B/
+                1 CENS
+                2 DATE 1871
+                2 PLAC York
+                1 CENS
+                2 DATE 1881
+                1 RELI Anglican
+                1 FAMS @F1@
+                """, applied(g2, Map.of(Field.CENSUS_PLACE, "York", Field.RELIGION, "")));
+    }
+
+    @Test
+    void sourcedEventsAndAttributesAreNotDroppedSilently() {
+        var g2 = record("1 CENS\n2 DATE 1881\n2 SOUR @S1@\n1 EDUC Lyceum\n2 SOUR @S1@\n");
+        var p = g2.person("I1").orElseThrow();
+        var e = assertThrows(IllegalArgumentException.class, () -> PersonForm.diff(p, Map.of(Field.EDUCATION, "")));
+        assertTrue(e.getMessage().startsWith("can't remove the education"), e.getMessage());
+        assertEquals(1, PersonForm.diff(p, Map.of(Field.EDUCATION, "University")).size(), "changing it is fine");
+        assertTrue(applied(g2, Map.of(Field.CENSUS_DATE, "")).contains("1 CENS\n2 SOUR @S1@\n"), "the source stays");
+        assertTrue(PersonForm.render(g2.person("I1").orElseThrow(), null).contains("\ncensus.date:\n"), "and so does the field");
+    }
+
+    @Test
+    void anOccupationWithADateIsNotRemovedEither() {
+        var g2 = record("1 OCCU Baker\n2 DATE 1880\n");
+        assertThrows(IllegalArgumentException.class, () -> PersonForm.diff(g2.person("I1").orElseThrow(), Map.of(Field.OCCUPATION, "")));
+    }
+
+    @Test
+    void cremationImpliesDeceased() {
+        var changes = PersonForm.diff(p("I2"), Map.of(Field.CREMATION_PLACE, "Woking"));
+        assertTrue(changes.stream().anyMatch(c -> c.field() == Field.DECEASED && c.after().equals("yes")), changes.toString());
+        assertThrows(IllegalArgumentException.class,
+                () -> PersonForm.diff(p("I2"), Map.of(Field.CREMATION_DATE, "1930", Field.DECEASED, "no")));
+        edit("I2", Map.of(Field.DEATH_DATE, "1929", Field.CREMATION_DATE, "1930"));
+        assertTrue(raw("I2").contains("1 DEAT\n2 DATE 1929\n1 CREM\n2 DATE 1930\n1 FAMC"), raw("I2"));
+        edit("I2", Map.of(Field.DEATH_DATE, "", Field.CREMATION_DATE, "", Field.DECEASED, "no"));
+        assertFalse(raw("I2").contains("DEAT") || raw("I2").contains("CREM"), raw("I2"));
+    }
+
+    @Test
+    void markingLivingRemovesABareCremationButNotOneWithSources() {
+        var bare = record("1 CREM Y\n");
+        applied(bare, Map.of(Field.DECEASED, "no"));
+        assertFalse(bare.person("I1").orElseThrow().isDeceased());
+        var sourced = record("1 CREM\n2 SOUR @S1@\n");
+        var e = assertThrows(IllegalArgumentException.class,
+                () -> PersonForm.diff(sourced.person("I1").orElseThrow(), Map.of(Field.DECEASED, "no")));
+        assertTrue(e.getMessage().contains("cremation"), e.getMessage());
+    }
+
+    @Test
+    void christeningIsSeparateOnlyAlongsideABaptism() {
+        var both = record("1 BAPM\n2 DATE 1800\n1 CHR\n2 DATE 1801\n");
+        var p = both.person("I1").orElseThrow();
+        assertEquals("1801", PersonForm.values(p).get(Field.CHRISTENING_DATE));
+        assertTrue(PersonForm.render(p, null).contains("\nchristening.date:  1801\n"), PersonForm.render(p, null));
+        assertTrue(applied(both, Map.of(Field.CHRISTENING_PLACE, "Lyon")).contains("1 CHR\n2 DATE 1801\n2 PLAC Lyon\n"));
+
+        // a lone CHR is the baptism: christening fields reach it as such
+        var lone = record("1 CHR\n2 DATE 1800\n");
+        var q = lone.person("I1").orElseThrow();
+        assertFalse(PersonForm.render(q, null).contains("christening"), PersonForm.render(q, null));
+        var changes = PersonForm.diff(q, Map.of(Field.CHRISTENING_DATE, "1802"));
+        assertEquals(Field.BAPTISM_DATE, changes.getFirst().field());
+        var e = assertThrows(IllegalArgumentException.class, () -> PersonForm.diff(q, PersonForm.parse(
+                PersonForm.render(q, null) + "christening.date: 1803\n")));
+        assertTrue(e.getMessage().contains("change baptism.date instead"), e.getMessage());
+
+        // with neither, a christening is written as CHR, next to a new baptism
+        var none = record("1 BIRT\n2 DATE 1799\n");
+        var raw = applied(none, Map.of(Field.BAPTISM_DATE, "1800", Field.CHRISTENING_DATE, "1801"));
+        assertTrue(raw.contains("1 BIRT\n2 DATE 1799\n1 BAPM\n2 DATE 1800\n1 CHR\n2 DATE 1801\n"), raw);
+    }
+
+    @Test
+    void extraAliases() {
+        assertEquals(Field.EMIGRATION_DATE, Field.parse("emigrated").orElseThrow());
+        assertEquals(Field.EMIGRATION_PLACE, Field.parse("emigratedplace").orElseThrow());
+        assertEquals(Field.NATURALISATION_DATE, Field.parse("naturalized").orElseThrow());
+        assertEquals(Field.NATURALISATION_PLACE, Field.parse("naturalization.place").orElseThrow());
+        assertEquals(Field.CREMATION_DATE, Field.parse("cremated").orElseThrow());
+        assertEquals(Field.CREMATION_PLACE, Field.parse("cremationplace").orElseThrow());
+        assertEquals(Field.CENSUS_DATE, Field.parse("census").orElseThrow());
+        assertEquals(Field.CENSUS_DATE, Field.parse("CENS").orElseThrow());
+        assertEquals(Field.BASMITZVAH_DATE, Field.parse("bat-mitzvah").orElseThrow());
+        assertEquals(Field.COMMUNION_DATE, Field.parse("first_communion").orElseThrow());
+        assertEquals(Field.RELIGION, Field.parse("religion").orElseThrow());
+        assertEquals(Field.RELIGION, Field.parse("reli").orElseThrow());
+        assertEquals(Field.TITLE, Field.parse("titl").orElseThrow());
+        assertEquals(Field.BAPTISM_DATE, Field.parse("christening").orElseThrow(), "as before");
+        assertTrue(Field.parse("religionplace").isEmpty());
+    }
 }

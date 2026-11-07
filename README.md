@@ -146,6 +146,7 @@ top. The same fields work without an editor, for scripts:
 ```
 edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
 bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
+edit census.date=1881 census.place=London religion=Methodist
 ```
 
 A family opens the same way, with its marriage and divorce (the partners
@@ -162,15 +163,33 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
   you leave unchanged is never rewritten, even if its existing form is
   unusual.
-- **Death and deceased are kept consistent**: a death or burial date or
-  place implies `deceased: yes`. `deceased: yes` with no details writes
-  `1 DEAT Y`. `deceased: no` removes the death record (and a bare burial
-  flag), but refuses if either has sources or notes, or there is a
-  cremation record, so nothing is lost silently.
+- **Julian, Hebrew and French Republican dates** (`@#DJULIAN@ 4 OCT 1582`,
+  `HEBREW 1 TSH 5785`, `@#DFRENCH R@ 18 BRUM 8`, GEDCOM 5.5.1 escape or
+  GEDCOM 7 keyword) are checked against their own months and shown as
+  written, but sorted, filtered and aged by the Gregorian day they mean. A
+  year or month alone counts as the Gregorian year or month holding its
+  middle (Hebrew 5785 → 2025). Old Style dual years (`11 FEB 1731/32`) are
+  read as Julian.
+- **Death and deceased are kept consistent**: a death, burial or cremation
+  date or place implies `deceased: yes`. `deceased: yes` with no details
+  writes `1 DEAT Y`. `deceased: no` removes the death record (and a bare
+  burial or cremation flag), but refuses if any of them has sources or
+  notes, so nothing is lost silently.
+- **Rarer events and facts** appear in the form only when the person has
+  them; a comment lists the others, to add as new lines. Events take
+  `NAME.date` and `NAME.place`: christening, adoption, confirmation,
+  communion, barmitzvah, basmitzvah, graduation, ordination, emigration,
+  immigration, naturalisation, census, retirement, will, probate,
+  cremation. Facts take a value: education, religion, title, nationality.
+  Each also answers to its verb or tag (`emigrated=1890`, `cens=1881`,
+  `cremated.place=Woking`). Like occupation, they edit the first one
+  recorded, and a fact with a date, place, sources or notes can be changed
+  but not removed.
 - **Baptism** is written as `BAPM`, unless the person's record already uses
-  `CHR` (christening) for it. **Occupation** and **residence** edit the
+  `CHR` (christening) for it; `christening` is a separate field only when
+  the record has both. **Occupation** and **residence** edit the
   first one recorded; any others are left alone, and an occupation with
-  sources or notes can be changed but not removed.
+  a date, place, sources or notes can be changed but not removed.
   Divorce works the same way: a divorce date or place implies `divorced:
   yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
@@ -269,6 +288,10 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
   heuristic tells real ANSEL (a combining mark followed by a plausible base
   letter) from mislabelled Latin-1/Windows-1252. ANSEL marks are moved after
   their base letter and NFC-normalised, so `á` is one character.
+- **GEDCOM 5.5, 5.5.1 and 7.0.** The version comes from `HEAD.GEDC.VERS`
+  (`show /` reports it). For 7.0, `SNOTE` shared notes are resolved like
+  `NOTE @N1@`, `EXID`s are shown as external ids, `@VOID@` pointers mean
+  "no link", and edited lines are saved without `CONC`, which 7.0 removed.
 - **Entries and rows.** `FileSystem.entries()` holds the named children a path
   walks through. `FileSystem.rows()` holds what `ls` prints and what row
   numbers index into; for a person, that's the flattened relatives.
@@ -283,7 +306,6 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing events beyond birth, baptism, death, burial, occupation and the
-first residence (census, emigration…), GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
-calendar arithmetic (dates are shown verbatim), and export/convert from the
-JS version.
+Editing an event or fact other than the first of its kind, custom `EVEN`
+and `FACT` records, and family events beyond marriage and divorce; and
+export/convert from the JS version.
