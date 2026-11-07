@@ -7,6 +7,7 @@ final class PwdCommand implements Command {
             .flag("P", "physical", "print the canonical path (/people/I7) instead of the route taken");
 
     @Override public String name() { return "pwd"; }
+    @Override public Options options() { return opts; }
     @Override public String summary() { return "print the current path"; }
 
     @Override

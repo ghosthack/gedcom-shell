@@ -98,7 +98,7 @@ public final class Main {
                     + home.map(Person::label).orElse("(no people)"));
         }
         var input = interactive
-                ? LineInput.terminal(Path.of(System.getProperty("user.home"), ".ged_browser_history"), out)
+                ? LineInput.terminal(Path.of(System.getProperty("user.home"), ".ged_browser_history"), out, shell.completer())
                 : LineInput.of(new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8)));
         return shell.repl(input, interactive);
     }

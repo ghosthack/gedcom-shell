@@ -35,6 +35,11 @@ public final class Shell {
         }
     }
 
+    /// Tab completion for interactive input.
+    public Completer completer() {
+        return new ShellCompleter(commands, aliases, ctx);
+    }
+
     /// Runs one input line (possibly several `;`-separated commands).
     /// Returns false if any command failed.
     public boolean execute(String line) {

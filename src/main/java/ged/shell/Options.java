@@ -11,18 +11,42 @@ import java.util.Optional;
 /// `-n 5`, `-n5`, `--depth 5`, `--depth=5`, and `--` to end options.
 /// Options and positionals may be interleaved.
 public final class Options {
-    private record Spec(String shortName, String longName, String arg, String help) {}
+    private record Spec(String shortName, String longName, String arg, String help, List<String> choices) {}
 
     private final List<Spec> specs = new ArrayList<>();
 
     public Options flag(String shortName, String longName, String help) {
-        specs.add(new Spec(shortName, longName, null, help));
+        specs.add(new Spec(shortName, longName, null, help, List.of()));
         return this;
     }
 
+    /// An option taking a value. An `arg` like `en|es` also lists the
+    /// accepted values for tab completion.
     public Options value(String shortName, String longName, String arg, String help) {
-        specs.add(new Spec(shortName, longName, arg, help));
+        var choices = arg.contains("|") ? List.of(arg.split("\\|")) : List.<String>of();
+        return value(shortName, longName, arg, help, choices);
+    }
+
+    /// An option taking one of `choices` (offered by tab completion).
+    public Options value(String shortName, String longName, String arg, String help, List<String> choices) {
+        specs.add(new Spec(shortName, longName, arg, help, List.copyOf(choices)));
         return this;
+    }
+
+    /// An option as tab completion sees it: `--long` or `-s`, what it does,
+    /// and, if it takes a value, the value's name (`N`, `PATH`) and choices.
+    public record Flag(String name, String help, String arg, List<String> choices) {
+        public boolean takesValue() { return arg != null; }
+    }
+
+    /// Long options, then the short ones.
+    public List<Flag> flags() {
+        var list = new ArrayList<Flag>();
+        for (var s : specs) list.add(new Flag("--" + s.longName, s.help, s.arg, s.choices));
+        for (var s : specs) {
+            if (s.shortName != null) list.add(new Flag("-" + s.shortName, s.help, s.arg, s.choices));
+        }
+        return list;
     }
 
     public record Parsed(Map<String, String> values, List<String> positionals) {

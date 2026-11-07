@@ -4,6 +4,7 @@ import java.util.List;
 
 final class CdCommand implements Command {
     @Override public String name() { return "cd"; }
+    @Override public boolean takesPaths() { return true; }
     @Override public String summary() { return "change the current person, family or directory"; }
 
     @Override

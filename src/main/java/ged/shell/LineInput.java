@@ -17,13 +17,13 @@ public interface LineInput {
         return _ -> in.readLine();
     }
 
-    /// An interactive prompt with history (↑/↓) and line editing, kept in
-    /// `historyFile` across sessions. Uses `stty` to put the terminal in
+    /// An interactive prompt with history (↑/↓), Tab completion and line
+    /// editing; history is kept in `historyFile` across sessions. Uses `stty` to put the terminal in
     /// raw mode only while a line is being read, so command output and
     /// `edit`'s external editor see a normal terminal. Where `stty` isn't
     /// available (e.g. Windows) it falls back to the terminal's own line
     /// input, which on Windows consoles already has ↑/↓ history.
-    static LineInput terminal(Path historyFile, PrintStream out) {
+    static LineInput terminal(Path historyFile, PrintStream out, Completer completer) {
         if (!Tty.available()) {
             var in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
             return prompt -> {
@@ -34,7 +34,7 @@ public interface LineInput {
         }
         var history = new History(historyFile);
         int[] cols = {80};
-        var editor = new LineEditor(System.in, out, history, () -> cols[0]);
+        var editor = new LineEditor(System.in, out, history, () -> cols[0], completer);
         return prompt -> {
             cols[0] = Tty.columns();
             var saved = Tty.enterRaw();

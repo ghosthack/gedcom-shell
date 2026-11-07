@@ -14,4 +14,10 @@ public interface Command {
     String usage();
 
     void run(List<String> args, Context ctx);
+
+    /// The command's options, for tab completion.
+    default Options options() { return new Options(); }
+
+    /// Whether positional arguments are tree paths (tab-completed as such).
+    default boolean takesPaths() { return false; }
 }

@@ -20,7 +20,7 @@ Requires JDK 26 and Maven 3.9+. No runtime dependencies.
 
 ```
 mvn package                         # builds target/ged-browser.jar, runs tests
-bin/ged-browser FILE.ged            # interactive prompt (↑/↓ history, line editing)
+bin/ged-browser FILE.ged            # interactive prompt (↑/↓ history, Tab completion, line editing)
 bin/ged-browser FILE.ged -c 'find maria; show /found/1'
 echo 'tree -a -n 5' | bin/ged-browser FILE.ged
 ```
@@ -38,9 +38,16 @@ command failed, 2 for usage errors, which makes it scriptable.
 | Home / End (Ctrl-A / E) | start / end of line                      |
 | Backspace / Delete      | delete before / under the cursor         |
 | Ctrl-U / Ctrl-K / Ctrl-W| delete to start / to end / previous word |
+| Tab                     | complete; again to list the choices      |
 | Ctrl-L                  | clear the screen                         |
 | Ctrl-C                  | discard the line                         |
 | Ctrl-D                  | quit (on an empty line)                  |
+
+Tab completes command names, options and their values (`chart --theme
+ba` → `baroque`), and paths: `cd fa` → `cd father/`, and Tab after a `/`
+lists what's inside, with who each entry is. A word that names no entry is
+read as a name, as `cd` would: `cd olga` becomes `cd children/I3/` when Olga
+is the only match, and when several people match it lists them.
 
 History is kept in `~/.ged_browser_history` (last 1000 commands). Start a
 command with a space to keep it out of history. The editor is built in: it
@@ -187,7 +194,7 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 ## Not (yet) supported
 
 Editing families (marriage details, adding or linking people), editing
-other events (baptism, residence…), tab completion, half-siblings through
+other events (baptism, residence…), half-siblings through
 separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.

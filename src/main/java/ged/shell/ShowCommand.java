@@ -18,6 +18,8 @@ final class ShowCommand implements Command {
             .flag("r", "raw", "print the GEDCOM record as stored in the file");
 
     @Override public String name() { return "show"; }
+    @Override public Options options() { return opts; }
+    @Override public boolean takesPaths() { return true; }
     @Override public String summary() { return "show the full record of a person or family (at / : file summary)"; }
 
     @Override
