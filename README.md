@@ -103,7 +103,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme modern\|classic\|baroque\|sephirot] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share: one self-contained HTML file (no internet needed) with ancestors to the left, descendants and their partners to the right, and one labelled column per generation. Click a person for dates, places and relatives; Print fits it to a landscape page, or use "Save as PDF". `-o x.png` writes a picture to text or email (drawn at 2×, or `--scale N`; huge charts are drawn smaller to keep the file manageable), and `-o x.svg` a scalable image. Default: 4 generations each way, saved as `NAME-tree.html`. Notes are left out unless you pass `--notes`. Birthplaces get a small country flag, worked out from the place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`); flags are drawn as shapes, not emoji, so they show on Windows and in PNGs. Cards show initials tinted by sex, a large flag, age (at death, or today's for the living), and the record id (`I30`); partners are joined by a marriage badge. The HTML follows the viewer's light/dark setting, with a switch, and always prints light; `--dark` makes a dark PNG/SVG (or starts the page dark). `--theme classic` is the plainer warm-paper look (light only, small flags, no ages or ids). `--theme baroque` is a 19th-century engraved look on parchment: cartouche cards with corner scrollwork, the birth country's flag as a medallion on the top edge (or a crest tinted by sex when there's none; `--arms` bears it on a shield for men or a lozenge for women instead, as old heraldry did), and the id on a plate, a double-ruled page border with corner arabesques, and a script title over a flourish (all drawn as vector paths, so identical in HTML, SVG and PNG); its dark version is candlelit. `--theme sephirot` draws the tree like an old engraved Tree of Life, ivory on black (`--light` for black on cream): one round medallion per person with the birth and death set around its ring, the relation (`Grandmother`) above it and the old sign ♂/♀ beside it; ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person, the sun of the plate, to every ancestor from the grandparents up (except where one would pass behind another medallion), opening into the channels they cross like streets at a crossroads; descendants hang below, fanning out from under their parents. `--timeline` draws the same people on a time axis instead (`NAME-timeline.html`): one bar per life, from birth to death or today, so longer lives are longer bars; children branch off their parents' bars in the year they were born, partners are joined at their marriage year, and dates missing from the file are estimated from relatives and drawn pale. |
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 
-| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth/death date and place, deceased; or a family's marriage and divorce. See below. |
+| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth, baptism, death, burial, occupation and residence; or a family's marriage and divorce. See below. |
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
 | `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
@@ -117,17 +117,26 @@ Separate commands with `;`. `#` starts a comment. Quote names that contain space
 `edit` opens the person in `$VISUAL` / `$EDITOR` (default `vi`) as a short form:
 
 ```
-given:        Alexei Nikolaevich
-surname:      Romanov
+given:           Alexei Nikolaevich
+surname:         Romanov
 suffix:
-sex:          M
+sex:             M
 
-birth.date:   12 AUG 1904
-birth.place:  Peterhof Palace, Russia
+birth.date:      12 AUG 1904
+birth.place:     Peterhof Palace, Russia
 
-death.date:   17 JUL 1918
-death.place:  Yekaterinburg, Russia
-deceased:     yes
+baptism.date:
+baptism.place:
+
+death.date:      17 JUL 1918
+death.place:     Yekaterinburg, Russia
+burial.date:
+burial.place:
+deceased:        yes
+
+occupation:      Tsesarevich
+residence.date:
+residence.place: Alexander Palace, Tsarskoye Selo
 ```
 
 Save and quit to apply. Quit without saving, or `:cq`, to cancel. If a value
@@ -153,10 +162,15 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
   you leave unchanged is never rewritten, even if its existing form is
   unusual.
-- **Death and deceased are kept consistent**: a death date or place implies
-  `deceased: yes`. `deceased: yes` with no details writes `1 DEAT Y`.
-  `deceased: no` removes the death record, but refuses if that record has
-  sources or notes, or there is a burial record, so nothing is lost silently.
+- **Death and deceased are kept consistent**: a death or burial date or
+  place implies `deceased: yes`. `deceased: yes` with no details writes
+  `1 DEAT Y`. `deceased: no` removes the death record (and a bare burial
+  flag), but refuses if either has sources or notes, or there is a
+  cremation record, so nothing is lost silently.
+- **Baptism** is written as `BAPM`, unless the person's record already uses
+  `CHR` (christening) for it. **Occupation** and **residence** edit the
+  first one recorded; any others are left alone, and an occupation with
+  sources or notes can be changed but not removed.
   Divorce works the same way: a divorce date or place implies `divorced:
   yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
@@ -269,6 +283,7 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing other events (baptism, residence…), GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
+Editing events beyond birth, baptism, death, burial, occupation and the
+first residence (census, emigration…), GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.

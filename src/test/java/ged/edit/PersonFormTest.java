@@ -204,4 +204,111 @@ class PersonFormTest {
         edit("I2", Map.of(Field.SEX, "F"));
         assertFalse(raw("I2").contains("CHAN"));
     }
+
+    // ---- baptism, burial, occupation, residence ----------------------------
+
+    @Test
+    void otherEventsGoInConventionalPlaces() {
+        var fresh = edit("I1", Map.of(Field.BAPTISM_DATE, "20 jun 1850", Field.BAPTISM_PLACE, "San Lorenzo, Genova",
+                Field.OCCUPATION, "Sailor", Field.RESIDENCE_PLACE, "Livorno",
+                Field.DEATH_DATE, "1920", Field.BURIAL_PLACE, "Staglieno"));
+        assertEquals("""
+                0 @I1@ INDI
+                1 NAME Marco /Rossi/
+                2 GIVN Marco
+                2 SURN Rossi
+                1 SEX M
+                1 BIRT
+                2 DATE 12 JUN 1850
+                2 PLAC Genova
+                1 BAPM
+                2 DATE 20 JUN 1850
+                2 PLAC San Lorenzo, Genova
+                1 DEAT
+                2 DATE 1920
+                1 BURI
+                2 PLAC Staglieno
+                1 OCCU Sailor
+                1 RESI
+                2 PLAC Livorno
+                1 FAMS @F1@
+                """, raw("I1").replaceFirst("1 CHAN[\\s\\S]*", ""));
+        assertEquals("Baptised", fresh.event("BAPM").orElseThrow().label());
+        var form = PersonForm.render(fresh, null);
+        assertTrue(form.contains("baptism.place:   San Lorenzo, Genova"), form);
+        assertTrue(PersonForm.diff(fresh, PersonForm.parse(form)).isEmpty(), "and the form reads back unchanged");
+    }
+
+    @Test
+    void aFileThatRecordsChristeningsKeepsUsingChr() {
+        var g2 = Genealogy.of("0 @I1@ INDI\n1 NAME A /B/\n1 CHR\n2 DATE 1800\n0 TRLR\n");
+        var p = g2.person("I1").orElseThrow();
+        assertEquals("1800", PersonForm.values(p).get(Field.BAPTISM_DATE));
+        PersonForm.apply(g2, p, PersonForm.diff(p, Map.of(Field.BAPTISM_PLACE, "Lyon")));
+        assertEquals("0 @I1@ INDI\n1 NAME A /B/\n1 CHR\n2 DATE 1800\n2 PLAC Lyon\n", g2.person("I1").orElseThrow().node().toString());
+    }
+
+    @Test
+    void aBurialImpliesDeceased() {
+        var changes = PersonForm.diff(p("I2"), Map.of(Field.BURIAL_DATE, "1930"));
+        assertTrue(changes.stream().anyMatch(c -> c.field() == Field.DECEASED && c.after().equals("yes")), changes.toString());
+        var e = assertThrows(IllegalArgumentException.class,
+                () -> PersonForm.diff(p("I2"), Map.of(Field.BURIAL_PLACE, "Roma", Field.DECEASED, "no")));
+        assertTrue(e.getMessage().contains("burial"), e.getMessage());
+    }
+
+    @Test
+    void markingLivingRemovesABareBurialButNotOneWithSources() {
+        var g2 = Genealogy.of("0 @I1@ INDI\n1 NAME A /B/\n1 BURI Y\n0 @I2@ INDI\n1 NAME C /D/\n1 BURI\n2 SOUR @S1@\n0 TRLR\n");
+        var a = g2.person("I1").orElseThrow();
+        PersonForm.apply(g2, a, PersonForm.diff(a, Map.of(Field.DECEASED, "no")));
+        assertFalse(g2.person("I1").orElseThrow().isDeceased());
+        var c = g2.person("I2").orElseThrow();
+        assertThrows(IllegalArgumentException.class, () -> PersonForm.diff(c, Map.of(Field.DECEASED, "no")));
+    }
+
+    @Test
+    void occupationAndResidenceEditTheFirstAndKeepTheRest() {
+        var g2 = Genealogy.of("""
+                0 @I1@ INDI
+                1 NAME A /B/
+                1 OCCU Baker
+                1 OCCU Miller
+                1 RESI
+                2 PLAC Pisa
+                1 RESI
+                2 PLAC Lucca
+                0 TRLR
+                """);
+        var p = g2.person("I1").orElseThrow();
+        assertEquals("Baker", PersonForm.values(p).get(Field.OCCUPATION));
+        PersonForm.apply(g2, p, PersonForm.diff(p, Map.of(Field.OCCUPATION, "", Field.RESIDENCE_DATE, "1880")));
+        assertEquals("""
+                0 @I1@ INDI
+                1 NAME A /B/
+                1 OCCU Miller
+                1 RESI
+                2 DATE 1880
+                2 PLAC Pisa
+                1 RESI
+                2 PLAC Lucca
+                """, g2.person("I1").orElseThrow().node().toString());
+    }
+
+    @Test
+    void anOccupationWithSourcesIsNotRemovedSilently() {
+        var g2 = Genealogy.of("0 @I1@ INDI\n1 NAME A /B/\n1 OCCU Baker\n2 SOUR @S1@\n0 TRLR\n");
+        var p = g2.person("I1").orElseThrow();
+        assertThrows(IllegalArgumentException.class, () -> PersonForm.diff(p, Map.of(Field.OCCUPATION, "")));
+        assertEquals(1, PersonForm.diff(p, Map.of(Field.OCCUPATION, "Master baker")).size(), "changing it is fine");
+    }
+
+    @Test
+    void newAliases() {
+        assertEquals(Field.BAPTISM_DATE, Field.parse("christened").orElseThrow());
+        assertEquals(Field.BURIAL_DATE, Field.parse("buried").orElseThrow());
+        assertEquals(Field.BURIAL_PLACE, Field.parse("burialplace").orElseThrow());
+        assertEquals(Field.OCCUPATION, Field.parse("job").orElseThrow());
+        assertEquals(Field.RESIDENCE_PLACE, Field.parse("residence").orElseThrow());
+    }
 }
