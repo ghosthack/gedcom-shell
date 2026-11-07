@@ -29,6 +29,9 @@ import java.util.stream.Stream;
 public final class Genealogy {
     private final Path source;
     private final List<Node> records;
+    /// Parallel to `records`: each record's text as it now stands in the
+    /// file (refreshed on save), with any junk lines that trailed it.
+    private final List<String> rawRecords;
     private final GedcomParser.Layout layout;
     private final Set<Node> dirty = new LinkedHashSet<>();
     private final Node header;
@@ -42,7 +45,8 @@ public final class Genealogy {
     private Genealogy(Path source, GedcomParser.Result parsed) {
         this.source = source;
         this.encoding = parsed.encoding();
-        this.records = parsed.records();
+        this.records = new ArrayList<>(parsed.records());
+        this.rawRecords = new ArrayList<>(parsed.layout().rawRecords());
         this.layout = parsed.layout();
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
@@ -154,21 +158,21 @@ public final class Genealogy {
     /// The whole file as text, with untouched records verbatim.
     public String render() {
         var sb = new StringBuilder(layout.prefix());
-        for (int i = 0; i < records.size(); i++) {
-            var r = records.get(i);
-            if (dirty.contains(r)) {
-                r.write(sb, layout.newline());
-                // keep blank/junk lines that trailed the original record
-                var raw = layout.rawRecords().get(i);
-                sb.append(raw.substring(parsedLength(raw)));
-            } else {
-                sb.append(layout.rawRecords().get(i));
-            }
-        }
+        for (int i = 0; i < records.size(); i++) sb.append(recordText(i));
         if (!layout.finalNewline() && sb.toString().endsWith(layout.newline())) {
             sb.setLength(sb.length() - layout.newline().length());
         }
         return sb.toString();
+    }
+
+    /// Record `i` as it will be written: verbatim unless edited.
+    private String recordText(int i) {
+        var raw = rawRecords.get(i);
+        if (!dirty.contains(records.get(i))) return raw;
+        var sb = new StringBuilder();
+        records.get(i).write(sb, layout.newline());
+        // keep blank/junk lines that trailed the original record
+        return sb.append(raw.substring(parsedLength(raw))).toString();
     }
 
     /// Length of a raw record minus any blank or unparseable lines that
@@ -210,7 +214,11 @@ public final class Genealogy {
         } finally {
             Files.deleteIfExists(tmp);
         }
-        if (toSource) dirty.clear();
+        if (toSource) {
+            // what's on disk now is the baseline for later saves
+            for (int i = 0; i < records.size(); i++) rawRecords.set(i, recordText(i));
+            dirty.clear();
+        }
     }
 
     // ---- relationships ---------------------------------------------------
