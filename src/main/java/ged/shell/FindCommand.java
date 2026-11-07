@@ -21,10 +21,11 @@ final class FindCommand implements Command {
             .value(null, "ancestors-of", "PATH", "only ancestors of PATH")
             .value(null, "descendants-of", "PATH", "only descendants of PATH")
             .flag("l", "long", "full dates and places in the result table")
-            .value("s", "sort", "KEY", "sort by " + String.join("|", Listing.SORT_KEYS) + " (default name)")
+            .value("s", "sort", "KEY", "sort by " + String.join("|", Listing.SORT_KEYS) + " (default name)", Listing.SORT_KEYS)
             .flag("r", "reverse", "reverse the sort order");
 
     @Override public String name() { return "find"; }
+    @Override public Options options() { return opts; }
     @Override public String summary() { return "search people by name, dates, place, sex or lineage"; }
 
     @Override

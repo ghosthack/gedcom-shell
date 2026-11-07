@@ -19,6 +19,8 @@ final class TreeCommand implements Command {
             .flag("S", "no-spouses", "descendants: don't show partners; list children directly");
 
     @Override public String name() { return "tree"; }
+    @Override public Options options() { return opts; }
+    @Override public boolean takesPaths() { return true; }
     @Override public String summary() { return "draw descendants (default) or ancestors (-a)"; }
 
     @Override

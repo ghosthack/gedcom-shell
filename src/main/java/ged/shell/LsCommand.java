@@ -7,10 +7,12 @@ import java.util.List;
 final class LsCommand implements Command {
     private final Options opts = new Options()
             .flag("l", "long", "full dates and birth/death places")
-            .value("s", "sort", "KEY", "sort by " + String.join("|", Listing.SORT_KEYS))
+            .value("s", "sort", "KEY", "sort by " + String.join("|", Listing.SORT_KEYS), Listing.SORT_KEYS)
             .flag("r", "reverse", "reverse the sort order");
 
     @Override public String name() { return "ls"; }
+    @Override public Options options() { return opts; }
+    @Override public boolean takesPaths() { return true; }
     @Override public String summary() { return "list the entries of a directory (a person lists their relatives)"; }
 
     @Override

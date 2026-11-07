@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 final class EditCommand implements Command {
     @Override public String name() { return "edit"; }
+    @Override public boolean takesPaths() { return true; }
     @Override public String summary() { return "change name, sex, birth and death details (in $EDITOR or FIELD=VALUE)"; }
 
     @Override

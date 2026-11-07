@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.function.IntSupplier;
 
 /// A small readline: reads keys from a terminal already in raw mode and
@@ -20,6 +21,7 @@ import java.util.function.IntSupplier;
 /// | Backspace / Delete     | delete before / under the cursor        |
 /// | Ctrl-U / Ctrl-K        | delete to start / end of line           |
 /// | Ctrl-W                 | delete the previous word                |
+/// | Tab                    | complete the word; list the choices     |
 /// | Ctrl-L                 | clear the screen                        |
 /// | Ctrl-C                 | discard the line                        |
 /// | Ctrl-D                 | end of input on an empty line           |
@@ -31,6 +33,10 @@ public final class LineEditor {
     private final PrintStream out;
     private final History history;
     private final IntSupplier columns;
+    private final Completer completer; // null: Tab inserts spaces
+
+    /// Longest list Tab prints; the rest are counted.
+    static final int MAX_LISTED = 100;
 
     // per-line state
     private final StringBuilder buf = new StringBuilder();
@@ -41,10 +47,15 @@ public final class LineEditor {
     private int cursorRow;    // terminal row of the cursor, relative to the prompt's first row
 
     public LineEditor(InputStream in, PrintStream out, History history, IntSupplier columns) {
+        this(in, out, history, columns, null);
+    }
+
+    public LineEditor(InputStream in, PrintStream out, History history, IntSupplier columns, Completer completer) {
         this.in = in;
         this.out = out;
         this.history = history;
         this.columns = columns;
+        this.completer = completer;
     }
 
     /// Returns the line (without newline), `""` after Ctrl-C, or `null` at
@@ -92,7 +103,10 @@ public final class LineEditor {
                 case 23 -> edit(this::deleteWord);                                     // Ctrl-W
                 case 12 -> { out.print("\u001B[H\u001B[2J"); cursorRow = 0; redraw(); } // Ctrl-L
                 case 27 -> escape();
-                case '\t' -> insert("  ");
+                case '\t' -> {
+                    if (completer == null) insert("  ");
+                    else complete();
+                }
                 default -> {
                     if (b >= 0x20) insert(decodeUtf8(b));
                 }
@@ -134,6 +148,82 @@ public final class LineEditor {
             }
             default -> { }
         }
+    }
+
+    /// Tab: a single candidate replaces the word (plus `/` or a space);
+    /// several extend it as far as they agree, and when they don't agree
+    /// any further they are listed under the prompt.
+    private void complete() {
+        var r = completer.complete(buf.toString(), cursor);
+        var cands = r.candidates();
+        if (cands.isEmpty()) {
+            out.print("\u0007");
+            out.flush();
+            return;
+        }
+        if (cands.size() == 1) {
+            var c = cands.getFirst();
+            replaceWord(r.start(), Completer.escape(c.text()));
+            if (!c.suffix().isEmpty()) {
+                if (buf.indexOf(c.suffix(), cursor) == cursor) setCursor(cursor + c.suffix().length());
+                else insert(c.suffix());
+            }
+            return;
+        }
+        var common = commonPrefix(cands.stream().map(Completer.Candidate::text).toList());
+        if (common.length() > r.word().length() && common.regionMatches(true, 0, r.word(), 0, r.word().length())) {
+            replaceWord(r.start(), Completer.escape(common));
+        } else {
+            list(cands);
+        }
+    }
+
+    private void replaceWord(int start, String text) {
+        buf.replace(start, cursor, text);
+        cursor = start + text.length();
+        redraw();
+    }
+
+    /// Case-insensitive common prefix, spelled as in the first string.
+    private static String commonPrefix(List<String> texts) {
+        var first = texts.getFirst();
+        int n = first.length();
+        for (var t : texts) {
+            int i = 0;
+            while (i < n && i < t.length()
+                    && Character.toLowerCase(first.charAt(i)) == Character.toLowerCase(t.charAt(i))) i++;
+            n = i;
+        }
+        if (n > 0 && n < first.length() && Character.isHighSurrogate(first.charAt(n - 1))) n--;
+        return first.substring(0, n);
+    }
+
+    /// Prints the candidates in columns (one per line when they carry
+    /// notes) below the line, then draws the prompt again.
+    private void list(List<Completer.Candidate> cands) {
+        moveToEnd();
+        out.print("\r\n");
+        int cols = cols();
+        var shown = cands.subList(0, Math.min(cands.size(), MAX_LISTED));
+        boolean notes = shown.stream().anyMatch(c -> !c.note().isEmpty());
+        int width = shown.stream().mapToInt(c -> Style.width(c.display())).max().orElse(0) + 2;
+        if (notes) {
+            for (var c : shown) out.print((c.note().isEmpty() ? c.display() : Style.pad(c.display(), width) + c.note()) + "\r\n");
+        } else {
+            int perRow = Math.max(1, cols / width);
+            int rows = (shown.size() + perRow - 1) / perRow;
+            for (int row = 0; row < rows; row++) {
+                var line = new StringBuilder();
+                for (int col = 0; col < perRow; col++) {
+                    int i = col * rows + row;
+                    if (i < shown.size()) line.append(Style.pad(shown.get(i).display(), width));
+                }
+                out.print(line.toString().stripTrailing() + "\r\n");
+            }
+        }
+        if (cands.size() > shown.size()) out.print("… " + (cands.size() - shown.size()) + " more\r\n");
+        cursorRow = 0;
+        redraw();
     }
 
     private String decodeUtf8(int first) throws IOException {
