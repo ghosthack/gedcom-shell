@@ -269,6 +269,10 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
   heuristic tells real ANSEL (a combining mark followed by a plausible base
   letter) from mislabelled Latin-1/Windows-1252. ANSEL marks are moved after
   their base letter and NFC-normalised, so `á` is one character.
+- **GEDCOM 5.5, 5.5.1 and 7.0.** The version comes from `HEAD.GEDC.VERS`
+  (`show /` reports it). For 7.0, `SNOTE` shared notes are resolved like
+  `NOTE @N1@`, `EXID`s are shown as external ids, `@VOID@` pointers mean
+  "no link", and edited lines are saved without `CONC`, which 7.0 removed.
 - **Entries and rows.** `FileSystem.entries()` holds the named children a path
   walks through. `FileSystem.rows()` holds what `ls` prints and what row
   numbers index into; for a person, that's the flattened relatives.
@@ -284,6 +288,6 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 ## Not (yet) supported
 
 Editing events beyond birth, baptism, death, burial, occupation and the
-first residence (census, emigration…), GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
+first residence (census, emigration…), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.

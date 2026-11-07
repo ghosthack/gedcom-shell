@@ -41,9 +41,9 @@ public record Person(
                 n.first("NAME").map(Name::of).orElse(Name.EMPTY),
                 Sex.parse(n.text("SEX")),
                 events,
-                n.all("FAMC").map(Node::value).toList(),
-                n.all("FAMS").map(Node::value).toList(),
-                n.all("NOTE").map(Node::value).toList(),
+                n.links("FAMC").map(Node::value).toList(),
+                n.links("FAMS").map(Node::value).toList(),
+                n.notes().map(Node::value).toList(),
                 n);
     }
 
