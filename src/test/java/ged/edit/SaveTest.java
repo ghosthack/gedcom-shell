@@ -86,6 +86,20 @@ class SaveTest {
     }
 
     @Test
+    void laterSavesKeepEarlierEdits() throws Exception {
+        var file = copy("test_divorce.ged");
+        var g = Genealogy.load(file);
+        edit(g, "I1", Map.of(PersonForm.Field.BIRTH_DATE, "1901"));
+        g.save(file);
+        edit(g, "I2", Map.of(PersonForm.Field.BIRTH_DATE, "1902"));
+        g.save(file);
+        var text = Files.readString(file);
+        assertTrue(text.contains("2 DATE 1901"), "the first save's edit survives the second save");
+        assertTrue(text.contains("2 DATE 1902"));
+        assertEquals(text, Genealogy.load(file).render(), "and the file reloads as written");
+    }
+
+    @Test
     void ansellFileStaysAnsel() throws Exception {
         var file = write("ansel.ged", bytes("0 HEAD\r\n1 CHAR ANSEL\r\n0 @I1@ INDI\r\n1 NAME Jos", 0xE2, "e /Mu", 0xE4, "noz/\r\n0 TRLR\r\n"));
         var g = Genealogy.load(file);
