@@ -100,4 +100,59 @@ class ModelTest {
     void sharedNotesResolve() {
         assertEquals("Went to sea\nat fifteen.", g.noteText(p("I3").notes().getFirst()));
     }
+
+    @Test
+    void fatherAndMotherComeFromTheSameFamily() {
+        // F1 names only a mother; F2 names both parents
+        var g = Genealogy.of("""
+                0 HEAD
+                0 @I1@ INDI
+                1 NAME Child /A/
+                1 FAMC @F1@
+                1 FAMC @F2@
+                0 @I2@ INDI
+                1 NAME Birth Mother /B/
+                0 @I3@ INDI
+                1 NAME Other Father /C/
+                0 @I4@ INDI
+                1 NAME Other Mother /D/
+                0 @F1@ FAM
+                1 WIFE @I2@
+                1 CHIL @I1@
+                0 @F2@ FAM
+                1 HUSB @I3@
+                1 WIFE @I4@
+                1 CHIL @I1@
+                0 TRLR
+                """);
+        var child = g.person("I1").orElseThrow();
+        assertEquals("I2", g.mother(child).orElseThrow().id().replace("@", ""));
+        assertTrue(g.father(child).isEmpty(), "not F2's husband");
+    }
+
+    @Test
+    void birthFamilyIsPreferredOverAdoptive() {
+        var g = Genealogy.of("""
+                0 HEAD
+                0 @I1@ INDI
+                1 NAME Child /A/
+                1 FAMC @F1@
+                2 PEDI adopted
+                1 FAMC @F2@
+                0 @I2@ INDI
+                1 NAME Adoptive Father /B/
+                0 @I3@ INDI
+                1 NAME Birth Father /C/
+                0 @F1@ FAM
+                1 HUSB @I2@
+                1 CHIL @I1@
+                0 @F2@ FAM
+                1 HUSB @I3@
+                1 CHIL @I1@
+                0 TRLR
+                """);
+        var child = g.person("I1").orElseThrow();
+        assertEquals("Birth Father C", g.father(child).orElseThrow().name().full());
+        assertEquals(2, g.parents(child).size(), "parents/ still lists both");
+    }
 }
