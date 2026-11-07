@@ -76,7 +76,9 @@ public final class FileSystem {
                 case PARENTS -> g.parents(p).stream().map(x -> person(x, parentLabel(x))).toList();
                 case SPOUSES -> g.spouses(p).stream().map(x -> person(x, spouseLabel(x))).toList();
                 case CHILDREN -> g.children(p).stream().map(x -> person(x, childLabel(x))).toList();
-                case SIBLINGS -> g.siblings(p).stream().map(x -> person(x, siblingLabel(x))).toList();
+                case SIBLINGS -> Stream.concat(
+                        g.siblings(p).stream().map(x -> person(x, siblingLabel(x))),
+                        g.halfSiblings(p).stream().map(x -> person(x, "half-" + siblingLabel(x)))).toList();
                 case FAMILIES -> Stream.concat(
                         g.familiesAsChild(p).stream().map(f -> family(f, "as child")),
                         g.familiesAsSpouse(p).stream().map(f -> family(f, "as spouse"))).toList();

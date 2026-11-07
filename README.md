@@ -70,7 +70,9 @@ own line input, which on Windows already recalls commands with ↑/↓.
 `father` and `mother` always come from one family: the first the person
 belongs to by birth (`FAMC` with no `PEDI`, or `PEDI birth`), or, if no
 birth family names a parent, the first adoptive or foster one. `parents/`
-lists everyone from every family.
+lists everyone from every family. `siblings/` lists full siblings, then
+half-siblings (children of a parent's other families) as `half-brother` /
+`half-sister`.
 
 A path segment can be any of:
 
@@ -267,7 +269,6 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing other events (baptism, residence…), half-siblings through
-separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
+Editing other events (baptism, residence…), GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
 calendar arithmetic (dates are shown verbatim), and export/convert from the
 JS version.
