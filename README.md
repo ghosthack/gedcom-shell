@@ -16,7 +16,7 @@ Nicholas II I1 › cd 4
 Olga Nikolaevna Romanova I3 › tree -a
 ```
 
-Requires JDK 26 and Maven 3.9+. No runtime dependencies.
+Requires JDK 25 and Maven 3.9+. No runtime dependencies.
 
 ```
 mvn package                         # builds target/ged-browser.jar, runs tests
