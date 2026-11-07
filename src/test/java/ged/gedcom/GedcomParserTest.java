@@ -38,6 +38,14 @@ class GedcomParserTest {
     }
 
     @Test
+    void tabAfterTagSeparatesTheValue() {
+        var g = Genealogy.of("0 HEAD\n0 @I1@ INDI\n1 NAME\tJohn /Smith/\n1 SEX M\n0 TRLR\n");
+        assertEquals("John Smith", g.person("I1").orElseThrow().name().full());
+        assertTrue(g.warnings().isEmpty(), g.warnings().toString());
+        assertEquals("0 HEAD\n0 @I1@ INDI\n1 NAME\tJohn /Smith/\n1 SEX M\n0 TRLR\n", g.render(), "written back as it was");
+    }
+
+    @Test
     void malformedLinesBecomeWarnings() {
         var r = GedcomParser.parse("0 HEAD\nthis is not gedcom\n2 ORPHAN x\n0 TRLR\n");
         assertEquals(2, r.records().size());

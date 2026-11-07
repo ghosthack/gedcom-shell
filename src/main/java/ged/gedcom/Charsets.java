@@ -66,12 +66,12 @@ public final class Charsets {
         return switch (declared.toUpperCase(Locale.ROOT)) {
             case "ANSEL" -> looksLikeAnsel(bytes)
                     ? new Decoded(Ansel.decode(bytes), declared, "ANSEL")
-                    : new Decoded(new String(bytes, Charset.forName("windows-1252")), declared, "windows-1252");
+                    : new Decoded(cp1252(bytes), declared, "windows-1252");
             case "IBMPC" -> new Decoded(new String(bytes, Charset.forName("IBM437")), declared, "IBMPC");
             case "MACINTOSH" -> new Decoded(new String(bytes, Charset.forName("x-MacRoman")), declared, "MACINTOSH");
             case "LATIN1", "ISO-8859-1", "ISO8859-1" ->
                     new Decoded(new String(bytes, StandardCharsets.ISO_8859_1), declared, "ISO-8859-1");
-            default -> new Decoded(new String(bytes, Charset.forName("windows-1252")), declared, "windows-1252");
+            default -> new Decoded(cp1252(bytes), declared, "windows-1252");
         };
     }
 
@@ -94,15 +94,18 @@ public final class Charsets {
             case "ASCII", "US-ASCII" -> StandardCharsets.US_ASCII;
             default -> Charset.forName("windows-1252");
         };
+        boolean cp1252 = cs.name().equals("windows-1252");
         var encoder = cs.newEncoder()
                 .onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT);
         for (int i = 0; i < text.length(); ) {
             int cp = text.codePointAt(i);
-            if (cp >= 0x80 && !encoder.canEncode(Character.toString(cp))) throw new UnmappableException(cp, cs.name());
+            if (cp >= 0x80 && !(cp1252 && isCp1252Gap(cp)) && !encoder.canEncode(Character.toString(cp))) {
+                throw new UnmappableException(cp, cs.name());
+            }
             i += Character.charCount(cp);
         }
-        var body = text.getBytes(cs);
+        var body = cp1252 ? cp1252(text) : text.getBytes(cs);
         if (!how.bom()) return body;
         byte[] bom = switch (upper) {
             case "UTF-16LE" -> new byte[] {(byte) 0xFF, (byte) 0xFE};
@@ -112,6 +115,32 @@ public final class Charsets {
         var out = Arrays.copyOf(bom, bom.length + body.length);
         System.arraycopy(body, 0, out, bom.length, body.length);
         return out;
+    }
+
+    /// windows-1252 leaves 0x81, 0x8D, 0x8F, 0x90 and 0x9D undefined, and
+    /// Java decodes them to U+FFFD, which can't be written back. Like web
+    /// browsers, read them as the C1 controls with the same number (U+0081…)
+    /// instead, so a file containing them still saves byte for byte.
+    private static boolean isCp1252Gap(int cp) {
+        return cp == 0x81 || cp == 0x8D || cp == 0x8F || cp == 0x90 || cp == 0x9D;
+    }
+
+    private static String cp1252(byte[] bytes) {
+        var text = new String(bytes, Charset.forName("windows-1252"));
+        if (text.indexOf('\uFFFD') < 0) return text; // single-byte: chars line up with bytes
+        var chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == '\uFFFD' && isCp1252Gap(bytes[i] & 0xFF)) chars[i] = (char) (bytes[i] & 0xFF);
+        }
+        return new String(chars);
+    }
+
+    private static byte[] cp1252(String text) {
+        var bytes = text.getBytes(Charset.forName("windows-1252"));
+        for (int i = 0; i < text.length(); i++) {
+            if (isCp1252Gap(text.charAt(i))) bytes[i] = (byte) text.charAt(i);
+        }
+        return bytes;
     }
 
     public static final class UnmappableException extends RuntimeException {

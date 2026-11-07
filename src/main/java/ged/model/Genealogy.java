@@ -195,6 +195,8 @@ public final class Genealogy {
         return node;
     }
 
+    private static final java.util.regex.Pattern LINE_WITH_ENDING =
+            java.util.regex.Pattern.compile("([^\\r\\n]*)(\\r\\n|\\r|\\n)");
     private static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("@([A-Za-z_]*)(\\d{1,9})@");
 
     /// Deletes a family record (used when unlinking leaves it empty).
@@ -250,12 +252,12 @@ public final class Genealogy {
     /// Length of a raw record minus any blank or unparseable lines that
     /// trail it; those are kept as-is when the record itself is rewritten.
     private int parsedLength(String raw) {
-        var nl = layout.newline();
-        var lines = raw.split(java.util.regex.Pattern.quote(nl), -1);
-        int keep = lines.length - 1; // last element is "" after the final newline
-        while (keep > 1 && !lines[keep - 1].matches("\\s*\\d{1,2}\\s+\\S.*")) keep--;
+        // each line keeps its own ending, so they can differ within a record
+        var m = LINE_WITH_ENDING.matcher(raw);
         int len = 0;
-        for (int i = 0; i < keep; i++) len += lines[i].length() + nl.length();
+        while (m.find()) {
+            if (len == 0 || m.group(1).matches("\\s*\\d{1,2}\\s+\\S.*")) len = m.end();
+        }
         return len;
     }
 
