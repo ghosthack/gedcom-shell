@@ -67,15 +67,41 @@ class PersonFormTest {
             500 BC               | 500 B.C.
             (in the spring)      | (in the spring)
             @#DJULIAN@ 5 oct 1582| @#DJULIAN@ 5 OCT 1582
+            29 feb 1904          | 29 FEB 1904
+            29 feb 2000          | 29 FEB 2000
+            @#DJULIAN@ 29 feb 1900| @#DJULIAN@ 29 FEB 1900
+            29 feb 1699/00       | 29 FEB 1699/00
+            44 bce               | 44 B.C.
             """)
     void normalizesDates(String input, String expected) {
         assertEquals(expected, GedDate.normalize(input));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"31 FEB 1850", "12 1850", "June 12, 1850", "yesterday", "1850-13-01", "12 XYZ 1850", "85"})
+    @ValueSource(strings = {"31 FEB 1850", "12 1850", "June 12, 1850", "yesterday", "1850-13-01", "12 XYZ 1850", "85",
+            "29 FEB 1900", "29 FEB 1901", "1900-02-29", "ABT 29 FEB 1700"})
     void rejectsBadDates(String input) {
         assertThrows(IllegalArgumentException.class, () -> GedDate.normalize(input));
+    }
+
+    @Test
+    void leapDayErrorSaysHowToWriteAJulianDate() {
+        var e = assertThrows(IllegalArgumentException.class, () -> GedDate.normalize("29 feb 1900"));
+        assertTrue(e.getMessage().contains("1900 was not a leap year"), e.getMessage());
+        assertTrue(e.getMessage().contains("@#DJULIAN@ 29 FEB 1900"), e.getMessage());
+    }
+
+    @Test
+    void bcDatesSortBeforeAdAndCountAcrossTheEra() {
+        var bc44 = GedDate.parse("15 MAR 44 B.C.");
+        var bc10 = GedDate.parse("10 BCE");
+        var ad14 = GedDate.parse("19 AUG 14");
+        assertEquals(-44, bc44.year());
+        assertTrue(bc44.compareTo(bc10) < 0 && bc10.compareTo(ad14) < 0);
+        assertEquals("44 BC", bc44.yearText());
+        assertEquals("10 BC", bc10.shortForm());
+        // 63 B.C. to A.D. 14 is 76 years: there was no year 0
+        assertEquals(76, GedDate.parse("14").astronomicalYear() - GedDate.parse("63 B.C.").astronomicalYear());
     }
 
     @Test
