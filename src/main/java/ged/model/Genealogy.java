@@ -29,8 +29,13 @@ import java.util.stream.Stream;
 public final class Genealogy {
     private final Path source;
     private final List<Node> records;
+    /// Parallel to `records`: each record's text as it now stands in the
+    /// file (refreshed on save), with any junk lines that trailed it.
+    private final List<String> rawRecords;
     private final GedcomParser.Layout layout;
     private final Set<Node> dirty = new LinkedHashSet<>();
+    /// Records that were in the file and have been deleted since the last save.
+    private int deleted;
     private final Node header;
     private final Charsets.Decoded encoding;
     private final List<String> warnings;
@@ -42,7 +47,8 @@ public final class Genealogy {
     private Genealogy(Path source, GedcomParser.Result parsed) {
         this.source = source;
         this.encoding = parsed.encoding();
-        this.records = parsed.records();
+        this.records = new ArrayList<>(parsed.records());
+        this.rawRecords = new ArrayList<>(parsed.layout().rawRecords());
         this.layout = parsed.layout();
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
@@ -138,28 +144,107 @@ public final class Genealogy {
         return fresh;
     }
 
-    public boolean isDirty() { return !dirty.isEmpty(); }
+    /// Re-reads a family after its record's nodes were edited, marks the
+    /// record dirty, and returns the fresh [Family].
+    public Family updated(Family f) {
+        var fresh = Family.of(f.node());
+        families.put(fresh.id(), fresh);
+        dirty.add(f.node());
+        return fresh;
+    }
 
-    public int dirtyCount() { return dirty.size(); }
+    /// Adds a family with no members yet.
+    public Family newFamily() {
+        var fresh = Family.of(newRecord("FAM", "F", families.keySet()));
+        families.put(fresh.id(), fresh);
+        return fresh;
+    }
+
+    /// Adds a person with a NAME line (`Maria /Rossi/`) and SEX.
+    public Person newPerson(String name, Person.Sex sex) {
+        var rec = newRecord("INDI", "I", people.keySet());
+        rec.insert(0, "NAME", name);
+        rec.insert(1, "SEX", sex == Person.Sex.UNKNOWN ? "U" : sex.code);
+        var fresh = Person.of(rec);
+        people.put(fresh.id(), fresh);
+        searchText.put(fresh.id(), fold(fresh.name().full()));
+        return fresh;
+    }
+
+    /// A new level-0 record, placed before the trailer and marked dirty.
+    /// Its id follows the file's own style: the prefix most of `ids` use
+    /// (`I`, `P`, …; `fallback` if none), numbered after the highest in use.
+    private Node newRecord(String tag, String fallback, Set<String> ids) {
+        var prefixes = new LinkedHashMap<String, Integer>();
+        for (var id : ids) {
+            var m = ID.matcher(id);
+            if (m.matches()) prefixes.merge(m.group(1), 1, Integer::sum);
+        }
+        var prefix = prefixes.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(fallback);
+        int max = 0;
+        for (var r : records) {
+            var m = r.xref() == null ? null : ID.matcher(r.xref());
+            if (m != null && m.matches() && m.group(1).equals(prefix)) max = Math.max(max, Integer.parseInt(m.group(2)));
+        }
+        var node = Node.record("@" + prefix + (max + 1) + "@", tag);
+        int at = records.size();
+        if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
+        records.add(at, node);
+        rawRecords.add(at, "");
+        dirty.add(node);
+        return node;
+    }
+
+    private static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("@([A-Za-z_]*)(\\d{1,9})@");
+
+    /// Deletes a family record (used when unlinking leaves it empty).
+    public void removeFamily(Family f) {
+        int i = records.indexOf(f.node());
+        if (i < 0) return;
+        boolean wasInFile = !rawRecords.get(i).isEmpty();
+        records.remove(i);
+        rawRecords.remove(i);
+        dirty.remove(f.node());
+        families.remove(f.id());
+        if (wasInFile) deleted++;
+    }
+
+    /// Deletes a person record that nothing points at any more (used to
+    /// undo an `add` that couldn't be completed).
+    public void removePerson(Person p) {
+        int i = records.indexOf(p.node());
+        if (i < 0) return;
+        boolean wasInFile = !rawRecords.get(i).isEmpty();
+        records.remove(i);
+        rawRecords.remove(i);
+        dirty.remove(p.node());
+        people.remove(p.id());
+        searchText.remove(p.id());
+        if (wasInFile) deleted++;
+    }
+
+    public boolean isDirty() { return !dirty.isEmpty() || deleted > 0; }
+
+    public int dirtyCount() { return dirty.size() + deleted; }
 
     /// The whole file as text, with untouched records verbatim.
     public String render() {
         var sb = new StringBuilder(layout.prefix());
-        for (int i = 0; i < records.size(); i++) {
-            var r = records.get(i);
-            if (dirty.contains(r)) {
-                r.write(sb, layout.newline());
-                // keep blank/junk lines that trailed the original record
-                var raw = layout.rawRecords().get(i);
-                sb.append(raw.substring(parsedLength(raw)));
-            } else {
-                sb.append(layout.rawRecords().get(i));
-            }
-        }
+        for (int i = 0; i < records.size(); i++) sb.append(recordText(i));
         if (!layout.finalNewline() && sb.toString().endsWith(layout.newline())) {
             sb.setLength(sb.length() - layout.newline().length());
         }
         return sb.toString();
+    }
+
+    /// Record `i` as it will be written: verbatim unless edited.
+    private String recordText(int i) {
+        var raw = rawRecords.get(i);
+        if (!dirty.contains(records.get(i))) return raw;
+        var sb = new StringBuilder();
+        records.get(i).write(sb, layout.newline());
+        // keep blank/junk lines that trailed the original record
+        return sb.append(raw.substring(parsedLength(raw))).toString();
     }
 
     /// Length of a raw record minus any blank or unparseable lines that
@@ -201,7 +286,12 @@ public final class Genealogy {
         } finally {
             Files.deleteIfExists(tmp);
         }
-        if (toSource) dirty.clear();
+        if (toSource) {
+            // what's on disk now is the baseline for later saves
+            for (int i = 0; i < records.size(); i++) rawRecords.set(i, recordText(i));
+            dirty.clear();
+            deleted = 0;
+        }
     }
 
     // ---- relationships ---------------------------------------------------

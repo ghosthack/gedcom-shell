@@ -20,4 +20,7 @@ public interface Command {
 
     /// Whether positional arguments are tree paths (tab-completed as such).
     default boolean takesPaths() { return false; }
+
+    /// Words besides paths that the first argument can be, for completion.
+    default List<String> firstWords() { return List.of(); }
 }

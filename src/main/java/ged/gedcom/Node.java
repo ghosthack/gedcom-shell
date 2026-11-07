@@ -31,6 +31,11 @@ public final class Node {
         this.source = sourceLine == null ? null : new ArrayList<>(List.of(sourceLine));
     }
 
+    /// A new, empty level-0 record, e.g. `0 @F12@ FAM`.
+    public static Node record(String xref, String tag) {
+        return new Node(0, xref, tag, "", null);
+    }
+
     public int level() { return level; }
     /// Cross-reference id of a record (e.g. `@I1@`), or `null`.
     public String xref() { return xref; }
