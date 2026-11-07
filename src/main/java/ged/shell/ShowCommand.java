@@ -71,6 +71,13 @@ final class ShowCommand implements Command {
             f.children().stream().filter(id -> !id.equals(p.id())).flatMap(id -> g.person(id).stream())
                     .forEach(x -> relative(out, x.sex() == Person.Sex.FEMALE ? "sister" : x.sex() == Person.Sex.MALE ? "brother" : "sibling", x, s));
         }
+        var half = g.halfSiblings(p);
+        if (!half.isEmpty()) {
+            out.append('\n').append(s.heading("Half-siblings")).append('\n');
+            for (var x : half) {
+                relative(out, x.sex() == Person.Sex.FEMALE ? "half-sister" : x.sex() == Person.Sex.MALE ? "half-brother" : "half-sibling", x, s);
+            }
+        }
         for (var f : g.familiesAsSpouse(p)) {
             section(out, "Family", f, s);
             f.partnerOf(p.id()).flatMap(g::person).ifPresentOrElse(
