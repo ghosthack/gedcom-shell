@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 final class EditCommand implements Command {
     @Override public String name() { return "edit"; }
     @Override public boolean takesPaths() { return true; }
-    @Override public String summary() { return "change a person's name, sex, birth and death, or a family's marriage and divorce"; }
+    @Override public String summary() { return "change a person's name, sex, life events and occupation, or a family's marriage and divorce"; }
 
     @Override
     public String usage() {
@@ -39,6 +39,8 @@ final class EditCommand implements Command {
                   edit sex=F
                   edit mother birth.date="12 jun 1850" birthplace="Genova, Italia"
                   edit @I12@ deceased=yes
+                  edit christened="20 jun 1850" buried=1920 burialplace=Staglieno
+                  edit occupation=Sailor residence=Livorno
                   edit surname=Rossi given="Maria Luisa"
                   edit families/F4 married="12 jun 1870" marriage.place=Roma
                   edit @F2@ divorced=yes
@@ -47,7 +49,9 @@ final class EditCommand implements Command {
                 To change who belongs to a family, see `help link` and `help unlink`.
 
                 Person fields: %s
-                  aliases: first, last, gender, born, birthplace, died, deathplace, dead
+                  aliases: first, last, gender, born, birthplace, died, deathplace, dead,
+                  baptism, christened, baptismplace, buried, burialplace, job, residence
+                  occupation and residence edit the first one recorded; others are kept
                 Family fields: %s
                   aliases: married, wedding, marriageplace, divorce, divorceplace
                 Dates: %s

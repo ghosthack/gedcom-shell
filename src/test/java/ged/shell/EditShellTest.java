@@ -80,7 +80,7 @@ class EditShellTest {
         load(Fixtures.cousins());
         editorSteps.add(set("death.place", "Milano").andThen(set("surname", "Rossi-Verdi"))::apply);
         var r = run("edit");
-        assertTrue(formsShown.getFirst().contains("given:        Elena"), formsShown.getFirst());
+        assertTrue(formsShown.getFirst().contains("given:           Elena"), formsShown.getFirst());
         assertTrue(r.contains("Elena Rossi-Verdi  I9  2 changes"), r);
         assertTrue(g.person("I9").orElseThrow().event("DEAT").orElseThrow().place().equals("Milano"));
     }

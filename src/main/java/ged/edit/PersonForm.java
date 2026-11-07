@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /// The editable view of a person: a flat `field: value` form that can be
 /// rendered for a text editor, parsed back, diffed, and applied to the
@@ -26,9 +27,16 @@ public final class PersonForm {
         SEX("sex", "M, F or U"),
         BIRTH_DATE("birth.date", "Date"),
         BIRTH_PLACE("birth.place", "Place"),
+        BAPTISM_DATE("baptism.date", "Date"),
+        BAPTISM_PLACE("baptism.place", "Place"),
         DEATH_DATE("death.date", "Date"),
         DEATH_PLACE("death.place", "Place"),
-        DECEASED("deceased", "yes or no");
+        BURIAL_DATE("burial.date", "Date"),
+        BURIAL_PLACE("burial.place", "Place"),
+        DECEASED("deceased", "yes or no"),
+        OCCUPATION("occupation", "Occupation"),
+        RESIDENCE_DATE("residence.date", "Date"),
+        RESIDENCE_PLACE("residence.place", "Place");
 
         public final String key;
         final String hint;
@@ -49,6 +57,12 @@ public final class PersonForm {
                 case "birthplace", "pob" -> "birth.place";
                 case "died", "death", "deathdate", "dod" -> "death.date";
                 case "deathplace", "pod" -> "death.place";
+                case "baptism", "baptised", "baptized", "christened", "christening", "bapm", "chr" -> "baptism.date";
+                case "baptismplace", "baptism.place" -> "baptism.place";
+                case "burial", "buried", "buri" -> "burial.date";
+                case "burialplace", "buried.place" -> "burial.place";
+                case "occu", "job", "profession" -> "occupation";
+                case "residence", "resi", "lived", "address" -> "residence.place";
                 case "dead" -> "deceased";
                 default -> n;
             };
@@ -68,10 +82,24 @@ public final class PersonForm {
         v.put(Field.SEX, p.sex() == Person.Sex.UNKNOWN ? "U" : p.sex().code);
         v.put(Field.BIRTH_DATE, n.first("BIRT").map(b -> b.text("DATE")).orElse(""));
         v.put(Field.BIRTH_PLACE, n.first("BIRT").map(b -> b.text("PLAC")).orElse(""));
+        var bapt = n.first(baptismTag(n));
+        v.put(Field.BAPTISM_DATE, bapt.map(b -> b.text("DATE")).orElse(""));
+        v.put(Field.BAPTISM_PLACE, bapt.map(b -> b.text("PLAC")).orElse(""));
         v.put(Field.DEATH_DATE, n.first("DEAT").map(d -> d.text("DATE")).orElse(""));
         v.put(Field.DEATH_PLACE, n.first("DEAT").map(d -> d.text("PLAC")).orElse(""));
+        v.put(Field.BURIAL_DATE, n.first("BURI").map(b -> b.text("DATE")).orElse(""));
+        v.put(Field.BURIAL_PLACE, n.first("BURI").map(b -> b.text("PLAC")).orElse(""));
         v.put(Field.DECEASED, p.isDeceased() ? "yes" : "no");
+        v.put(Field.OCCUPATION, n.first("OCCU").map(Node::value).orElse("").replace('\n', ' '));
+        v.put(Field.RESIDENCE_DATE, n.first("RESI").map(r -> r.text("DATE")).orElse(""));
+        v.put(Field.RESIDENCE_PLACE, n.first("RESI").map(r -> r.text("PLAC")).orElse(""));
         return v;
+    }
+
+    /// Baptism is `BAPM`; a file that records christenings (`CHR`) and no
+    /// baptism keeps using `CHR`.
+    private static String baptismTag(Node rec) {
+        return rec.first("BAPM").isEmpty() && rec.first("CHR").isPresent() ? "CHR" : "BAPM";
     }
 
     // ---- the text form ----------------------------------------------------
@@ -89,7 +117,8 @@ public final class PersonForm {
                 #   dates     12 JUN 1850 · JUN 1850 · 1850 · ABT 1850 · BEF 1900 · AFT 1900
                 #             BET 1800 AND 1810 · FROM 1914 TO 1918 · (free text)
                 #             1850-06-12 and "12 june 1850" are converted for you
-                #   deceased  yes or no; a death date or place implies yes
+                #   deceased  yes or no; a death or burial date or place implies yes
+                #   occupation, residence  the first one recorded; any others are kept
 
                 """);
         var values = values(p);
@@ -97,7 +126,7 @@ public final class PersonForm {
         for (var e : values.entrySet()) {
             var f = e.getKey();
             if (previous != null && group(previous) != group(f)) sb.append('\n');
-            sb.append(String.format("%-13s %s", f.key + ":", e.getValue()).stripTrailing()).append('\n');
+            sb.append(String.format("%-16s %s", f.key + ":", e.getValue()).stripTrailing()).append('\n');
             previous = f;
         }
         return sb.toString();
@@ -106,8 +135,9 @@ public final class PersonForm {
     private static int group(Field f) {
         return switch (f) {
             case GIVEN, SURNAME, SUFFIX, SEX -> 0;
-            case BIRTH_DATE, BIRTH_PLACE -> 1;
-            default -> 2;
+            case BIRTH_DATE, BIRTH_PLACE, BAPTISM_DATE, BAPTISM_PLACE -> 1;
+            case DEATH_DATE, DEATH_PLACE, BURIAL_DATE, BURIAL_PLACE, DECEASED -> 2;
+            default -> 3;
         };
     }
 
@@ -129,20 +159,27 @@ public final class PersonForm {
         var wanted = new LinkedHashMap<>(current);
         for (var e : requested.entrySet()) wanted.put(e.getKey(), normalize(e.getKey(), e.getValue(), current.get(e.getKey())));
 
-        boolean hasDeathFacts = !wanted.get(Field.DEATH_DATE).isEmpty() || !wanted.get(Field.DEATH_PLACE).isEmpty();
+        boolean hasDeathFacts = Stream.of(Field.DEATH_DATE, Field.DEATH_PLACE, Field.BURIAL_DATE, Field.BURIAL_PLACE)
+                .anyMatch(f -> !wanted.get(f).isEmpty());
         if (hasDeathFacts && requested.containsKey(Field.DECEASED) && wanted.get(Field.DECEASED).equals("no")) {
-            throw new IllegalArgumentException("deceased is 'no' but a death date or place is given");
+            throw new IllegalArgumentException("deceased is 'no' but a death or burial date or place is given");
         }
         if (hasDeathFacts) wanted.put(Field.DECEASED, "yes");
+        var n = p.node();
         if (wanted.get(Field.DECEASED).equals("no") && current.get(Field.DECEASED).equals("yes")) {
-            var n = p.node();
-            if (n.first("BURI").isPresent() || n.first("CREM").isPresent()) {
-                throw new IllegalArgumentException("can't mark as living: there is a burial or cremation record");
+            var buri = n.first("BURI");
+            if (n.first("CREM").isPresent() || buri.isPresent() && Records.hasDetails(buri.get())) {
+                throw new IllegalArgumentException("can't mark as living: there is a burial or cremation record with details; edit the file directly");
             }
             var deat = n.first("DEAT");
             if (deat.isPresent() && Records.hasDetails(deat.get())) {
                 throw new IllegalArgumentException("can't mark as living: the death record has sources or notes; edit the file directly");
             }
+        }
+
+        if (wanted.get(Field.OCCUPATION).isEmpty() && !current.get(Field.OCCUPATION).isEmpty()
+                && Records.hasDetails(n.first("OCCU").orElseThrow())) {
+            throw new IllegalArgumentException("can't remove the occupation: it has a date, place, sources or notes; edit the file directly");
         }
 
         var changes = new ArrayList<Change>();
@@ -165,8 +202,8 @@ public final class PersonForm {
                 case "U", "?", "", "UNKNOWN" -> "U";
                 default -> throw new IllegalArgumentException("sex must be M, F or U, not '" + v + "'");
             };
-            case BIRTH_DATE, DEATH_DATE -> Records.date(f.key, v, current);
-            case BIRTH_PLACE, DEATH_PLACE -> v;
+            case BIRTH_DATE, BAPTISM_DATE, DEATH_DATE, BURIAL_DATE, RESIDENCE_DATE -> Records.date(f.key, v, current);
+            case BIRTH_PLACE, BAPTISM_PLACE, DEATH_PLACE, BURIAL_PLACE, RESIDENCE_PLACE, OCCUPATION -> v;
             case DECEASED -> Records.yesNo(f.key, v);
         };
     }
@@ -198,13 +235,38 @@ public final class PersonForm {
             Records.event(rec, "BIRT", n -> n.insertAfter(List.of("NAME", "SEX"), "BIRT", ""),
                     after.get(Field.BIRTH_DATE), after.get(Field.BIRTH_PLACE), false);
         }
+        if (after.containsKey(Field.BAPTISM_DATE) || after.containsKey(Field.BAPTISM_PLACE)) {
+            var tag = baptismTag(rec);
+            Records.event(rec, tag, n -> n.insertAfter(List.of("NAME", "SEX", "BIRT"), tag, ""),
+                    after.get(Field.BAPTISM_DATE), after.get(Field.BAPTISM_PLACE), false);
+        }
         var dead = after.get(Field.DECEASED);
         if ("no".equals(dead)) {
             rec.first("DEAT").ifPresent(rec::remove);
-        } else if (after.containsKey(Field.DEATH_DATE) || after.containsKey(Field.DEATH_PLACE) || "yes".equals(dead)) {
-            // after the life events, before links, notes and the change date
-            Records.event(rec, "DEAT", n -> n.insertBefore(TRAILING_TAGS, "DEAT", ""),
-                    after.get(Field.DEATH_DATE), after.get(Field.DEATH_PLACE), true);
+            rec.first("BURI").ifPresent(rec::remove); // only a bare flag gets this far
+        } else {
+            if (after.containsKey(Field.DEATH_DATE) || after.containsKey(Field.DEATH_PLACE) || "yes".equals(dead)) {
+                // after the life events, before links, notes and the change date
+                Records.event(rec, "DEAT", n -> n.insertBefore(TRAILING_TAGS, "DEAT", ""),
+                        after.get(Field.DEATH_DATE), after.get(Field.DEATH_PLACE), true);
+            }
+            if (after.containsKey(Field.BURIAL_DATE) || after.containsKey(Field.BURIAL_PLACE)) {
+                Records.event(rec, "BURI", n -> n.first("DEAT").isPresent()
+                                ? n.insertAfter(List.of("DEAT"), "BURI", "")
+                                : n.insertBefore(TRAILING_TAGS, "BURI", ""),
+                        after.get(Field.BURIAL_DATE), after.get(Field.BURIAL_PLACE), false);
+            }
+        }
+        if (after.containsKey(Field.OCCUPATION)) {
+            var v = after.get(Field.OCCUPATION);
+            var occu = rec.first("OCCU");
+            if (v.isEmpty()) occu.ifPresent(rec::remove);
+            else if (occu.isPresent()) occu.get().setValue(v);
+            else rec.insertBefore(TRAILING_TAGS, "OCCU", v);
+        }
+        if (after.containsKey(Field.RESIDENCE_DATE) || after.containsKey(Field.RESIDENCE_PLACE)) {
+            Records.event(rec, "RESI", n -> n.insertBefore(TRAILING_TAGS, "RESI", ""),
+                    after.get(Field.RESIDENCE_DATE), after.get(Field.RESIDENCE_PLACE), false);
         }
         Records.touch(rec);
         return g.updated(p);
