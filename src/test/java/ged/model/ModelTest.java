@@ -29,7 +29,7 @@ class ModelTest {
             AFT 1700             | AFTER   | 1700 | 0 | 0  | >1700
             BET 1800 AND 1810    | BETWEEN | 1800 | 0 | 0  | ~1800
             FROM 1914 TO 1918    | PERIOD  | 1914 | 0 | 0  | 1914
-            @#DJULIAN@ 5 OCT 1582| EXACT   | 1582 | 10| 5  | 1582
+            @#DJULIAN@ 5 OCT 1582| EXACT   | 1582 | 10| 15 | 1582
             """)
     void parsesDates(String raw, GedDate.Qualifier q, int y, int m, int d, String shortForm) {
         var date = GedDate.parse(raw);
