@@ -306,13 +306,31 @@ public final class Genealogy {
         return p.spouseIn().stream().flatMap(id -> family(id).stream()).toList();
     }
 
-    /// Father then mother, from the first family the person is a child of.
+    /// Father then mother, both from [#parentFamily], so they are never
+    /// taken from two different families.
     public Optional<Person> father(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.husband().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::husband).flatMap(this::person);
     }
 
     public Optional<Person> mother(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.wife().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::wife).flatMap(this::person);
+    }
+
+    /// The family a person's father and mother come from: the first family
+    /// they are a child of by birth (`FAMC` with no `PEDI`, or `PEDI birth`)
+    /// that names a parent; failing that, the first adoptive, foster or
+    /// other family that does.
+    public Optional<Family> parentFamily(Person p) {
+        Optional<Family> other = Optional.empty();
+        for (var link : p.node().all("FAMC").toList()) {
+            var f = family(link.value());
+            if (f.isEmpty() || f.get().husband().flatMap(this::person).isEmpty()
+                    && f.get().wife().flatMap(this::person).isEmpty()) continue;
+            var pedi = link.text("PEDI").strip();
+            if (pedi.isEmpty() || pedi.equalsIgnoreCase("birth")) return f;
+            if (other.isEmpty()) other = f;
+        }
+        return other;
     }
 
     public List<Person> parents(Person p) {

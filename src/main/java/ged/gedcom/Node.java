@@ -22,6 +22,11 @@ public final class Node {
     private final List<Node> children = new ArrayList<>();
     /// Original own line plus its CONT/CONC lines; null once modified.
     private List<String> source;
+    /// Parallel to `source`: the child line each CONT/CONC line came after
+    /// in the file, or null if it came straight after this node's own lines.
+    /// A file can put one after a sub-line (`2 SOUR`, then `2 CONT`); this
+    /// keeps it there when the record is written back.
+    private List<Node> sourceAfter;
 
     Node(int level, String xref, String tag, String value, String sourceLine) {
         this.level = level;
@@ -29,6 +34,7 @@ public final class Node {
         this.tag = tag;
         this.value = value;
         this.source = sourceLine == null ? null : new ArrayList<>(List.of(sourceLine));
+        this.sourceAfter = sourceLine == null ? null : new ArrayList<>(java.util.Collections.singletonList(null));
     }
 
     /// A new, empty level-0 record, e.g. `0 @F12@ FAM`.
@@ -45,7 +51,10 @@ public final class Node {
 
     void append(String text, String sourceLine) {
         value = value + text;
-        if (source != null) source.add(sourceLine);
+        if (source != null) {
+            source.add(sourceLine);
+            sourceAfter.add(children.isEmpty() ? null : children.getLast());
+        }
     }
 
     void add(Node child) { children.add(child); }
@@ -56,6 +65,7 @@ public final class Node {
         if (value.equals(this.value)) return;
         this.value = value;
         this.source = null;
+        this.sourceAfter = null;
     }
 
     /// Creates a child line `level+1 TAG value` at `index` (clamped).
@@ -84,7 +94,14 @@ public final class Node {
     }
 
     public void remove(Node child) {
-        children.remove(child);
+        int i = children.indexOf(child);
+        if (i < 0) return;
+        children.remove(i);
+        if (sourceAfter != null) {
+            // continuation lines that followed it now follow its predecessor
+            var before = i == 0 ? null : children.get(i - 1);
+            sourceAfter.replaceAll(n -> n == child ? before : n);
+        }
     }
 
     // ---- queries ----------------------------------------------------------
@@ -110,12 +127,24 @@ public final class Node {
 
     /// Renders this node and its descendants as GEDCOM lines.
     public void write(StringBuilder out, String newline) {
-        if (source != null) {
-            for (var line : source) out.append(line).append(newline);
-        } else {
+        if (source == null) {
             writeOwnLines(out, newline);
+            for (var c : children) c.write(out, newline);
+            return;
         }
-        for (var c : children) c.write(out, newline);
+        writeSource(out, newline, null);
+        for (var c : children) {
+            c.write(out, newline);
+            writeSource(out, newline, c);
+        }
+    }
+
+    /// The original lines placed after `after` (null: own line and the
+    /// continuation lines straight after it).
+    private void writeSource(StringBuilder out, String newline, Node after) {
+        for (int i = 0; i < source.size(); i++) {
+            if (sourceAfter.get(i) == after) out.append(source.get(i)).append(newline);
+        }
     }
 
     private void writeOwnLines(StringBuilder out, String newline) {
