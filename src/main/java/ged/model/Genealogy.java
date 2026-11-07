@@ -195,6 +195,8 @@ public final class Genealogy {
         return node;
     }
 
+    private static final java.util.regex.Pattern LINE_WITH_ENDING =
+            java.util.regex.Pattern.compile("([^\\r\\n]*)(\\r\\n|\\r|\\n)");
     private static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("@([A-Za-z_]*)(\\d{1,9})@");
 
     /// Deletes a family record (used when unlinking leaves it empty).
@@ -250,12 +252,12 @@ public final class Genealogy {
     /// Length of a raw record minus any blank or unparseable lines that
     /// trail it; those are kept as-is when the record itself is rewritten.
     private int parsedLength(String raw) {
-        var nl = layout.newline();
-        var lines = raw.split(java.util.regex.Pattern.quote(nl), -1);
-        int keep = lines.length - 1; // last element is "" after the final newline
-        while (keep > 1 && !lines[keep - 1].matches("\\s*\\d{1,2}\\s+\\S.*")) keep--;
+        // each line keeps its own ending, so they can differ within a record
+        var m = LINE_WITH_ENDING.matcher(raw);
         int len = 0;
-        for (int i = 0; i < keep; i++) len += lines[i].length() + nl.length();
+        while (m.find()) {
+            if (len == 0 || m.group(1).matches("\\s*\\d{1,2}\\s+\\S.*")) len = m.end();
+        }
         return len;
     }
 
@@ -304,13 +306,31 @@ public final class Genealogy {
         return p.spouseIn().stream().flatMap(id -> family(id).stream()).toList();
     }
 
-    /// Father then mother, from the first family the person is a child of.
+    /// Father then mother, both from [#parentFamily], so they are never
+    /// taken from two different families.
     public Optional<Person> father(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.husband().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::husband).flatMap(this::person);
     }
 
     public Optional<Person> mother(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.wife().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::wife).flatMap(this::person);
+    }
+
+    /// The family a person's father and mother come from: the first family
+    /// they are a child of by birth (`FAMC` with no `PEDI`, or `PEDI birth`)
+    /// that names a parent; failing that, the first adoptive, foster or
+    /// other family that does.
+    public Optional<Family> parentFamily(Person p) {
+        Optional<Family> other = Optional.empty();
+        for (var link : p.node().all("FAMC").toList()) {
+            var f = family(link.value());
+            if (f.isEmpty() || f.get().husband().flatMap(this::person).isEmpty()
+                    && f.get().wife().flatMap(this::person).isEmpty()) continue;
+            var pedi = link.text("PEDI").strip();
+            if (pedi.isEmpty() || pedi.equalsIgnoreCase("birth")) return f;
+            if (other.isEmpty()) other = f;
+        }
+        return other;
     }
 
     public List<Person> parents(Person p) {

@@ -16,7 +16,7 @@ Nicholas II I1 › cd 4
 Olga Nikolaevna Romanova I3 › tree -a
 ```
 
-Requires JDK 26 and Maven 3.9+. No runtime dependencies.
+Requires JDK 25 and Maven 3.9+. No runtime dependencies.
 
 ```
 mvn package                         # builds target/ged-browser.jar, runs tests
@@ -66,6 +66,11 @@ own line input, which on Windows already recalls commands with ↑/↓.
 │   └── F1/            husband, wife, children/
 └── found/             results of the last `find`
 ```
+
+`father` and `mother` always come from one family: the first the person
+belongs to by birth (`FAMC` with no `PEDI`, or `PEDI birth`), or, if no
+birth family names a parent, the first adoptive or foster one. `parents/`
+lists everyone from every family.
 
 A path segment can be any of:
 

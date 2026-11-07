@@ -100,6 +100,36 @@ class SaveTest {
     }
 
     @Test
+    void windows1252UndefinedBytesSurviveASave() throws Exception {
+        // 0x81 has no character in windows-1252; it used to make every save fail
+        var file = write("cp1252.ged", bytes("0 HEAD\n1 CHAR ANSI\n0 @I1@ INDI\n1 NAME A", 0x81, "b /X/\n",
+                "0 @I2@ INDI\n1 NAME Ren", 0xE9, " /Y/\n0 TRLR\n"));
+        var g = Genealogy.load(file);
+        assertEquals("windows-1252", g.encoding().detected());
+        edit(g, "I2", Map.of(PersonForm.Field.BIRTH_PLACE, "Lyon"));
+        g.save(file);
+        var expected = bytes("0 HEAD\n1 CHAR ANSI\n0 @I1@ INDI\n1 NAME A", 0x81, "b /X/\n",
+                "0 @I2@ INDI\n1 NAME Ren", 0xE9, " /Y/\n1 BIRT\n2 PLAC Lyon\n0 TRLR\n");
+        assertArrayEquals(expected, Files.readAllBytes(file));
+    }
+
+    @Test
+    void mixedLineEndingsAreKeptOutsideEditedLines() throws Exception {
+        var original = "0 HEAD\r\n1 CHAR UTF-8\n0 @I1@ INDI\n1 NAME A /X/\r\n"
+                + "0 @I2@ INDI\r\n1 NAME B /Y/\r\n0 TRLR\r\n";
+        var file = write("mixed.ged", original.getBytes(StandardCharsets.UTF_8));
+        var g = Genealogy.load(file);
+        g.save(dir.resolve("copy.ged"));
+        assertEquals(original, Files.readString(dir.resolve("copy.ged")), "untouched: identical");
+
+        edit(g, "I2", Map.of(PersonForm.Field.BIRTH_PLACE, "Roma"));
+        g.save(file);
+        // I1 keeps its mix; the edited record is written with the commonest ending (\r\n)
+        assertEquals("0 HEAD\r\n1 CHAR UTF-8\n0 @I1@ INDI\n1 NAME A /X/\r\n"
+                + "0 @I2@ INDI\r\n1 NAME B /Y/\r\n1 BIRT\r\n2 PLAC Roma\r\n0 TRLR\r\n", Files.readString(file));
+    }
+
+    @Test
     void ansellFileStaysAnsel() throws Exception {
         var file = write("ansel.ged", bytes("0 HEAD\r\n1 CHAR ANSEL\r\n0 @I1@ INDI\r\n1 NAME Jos", 0xE2, "e /Mu", 0xE4, "noz/\r\n0 TRLR\r\n"));
         var g = Genealogy.load(file);

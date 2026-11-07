@@ -191,7 +191,7 @@ final class ShowCommand implements Command {
         var b = p.birth();
         var d = p.death();
         if (!b.hasYear() || !d.hasYear()) return java.util.Optional.empty();
-        int years = d.year() - b.year();
+        int years = d.astronomicalYear() - b.astronomicalYear();
         boolean exact = b.qualifier() == GedDate.Qualifier.EXACT && d.qualifier() == GedDate.Qualifier.EXACT
                 && b.day() > 0 && d.day() > 0;
         if (exact && (d.month() < b.month() || d.month() == b.month() && d.day() < b.day())) years--;
