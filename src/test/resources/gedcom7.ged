@@ -1,0 +1,45 @@
+0 HEAD
+1 GEDC
+2 VERS 7.0
+1 SOUR ged-browser-test
+2 NAME GEDCOM 7 fixture
+1 DATE 7 NOV 2026
+0 @I1@ INDI
+1 NAME Ada /Lovelace/
+1 SEX F
+1 BIRT
+2 DATE 10 DEC 1815
+2 PLAC London, England
+2 SNOTE @N2@
+1 DEAT
+2 DATE 27 NOV 1852
+1 FAMC @F1@
+1 FAMS @F2@
+1 SNOTE @N1@
+1 EXID 12345
+2 TYPE http://example.com/people
+1 EXID Q7259
+0 @I2@ INDI
+1 NAME George /Byron/
+1 SEX M
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Byron /King/
+1 SEX M
+1 FAMC @F2@
+1 FAMC @VOID@
+2 PEDI ADOPTED
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @VOID@
+1 CHIL @I1@
+0 @F2@ FAM
+1 HUSB @VOID@
+1 WIFE @I1@
+1 CHIL @I3@
+1 SNOTE @N1@
+1 EXID F-77
+0 @N1@ SNOTE Mathematician and writer,
+1 CONT known for her notes on the Analytical Engine.
+0 @N2@ SNOTE Born in Piccadilly.
+0 TRLR

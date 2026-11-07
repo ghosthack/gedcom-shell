@@ -18,11 +18,11 @@ public record Family(
     static Family of(Node n) {
         return new Family(
                 n.xref(),
-                n.first("HUSB").map(Node::value),
-                n.first("WIFE").map(Node::value),
-                n.all("CHIL").map(Node::value).toList(),
+                n.links("HUSB").findFirst().map(Node::value),
+                n.links("WIFE").findFirst().map(Node::value),
+                n.links("CHIL").map(Node::value).toList(),
                 n.children().stream().filter(c -> Event.isEventTag(c.tag())).map(Event::of).toList(),
-                n.all("NOTE").map(Node::value).toList(),
+                n.notes().map(Node::value).toList(),
                 n);
     }
 
