@@ -97,6 +97,17 @@ public final class Genealogy {
     public Optional<Path> source() { return Optional.ofNullable(source); }
     public Optional<Node> header() { return Optional.ofNullable(header); }
     public Charsets.Decoded encoding() { return encoding; }
+
+    /// The GEDCOM version the header declares (`HEAD.GEDC.VERS`, e.g.
+    /// `5.5.1` or `7.0`), or `""` if it declares none.
+    public String gedcomVersion() {
+        return header().flatMap(h -> h.first("GEDC")).map(n -> n.text("VERS").strip()).orElse("");
+    }
+
+    /// True for a GEDCOM 7 file: no `CONC`, `@VOID@` pointers, `SNOTE`.
+    public boolean isGedcom7() {
+        return gedcomVersion().startsWith("7");
+    }
     public List<String> warnings() { return warnings; }
     public List<Person> people() { return List.copyOf(people.values()); }
     public List<Family> families() { return List.copyOf(families.values()); }
@@ -109,7 +120,8 @@ public final class Genealogy {
         return Optional.ofNullable(families.get(xref(idOrKey)));
     }
 
-    /// Text of a note, resolving `@N1@` pointers to shared NOTE records.
+    /// Text of a note, resolving `@N1@` pointers to shared NOTE records
+    /// (and GEDCOM 7 `SNOTE` records, which have the same shape).
     public String noteText(String valueOrPointer) {
         if (valueOrPointer.startsWith("@") && valueOrPointer.endsWith("@")) {
             var rec = otherRecords.get(valueOrPointer);
@@ -244,7 +256,7 @@ public final class Genealogy {
         var raw = rawRecords.get(i);
         if (!dirty.contains(records.get(i))) return raw;
         var sb = new StringBuilder();
-        records.get(i).write(sb, layout.newline());
+        records.get(i).write(sb, layout.newline(), !isGedcom7());
         // keep blank/junk lines that trailed the original record
         return sb.append(raw.substring(parsedLength(raw))).toString();
     }
@@ -322,7 +334,7 @@ public final class Genealogy {
     /// other family that does.
     public Optional<Family> parentFamily(Person p) {
         Optional<Family> other = Optional.empty();
-        for (var link : p.node().all("FAMC").toList()) {
+        for (var link : p.node().links("FAMC").toList()) {
             var f = family(link.value());
             if (f.isEmpty() || f.get().husband().flatMap(this::person).isEmpty()
                     && f.get().wife().flatMap(this::person).isEmpty()) continue;

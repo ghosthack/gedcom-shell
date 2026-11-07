@@ -63,6 +63,7 @@ final class ShowCommand implements Command {
         field(out, "Sex", switch (p.sex()) { case MALE -> "male"; case FEMALE -> "female"; default -> "unknown"; }, s);
         for (var e : p.events()) event(out, e, s, ctx);
         age(p).ifPresent(a -> field(out, "Age", a, s));
+        externalIds(out, p.node(), s);
 
         for (var f : g.familiesAsChild(p)) {
             section(out, "Parents", f, s);
@@ -100,6 +101,7 @@ final class ShowCommand implements Command {
         f.husband().flatMap(g::person).ifPresent(x -> relative(out, "husband", x, s));
         f.wife().flatMap(g::person).ifPresent(x -> relative(out, "wife", x, s));
         for (var e : f.events()) event(out, e, s, ctx);
+        externalIds(out, f.node(), s);
         if (!f.children().isEmpty()) {
             out.append('\n').append(s.heading("Children")).append('\n');
             f.children().stream().flatMap(id -> g.person(id).stream())
@@ -119,7 +121,7 @@ final class ShowCommand implements Command {
             var src = h.first("SOUR");
             src.ifPresent(n -> field(out, "Created by", (n.text("NAME").isEmpty() ? n.value() : n.text("NAME"))
                     + (n.text("VERS").isEmpty() ? "" : " " + n.text("VERS")), s));
-            h.first("GEDC").ifPresent(n -> field(out, "GEDCOM", n.text("VERS") + " " + n.text("FORM"), s));
+            h.first("GEDC").ifPresent(n -> field(out, "GEDCOM", (n.text("VERS") + " " + n.text("FORM")).strip(), s));
             if (!h.text("DATE").isEmpty()) field(out, "Exported", h.text("DATE"), s);
         });
         var enc = g.encoding();
@@ -172,7 +174,7 @@ final class ShowCommand implements Command {
         if (!e.place().isEmpty()) parts.add(e.place());
         var value = parts.isEmpty() ? s.dim("yes") : String.join(", ", parts);
         field(out, e.label(), value, s);
-        e.node().all("NOTE").forEach(n ->
+        e.node().notes().forEach(n ->
                 out.append(" ".repeat(LABEL + 2)).append(s.dim(ctx.g().noteText(n.value()).replace("\n", " "))).append('\n'));
     }
 
@@ -182,6 +184,14 @@ final class ShowCommand implements Command {
         for (var n : notes) {
             out.append("  ").append(ctx.g().noteText(n).replace("\n", "\n  ")).append('\n');
         }
+    }
+
+    /// GEDCOM 7 `EXID`s, one per line: `123  (http://example.com/ids)`.
+    private static void externalIds(StringBuilder out, Node n, Style s) {
+        var ids = n.all("EXID")
+                .map(x -> x.value() + (x.text("TYPE").isEmpty() ? "" : "  " + s.dim("(" + x.text("TYPE") + ")")))
+                .toList();
+        if (!ids.isEmpty()) field(out, "External ids", String.join("\n", ids), s);
     }
 
     private static void changed(StringBuilder out, Node n, Style s) {

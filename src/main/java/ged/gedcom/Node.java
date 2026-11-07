@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /// One GEDCOM line and its sub-structures. `CONT`/`CONC` lines are folded
-/// into [#value()] at parse time, so consumers never see them.
+/// into [#value()] at parse time, so consumers never see them. (GEDCOM 7
+/// dropped `CONC`; see [#write(StringBuilder, String, boolean)].)
 ///
 /// A parsed node remembers its source lines; until it is modified,
 /// [#write] reproduces them byte-for-byte, so saving touches only the
@@ -106,6 +107,14 @@ public final class Node {
 
     // ---- queries ----------------------------------------------------------
 
+    /// GEDCOM 7's explicit null pointer: `1 HUSB @VOID@` says "no one".
+    public static final String VOID = "@VOID@";
+
+    /// True for a `@VOID@` pointer, which links to nothing.
+    public boolean isVoid() {
+        return value.equals(VOID);
+    }
+
     public boolean isPointer() {
         return value.length() > 2 && value.startsWith("@") && value.endsWith("@") && !value.startsWith("@#");
     }
@@ -118,6 +127,17 @@ public final class Node {
         return all(tag).findFirst();
     }
 
+    /// Children with `tag` that point somewhere: `@VOID@` pointers are left out.
+    public Stream<Node> links(String tag) {
+        return all(tag).filter(c -> !c.isVoid());
+    }
+
+    /// Notes in file order: `NOTE` (text, or a pointer to a NOTE record)
+    /// and GEDCOM 7's `SNOTE` (a pointer to a shared note record).
+    public Stream<Node> notes() {
+        return children.stream().filter(c -> (c.tag.equals("NOTE") || c.tag.equals("SNOTE")) && !c.isVoid());
+    }
+
     /// Value of the first child with `tag`, or `""`.
     public String text(String tag) {
         return first(tag).map(Node::value).orElse("");
@@ -125,16 +145,24 @@ public final class Node {
 
     // ---- output -----------------------------------------------------------
 
-    /// Renders this node and its descendants as GEDCOM lines.
+    /// Renders this node and its descendants as GEDCOM 5.5 lines.
     public void write(StringBuilder out, String newline) {
+        write(out, newline, true);
+    }
+
+    /// Renders this node and its descendants as GEDCOM lines. With `conc`
+    /// (GEDCOM 5.5/5.5.1), long regenerated values are split over `CONC`
+    /// lines; without it (GEDCOM 7, which has no `CONC`), each line of a
+    /// value is written whole. Unmodified lines are copied as read either way.
+    public void write(StringBuilder out, String newline, boolean conc) {
         if (source == null) {
-            writeOwnLines(out, newline);
-            for (var c : children) c.write(out, newline);
+            writeOwnLines(out, newline, conc);
+            for (var c : children) c.write(out, newline, conc);
             return;
         }
         writeSource(out, newline, null);
         for (var c : children) {
-            c.write(out, newline);
+            c.write(out, newline, conc);
             writeSource(out, newline, c);
         }
     }
@@ -147,14 +175,14 @@ public final class Node {
         }
     }
 
-    private void writeOwnLines(StringBuilder out, String newline) {
+    private void writeOwnLines(StringBuilder out, String newline, boolean conc) {
         var head = new StringBuilder().append(level);
         if (xref != null) head.append(' ').append(xref);
         head.append(' ').append(tag);
         var lines = value.split("\n", -1);
         for (int i = 0; i < lines.length; i++) {
             var prefix = i == 0 ? head.toString() : (level + 1) + " CONT";
-            var chunks = chunks(lines[i]);
+            var chunks = conc ? chunks(lines[i]) : List.of(lines[i]);
             out.append(prefix);
             if (!chunks.getFirst().isEmpty()) out.append(' ').append(chunks.getFirst());
             out.append(newline);

@@ -68,7 +68,9 @@ public final class Links {
         if (f.children().contains(p.id())) {
             throw new IllegalArgumentException(p.name().display() + " is a child in " + f.key() + ", not a partner");
         }
-        if (slot == Slot.HUSB) f.node().insert(0, "HUSB", p.id());
+        var empty = f.node().all(slot.name()).filter(Node::isVoid).findFirst();
+        if (empty.isPresent()) empty.get().setValue(p.id()); // GEDCOM 7: fill `HUSB @VOID@`
+        else if (slot == Slot.HUSB) f.node().insert(0, "HUSB", p.id());
         else f.node().insertAfter(List.of("HUSB"), "WIFE", p.id());
         var rec = p.node();
         if (rec.first("FAMS").isPresent()) rec.insertAfter(List.of("FAMS"), "FAMS", f.id());
