@@ -100,7 +100,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
 | `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
-| `save` | `save [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone. |
+| `save` | `save [-f] [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone. If another program changed the file since it was opened, `save` refuses rather than lose that program's changes; `save -f` overwrites. |
 
 Aliases: `ll` = `ls -l`, `cat` = `show`, `search` = `find`, `quit` = `exit`, `vi` = `edit`, `w` = `save`.
 Separate commands with `;`. `#` starts a comment. Quote names that contain spaces.
@@ -159,7 +159,9 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   The file keeps its encoding (UTF-8, ANSEL, Latin-1, …), line endings, BOM
   and permissions. The record's existing `CHAN` date is updated, as
   genealogy programs do. A character the file's encoding can't hold is
-  refused before anything is written. The write is atomic.
+  refused before anything is written. The write is atomic. Lines the
+  parser could not read are kept where they were, and a file that mixes
+  line endings keeps each line's own.
 
 ### Linking people
 

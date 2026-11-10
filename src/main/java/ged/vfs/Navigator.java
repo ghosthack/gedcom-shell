@@ -119,9 +119,9 @@ public final class Navigator {
         }
         var rows = fs.rows(loc);
         if (seg.matches("\\d+")) {
-            int n = Integer.parseInt(seg);
+            int n = seg.length() > 9 ? Integer.MAX_VALUE : Integer.parseInt(seg);
             if (n >= 1 && n <= rows.size()) return new Step(rows.get(n - 1), false);
-            throw new NotFound(seg + ": no row " + n + " here (" + rows.size() + " rows)");
+            throw new NotFound(seg + ": no row " + seg + " here (" + rows.size() + " rows)");
         }
         for (var e : rows) {
             if (String.join("/", e.path()).equalsIgnoreCase(seg)) return new Step(e, false);

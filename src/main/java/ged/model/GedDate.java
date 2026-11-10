@@ -19,7 +19,7 @@ public record GedDate(String raw, Qualifier qualifier, int year, int month, int 
 
     private static final List<String> MONTHS =
             List.of("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC");
-    private static final Pattern DATE = Pattern.compile("(?:(\\d{1,2})\\s+)?(?:([A-Z]{3})\\s+)?(\\d{1,4})(?:/\\d{1,2})?(?:\\s*B\\.?C\\.?)?");
+    private static final Pattern DATE = Pattern.compile("(?:(\\d{1,2})\\s+)?(?:([A-Z]{3,9})\\.?\\s+)?(\\d{1,4})(?:/\\d{1,2})?(?:\\s*B\\.?C\\.?)?");
 
     public static final Comparator<GedDate> CHRONOLOGICAL =
             Comparator.comparingInt(GedDate::year).thenComparingInt(GedDate::month).thenComparingInt(GedDate::day);
@@ -38,12 +38,47 @@ public record GedDate(String raw, Qualifier qualifier, int year, int month, int 
             default -> Qualifier.EXACT;
         };
         if (q != Qualifier.EXACT) s = s.substring(first.length()).strip();
-        var m = DATE.matcher(s);
+        // Forms GEDCOM doesn't allow but files contain. They are tried first
+        // because the standard pattern would take their leading day for a year.
+        Matcher m;
+        if ((m = ISO_DATE.matcher(s)).lookingAt()) {
+            int month = Integer.parseInt(m.group(2));
+            if (month < 1 || month > 12) return new GedDate(raw.strip(), q, Integer.parseInt(m.group(1)), 0, 0);
+            int day = m.group(3) == null ? 0 : Integer.parseInt(m.group(3));
+            return new GedDate(raw.strip(), q, Integer.parseInt(m.group(1)), month, day > 31 ? 0 : day);
+        }
+        if ((m = NUMERIC.matcher(s)).lookingAt()) {
+            // 12/06/1850: day and month order differs by country, so only the year is trusted
+            return new GedDate(raw.strip(), q, Integer.parseInt(m.group(1)), 0, 0);
+        }
+        if ((m = MONTH_FIRST.matcher(s)).lookingAt() && monthOf(m.group(1)) > 0) {
+            return new GedDate(raw.strip(), q, Integer.parseInt(m.group(3)), monthOf(m.group(1)), Integer.parseInt(m.group(2)));
+        }
+        m = DATE.matcher(s);
         if (!m.find()) return new GedDate(raw.strip(), Qualifier.PHRASE, 0, 0, 0);
         int year = Integer.parseInt(m.group(3));
-        int month = m.group(2) == null ? 0 : MONTHS.indexOf(m.group(2)) + 1;
+        int month = m.group(2) == null ? 0 : monthOf(m.group(2));
         int day = m.group(1) == null || month == 0 ? 0 : Integer.parseInt(m.group(1));
+        if (m.group(1) == null && m.group(2) == null && m.group(3).length() < 3) {
+            // "12 JUN" has no year: don't take the day for one
+            var after = DAY_MONTH_ONLY.matcher(s.substring(m.start()));
+            if (after.lookingAt() && monthOf(after.group(2)) > 0) {
+                return new GedDate(raw.strip(), q, 0, monthOf(after.group(2)), Integer.parseInt(after.group(1)));
+            }
+        }
         return new GedDate(raw.strip(), q, year, month, day);
+    }
+
+    private static final Pattern ISO_DATE = Pattern.compile("(\\d{4})-(\\d{1,2})(?:-(\\d{1,2}))?(?!\\d)");
+    private static final Pattern NUMERIC = Pattern.compile("\\d{1,2}[./-]\\d{1,2}[./-](\\d{4})(?!\\d)");
+    private static final Pattern MONTH_FIRST = Pattern.compile("([A-Z]{3,9})\\.?\\s+(\\d{1,2})(?:ST|ND|RD|TH)?,?\\s+(\\d{3,4})(?!\\d)");
+    private static final Pattern DAY_MONTH_ONLY = Pattern.compile("(\\d{1,2})\\s+([A-Z]{3,9})\\.?\\s*$");
+
+    /// 1–12 for `JUN`, `JUNE`, `SEPT`; 0 for anything else.
+    private static int monthOf(String word) {
+        if (word.length() < 3) return 0;
+        for (int i = 0; i < 12; i++) if (MONTH_NAMES.get(i).startsWith(word)) return i + 1;
+        return 0;
     }
 
     private static final List<String> MONTH_NAMES = List.of("JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
@@ -110,7 +145,10 @@ public record GedDate(String raw, Qualifier qualifier, int year, int month, int 
             if (month == 0) throw new IllegalArgumentException("'" + m.group(2) + "' is not a month (JAN, FEB, ...)");
             if (m.group(1) != null) {
                 int day = Integer.parseInt(m.group(1));
-                if (day < 1 || day > MONTH_DAYS[month - 1]) {
+                // a year not divisible by 4 has no 29 February in any calendar
+                // (1900 is allowed: it was a leap year where the Julian calendar still ran)
+                boolean noLeapDay = month == 2 && day == 29 && m.group(4) == null && m.group(5) == null && Integer.parseInt(m.group(3)) % 4 != 0;
+                if (day < 1 || day > MONTH_DAYS[month - 1] || noLeapDay) {
                     throw new IllegalArgumentException("day " + day + " is out of range for " + MONTHS.get(month - 1));
                 }
                 sb.append(day).append(' ');
@@ -130,12 +168,7 @@ public record GedDate(String raw, Qualifier qualifier, int year, int month, int 
         return MONTHS.get(month - 1);
     }
 
-    /// 1–12 for `JUN`, `JUNE`, `SEPT`...; 0 if not a month.
-    private static int month(String word) {
-        if (word.length() < 3) return 0;
-        for (int i = 0; i < 12; i++) if (MONTH_NAMES.get(i).startsWith(word)) return i + 1;
-        return 0;
-    }
+    private static int month(String word) { return monthOf(word); }
 
     public boolean isEmpty() { return raw.isEmpty(); }
     public boolean hasYear() { return year > 0; }

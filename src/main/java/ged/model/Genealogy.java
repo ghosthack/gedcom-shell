@@ -32,7 +32,14 @@ public final class Genealogy {
     /// Parallel to `records`: each record's text as it now stands in the
     /// file (refreshed on save), with any junk lines that trailed it.
     private final List<String> rawRecords;
+    /// Parallel to `records`: the blank or unparseable lines that trail
+    /// each record, kept at its end when the record is rewritten.
+    private final List<String> trailers;
     private final GedcomParser.Layout layout;
+    /// The source file's size and modification time when it was last read
+    /// or written here, to notice another program changing it meanwhile.
+    private long diskSize = -1;
+    private java.nio.file.attribute.FileTime diskTime;
     private final Set<Node> dirty = new LinkedHashSet<>();
     /// Records that were in the file and have been deleted since the last save.
     private int deleted;
@@ -49,6 +56,7 @@ public final class Genealogy {
         this.encoding = parsed.encoding();
         this.records = new ArrayList<>(parsed.records());
         this.rawRecords = new ArrayList<>(parsed.layout().rawRecords());
+        this.trailers = new ArrayList<>(parsed.layout().trailers());
         this.layout = parsed.layout();
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
@@ -85,7 +93,37 @@ public final class Genealogy {
     }
 
     public static Genealogy load(Path file) throws IOException {
-        return new Genealogy(file, GedcomParser.parse(file));
+        var g = new Genealogy(file, GedcomParser.parse(file));
+        g.stamp();
+        return g;
+    }
+
+    private void stamp() {
+        try {
+            diskSize = Files.size(source);
+            diskTime = Files.getLastModifiedTime(source);
+        } catch (IOException e) {
+            diskSize = -1;
+            diskTime = null;
+        }
+    }
+
+    /// True if the source file is no longer as this program last read or
+    /// wrote it: another program changed it, or it is gone.
+    public boolean changedOnDisk() {
+        if (source == null || diskTime == null) return false;
+        try {
+            return Files.size(source) != diskSize || !Files.getLastModifiedTime(source).equals(diskTime);
+        } catch (IOException e) {
+            return true;
+        }
+    }
+
+    /// True if `target` is the file this genealogy was loaded from.
+    public boolean isSource(Path target) throws IOException {
+        return source != null && (Files.exists(target) && Files.exists(source)
+                ? Files.isSameFile(source, target)
+                : source.toAbsolutePath().normalize().equals(target.toAbsolutePath().normalize()));
     }
 
     public static Genealogy of(String gedcomText) {
@@ -191,6 +229,7 @@ public final class Genealogy {
         if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
         records.add(at, node);
         rawRecords.add(at, "");
+        trailers.add(at, "");
         dirty.add(node);
         return node;
     }
@@ -204,6 +243,7 @@ public final class Genealogy {
         boolean wasInFile = !rawRecords.get(i).isEmpty();
         records.remove(i);
         rawRecords.remove(i);
+        trailers.remove(i);
         dirty.remove(f.node());
         families.remove(f.id());
         if (wasInFile) deleted++;
@@ -217,6 +257,7 @@ public final class Genealogy {
         boolean wasInFile = !rawRecords.get(i).isEmpty();
         records.remove(i);
         rawRecords.remove(i);
+        trailers.remove(i);
         dirty.remove(p.node());
         people.remove(p.id());
         searchText.remove(p.id());
@@ -244,19 +285,7 @@ public final class Genealogy {
         var sb = new StringBuilder();
         records.get(i).write(sb, layout.newline());
         // keep blank/junk lines that trailed the original record
-        return sb.append(raw.substring(parsedLength(raw))).toString();
-    }
-
-    /// Length of a raw record minus any blank or unparseable lines that
-    /// trail it; those are kept as-is when the record itself is rewritten.
-    private int parsedLength(String raw) {
-        var nl = layout.newline();
-        var lines = raw.split(java.util.regex.Pattern.quote(nl), -1);
-        int keep = lines.length - 1; // last element is "" after the final newline
-        while (keep > 1 && !lines[keep - 1].matches("\\s*\\d{1,2}\\s+\\S.*")) keep--;
-        int len = 0;
-        for (int i = 0; i < keep; i++) len += lines[i].length() + nl.length();
-        return len;
+        return sb.append(trailers.get(i)).toString();
     }
 
     /// Writes the file atomically (temp file + rename) in its original
@@ -267,9 +296,7 @@ public final class Genealogy {
     ///         character the file's encoding cannot represent
     public void save(Path target) throws IOException {
         var bytes = Charsets.encode(render(), encoding);
-        boolean toSource = source != null && (Files.exists(target) && Files.exists(source)
-                ? Files.isSameFile(source, target)
-                : source.toAbsolutePath().normalize().equals(target.toAbsolutePath().normalize()));
+        boolean toSource = isSource(target);
         if (Files.exists(target)) target = target.toRealPath(); // write through symlinks
         var dir = target.toAbsolutePath().getParent();
         var tmp = Files.createTempFile(dir, "." + target.getFileName() + ".", ".tmp");
@@ -291,6 +318,7 @@ public final class Genealogy {
             for (int i = 0; i < records.size(); i++) rawRecords.set(i, recordText(i));
             dirty.clear();
             deleted = 0;
+            stamp();
         }
     }
 

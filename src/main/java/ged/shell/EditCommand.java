@@ -97,6 +97,8 @@ final class EditCommand implements Command {
         abstract List<Row> rows(List<C> changes);
         /// Applies the changes; returns the heading to print above them.
         abstract String apply(List<C> changes);
+        /// Things worth pointing out once the changes are applied.
+        List<String> notes() { return List.of(); }
 
         /// Maps `FIELD=VALUE` keys to form fields.
         static <F> Map<F, String> fields(Map<String, String> byKey, Function<String, Optional<F>> parse,
@@ -135,7 +137,7 @@ final class EditCommand implements Command {
             return key + " is a family field: " + where;
         }
 
-        @Override List<PersonForm.Change> diffForm(String text) { return PersonForm.diff(p, PersonForm.parse(text)); }
+        @Override List<PersonForm.Change> diffForm(String text) { return PersonForm.diffForm(p, text); }
 
         @Override
         List<Row> rows(List<PersonForm.Change> changes) {
@@ -146,8 +148,22 @@ final class EditCommand implements Command {
         String apply(List<PersonForm.Change> changes) {
             var fresh = PersonForm.apply(ctx.g(), p, changes);
             var s = ctx.style();
+            notes.clear();
+            if (changes.stream().anyMatch(c -> c.field() == PersonForm.Field.SEX)) {
+                for (var f : ctx.g().familiesAsSpouse(fresh)) {
+                    boolean husband = f.husband().filter(fresh.id()::equals).isPresent();
+                    boolean clash = husband ? fresh.sex() == Person.Sex.FEMALE : fresh.sex() == Person.Sex.MALE;
+                    if (clash) notes.add("note: still recorded as the " + (husband ? "husband" : "wife") + " in " + f.key()
+                            + "; to swap: unlink /families/" + f.key() + "/" + (husband ? "husband" : "wife")
+                            + ", then link " + fresh.key() + " /families/" + f.key() + "/" + (husband ? "wife" : "husband"));
+                }
+            }
             return s.bold(fresh.name().display()) + "  " + s.dim(fresh.key());
         }
+
+        private final List<String> notes = new java.util.ArrayList<>();
+
+        @Override List<String> notes() { return notes; }
     }
 
     private static final class FamilyEdit extends Editable<FamilyForm.Change> {
@@ -167,7 +183,7 @@ final class EditCommand implements Command {
                             : "unknown field '" + key + "' (see: help edit)"));
         }
 
-        @Override List<FamilyForm.Change> diffForm(String text) { return FamilyForm.diff(f, FamilyForm.parse(text)); }
+        @Override List<FamilyForm.Change> diffForm(String text) { return FamilyForm.diffForm(f, text); }
 
         @Override
         List<Row> rows(List<FamilyForm.Change> changes) {
@@ -243,6 +259,7 @@ final class EditCommand implements Command {
                     + (c.before().isEmpty() ? s.dim("(empty)") : s.red(c.before())) + s.dim(" → ")
                     + (c.after().isEmpty() ? s.dim("(removed)") : s.green(c.after())));
         }
+        target.notes().forEach(n -> ctx.out().println(s.yellow(n)));
         unsaved(ctx);
     }
 

@@ -89,6 +89,12 @@ public final class Shell {
         } catch (CommandException | Navigator.NotFound e) {
             err.println(ctx.style().red(name + ": " + e.getMessage()));
             return false;
+        } catch (RuntimeException | StackOverflowError e) {
+            // a bug in one command must not end the session and take unsaved edits with it
+            var what = e.getMessage() == null ? e.getClass().getSimpleName() : e.getClass().getSimpleName() + ": " + e.getMessage();
+            err.println(ctx.style().red(name + ": internal error (" + what + ")")
+                    + ctx.style().dim("  nothing was lost; your edits are still in memory"));
+            return false;
         } finally {
             ctx.out().flush();
         }

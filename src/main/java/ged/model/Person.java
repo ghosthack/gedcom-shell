@@ -52,11 +52,21 @@ public record Person(
     }
 
     public GedDate birth() {
-        return event("BIRT").or(() -> event("CHR")).or(() -> event("BAPM")).map(Event::date).orElse(GedDate.EMPTY);
+        return firstDated("BIRT", "CHR", "BAPM");
     }
 
     public GedDate death() {
-        return event("DEAT").or(() -> event("BURI")).map(Event::date).orElse(GedDate.EMPTY);
+        return firstDated("DEAT", "BURI");
+    }
+
+    /// The date of the first of these events that has one: an undated
+    /// `BIRT` (place only) doesn't hide a dated christening.
+    private GedDate firstDated(String... tags) {
+        for (var tag : tags) {
+            var d = events.stream().filter(e -> e.tag().equals(tag)).map(Event::date).filter(x -> !x.isEmpty()).findFirst();
+            if (d.isPresent()) return d.get();
+        }
+        return GedDate.EMPTY;
     }
 
     public boolean isDeceased() {
