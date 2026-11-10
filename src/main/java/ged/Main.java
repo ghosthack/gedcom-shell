@@ -22,8 +22,8 @@ public final class Main {
     private static final String USAGE = """
             usage: ged-browser [OPTIONS] FILE.ged
 
-            Browse a GEDCOM file like a filesystem. Commands: ls, cd, pwd, show, tree, find,
-            edit, save.
+            Browse a GEDCOM file like a filesystem. Commands: ls, cd, pwd, show, tree, chart,
+            find, edit, add, link, unlink, save.
 
               -c, --command CMDS   run CMDS (';'-separated) and exit
               -H, --home ID        home person for `cd` and `~` (default: first person)
@@ -61,8 +61,18 @@ public final class Main {
             err.println("ged-browser: cannot read " + file);
             return 2;
         }
+        if (Files.isDirectory(path)) {
+            err.println("ged-browser: " + file + " is a directory, not a GEDCOM file");
+            return 2;
+        }
 
-        var g = Genealogy.load(path);
+        Genealogy g;
+        try {
+            g = Genealogy.load(path);
+        } catch (IOException e) {
+            err.println("ged-browser: cannot read " + file + ": " + e.getMessage());
+            return 2;
+        }
         Optional<Person> home;
         if (homeId != null) {
             home = g.person(homeId);

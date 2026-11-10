@@ -289,6 +289,17 @@ public final class PersonForm {
         return Records.parseForm(text, Field::parse, f -> f.key);
     }
 
+    /// The changes an edited form asks for. Only lines whose value differs
+    /// from the person's current one count as requests: the form always
+    /// lists every field, so an untouched `deceased: no` must not veto a
+    /// death date typed next to it.
+    public static List<Change> diffForm(Person p, String text) {
+        var requested = parse(text);
+        var current = values(p);
+        requested.entrySet().removeIf(e -> Records.clean(e.getValue()).equals(current.get(e.getKey())));
+        return diff(p, requested);
+    }
+
     // ---- validation, diff, apply ------------------------------------------
 
     private static final List<Field> DEATH_FACTS = List.of(Field.DEATH_DATE, Field.DEATH_PLACE,

@@ -49,14 +49,27 @@ public final class GedcomParser {
             if (m0.group(2).isEmpty()) break; // last line, no ending
         }
         boolean finalNewline = !endings.isEmpty() && !endings.getLast().isEmpty();
+        var newline = mostCommon(endings);
         var starts = new ArrayList<Integer>();
+        // Blank or unparseable lines seen since the last good line, and that
+        // line's node. Inside a record they are kept where they were, after
+        // the line they followed; after a record's last line they trail the
+        // record (see `Genealogy.recordText`).
+        var junk = new ArrayList<String>();
+        Node last = null;
         for (int i = 0; i < lines.size(); i++) {
             var line = lines.get(i);
+            // the line as it is in the file, with its own ending
+            var whole = line + (endings.get(i).isEmpty() ? newline : endings.get(i));
             int lineNo = i + 1;
-            if (line.isBlank()) continue;
+            if (line.isBlank()) {
+                junk.add(whole);
+                continue;
+            }
             var m = LINE.matcher(line);
             if (!m.matches()) {
                 warnings.add("line " + lineNo + ": unparseable: " + line.strip());
+                junk.add(whole);
                 continue;
             }
             int level = Integer.parseInt(m.group(1));
@@ -66,15 +79,18 @@ public final class GedcomParser {
             while (!stack.isEmpty() && stack.peek().level() >= level) stack.pop();
             Node parent = stack.peek();
 
-            if (parent != null && (tag.equals("CONT") || tag.equals("CONC"))) {
-                parent.append(tag.equals("CONT") ? "\n" + value : value, line);
-                continue;
-            }
             if (level > 0 && parent == null) {
                 warnings.add("line " + lineNo + ": orphaned level " + level + " line");
                 continue;
             }
-            var node = new Node(level, m.group(2), tag, value, line);
+            if (level > 0 && last != null) junk.forEach(last::addJunk);
+            junk.clear();
+            if (parent != null && (tag.equals("CONT") || tag.equals("CONC"))) {
+                parent.append(tag.equals("CONT") ? "\n" + value : value, whole);
+                last = parent;
+                continue;
+            }
+            var node = new Node(level, m.group(2), tag, value, whole);
             if (parent == null) {
                 records.add(node);
                 starts.add(i);
@@ -82,8 +98,8 @@ public final class GedcomParser {
                 parent.add(node);
             }
             stack.push(node);
+            last = node;
         }
-        var newline = mostCommon(endings);
         var prefix = joined(lines, endings, 0, starts.isEmpty() ? lines.size() : starts.getFirst(), newline);
         var raw = new ArrayList<String>();
         for (int r = 0; r < starts.size(); r++) {

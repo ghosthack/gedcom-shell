@@ -94,6 +94,15 @@ public final class FamilyForm {
         return Records.parseForm(text, Field::parse, f -> f.key);
     }
 
+    /// The changes an edited form asks for; lines left as they were are
+    /// not requests (see [PersonForm#diffForm]).
+    public static List<Change> diffForm(Family f, String text) {
+        var requested = parse(text);
+        var current = values(f);
+        requested.entrySet().removeIf(e -> Records.clean(e.getValue()).equals(current.get(e.getKey())));
+        return diff(f, requested);
+    }
+
     // ---- validation, diff, apply ------------------------------------------
 
     /// Validates and normalises `requested`; returns only real changes.

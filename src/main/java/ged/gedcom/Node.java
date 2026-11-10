@@ -21,8 +21,13 @@ public final class Node {
     private final String tag;
     private String value;
     private final List<Node> children = new ArrayList<>();
-    /// Original own line plus its CONT/CONC lines; null once modified.
+    /// Original own line plus its CONT/CONC lines, each with its own line
+    /// ending; null once modified.
     private List<String> source;
+    /// Blank or unparseable lines that followed this line inside the
+    /// record (with their line endings). They are written back in place
+    /// even when the line itself is rewritten.
+    private final List<String> junk = new ArrayList<>();
     /// Parallel to `source`: the child line each CONT/CONC line came after
     /// in the file, or null if it came straight after this node's own lines.
     /// A file can put one after a sub-line (`2 SOUR`, then `2 CONT`); this
@@ -59,6 +64,8 @@ public final class Node {
     }
 
     void add(Node child) { children.add(child); }
+
+    void addJunk(String line) { junk.add(line); }
 
     // ---- editing ----------------------------------------------------------
 
@@ -103,6 +110,21 @@ public final class Node {
             var before = i == 0 ? null : children.get(i - 1);
             sourceAfter.replaceAll(n -> n == child ? before : n);
         }
+        // lines the parser could not read that sat inside it move up to the line before
+        var orphaned = new ArrayList<String>();
+        child.collectJunk(orphaned);
+        if (orphaned.isEmpty()) return;
+        var keeper = this;
+        if (i > 0) {
+            keeper = children.get(i - 1);
+            while (!keeper.children.isEmpty()) keeper = keeper.children.getLast();
+        }
+        keeper.junk.addAll(orphaned);
+    }
+
+    private void collectJunk(List<String> into) {
+        into.addAll(junk);
+        for (var c : children) c.collectJunk(into);
     }
 
     // ---- queries ----------------------------------------------------------
@@ -157,10 +179,12 @@ public final class Node {
     public void write(StringBuilder out, String newline, boolean conc) {
         if (source == null) {
             writeOwnLines(out, newline, conc);
+            for (var line : junk) out.append(line);
             for (var c : children) c.write(out, newline, conc);
             return;
         }
         writeSource(out, newline, null);
+        for (var line : junk) out.append(line);
         for (var c : children) {
             c.write(out, newline, conc);
             writeSource(out, newline, c);
@@ -171,7 +195,7 @@ public final class Node {
     /// continuation lines straight after it).
     private void writeSource(StringBuilder out, String newline, Node after) {
         for (int i = 0; i < source.size(); i++) {
-            if (sourceAfter.get(i) == after) out.append(source.get(i)).append(newline);
+            if (sourceAfter.get(i) == after) out.append(source.get(i)); // has its own ending
         }
     }
 
@@ -211,6 +235,6 @@ public final class Node {
     public String toString() {
         var sb = new StringBuilder();
         write(sb, "\n");
-        return sb.toString();
+        return sb.toString().replaceAll("\\r\\n|\\r", "\n");
     }
 }
