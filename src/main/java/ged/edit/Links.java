@@ -36,10 +36,26 @@ public final class Links {
         public Slot other() { return this == HUSB ? WIFE : HUSB; }
     }
 
+    /// Refuses a parent–child link that would make someone their own
+    /// ancestor (or their own parent).
+    public static void refuseLoop(Genealogy g, Person parent, Person child) {
+        if (parent.id().equals(child.id())) {
+            throw new IllegalArgumentException(parent.name().display() + " can't be their own parent or child");
+        }
+        if (g.ancestors(parent).stream().anyMatch(a -> a.id().equals(child.id()))) {
+            throw new IllegalArgumentException(child.name().display() + " is an ancestor of " + parent.name().display()
+                    + ", so can't also be their child");
+        }
+    }
+
     /// Makes `child` a child of `f`.
     public static void addChild(Genealogy g, Family f, Person child) {
         f = fresh(g, f);
         child = fresh(g, child);
+        for (var id : java.util.stream.Stream.of(f.husband(), f.wife()).flatMap(java.util.Optional::stream).toList()) {
+            var parent = g.person(id);
+            if (parent.isPresent() && !parent.get().id().equals(child.id())) refuseLoop(g, parent.get(), child);
+        }
         if (f.children().contains(child.id())) {
             throw new IllegalArgumentException(child.name().display() + " is already a child in " + f.key());
         }
@@ -67,6 +83,10 @@ public final class Links {
         }
         if (f.children().contains(p.id())) {
             throw new IllegalArgumentException(p.name().display() + " is a child in " + f.key() + ", not a partner");
+        }
+        for (var id : f.children()) {
+            var child = g.person(id);
+            if (child.isPresent()) refuseLoop(g, p, child.get());
         }
         var empty = f.node().all(slot.name()).filter(Node::isVoid).findFirst();
         if (empty.isPresent()) empty.get().setValue(p.id()); // GEDCOM 7: fill `HUSB @VOID@`

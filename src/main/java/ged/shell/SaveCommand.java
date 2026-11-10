@@ -13,7 +13,7 @@ final class SaveCommand implements Command {
     @Override
     public String usage() {
         return """
-                save [FILE]
+                save [-f] [FILE]
 
                 Writes the file in its original encoding, line endings and BOM.
                 Records you didn't edit are copied byte-for-byte, and within edited
@@ -21,11 +21,17 @@ final class SaveCommand implements Command {
                 The write is atomic (temp file + rename) and keeps file permissions.
 
                 With FILE, writes there instead and leaves the original untouched.
+
+                If another program changed the file since it was opened, save
+                refuses, so that program's changes aren't lost: write a copy with
+                `save OTHER.ged` and compare, or overwrite with `save -f`.
                 """;
     }
 
     @Override
     public void run(List<String> args, Context ctx) {
+        args = new java.util.ArrayList<>(args);
+        boolean force = args.remove("-f") | args.remove("--force");
         if (args.size() > 1) throw new CommandException("too many arguments");
         var g = ctx.g();
         var target = args.isEmpty()
@@ -37,6 +43,10 @@ final class SaveCommand implements Command {
         }
         int records = g.dirtyCount();
         try {
+            if (!force && g.isSource(target) && g.changedOnDisk()) {
+                throw new CommandException(target + " was changed by another program since it was opened; "
+                        + "`save OTHER.ged` writes a copy to compare, `save -f` overwrites it");
+            }
             g.save(target);
         } catch (Charsets.UnmappableException e) {
             throw new CommandException(e.getMessage() + "; nothing was written");

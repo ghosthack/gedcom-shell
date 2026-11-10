@@ -130,6 +130,10 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
                 s = s.substring(c.end());
             }
         }
+        if (calendar == null) {
+            var odd = irregular(raw, q, s);
+            if (odd != null) return odd;
+        }
         var m = DATE.matcher(s);
         if (!m.find()) return new GedDate(raw, Qualifier.PHRASE, calendar == null ? Calendar.GREGORIAN : calendar, 0, 0, 0);
         // a dual year (11 FEB 1731/32) is Old Style: Julian, with the year starting on 25 MAR
@@ -145,6 +149,44 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
         int gy = g.getYear() <= 0 ? g.getYear() - 1 : g.getYear();
         return new GedDate(raw, q, calendar, gy, month == 0 ? 0 : g.getMonthValue(), day == 0 ? 0 : g.getDayOfMonth());
     }
+
+    private static final Pattern ISO_DATE = Pattern.compile("(\\d{4})-(\\d{1,2})(?:-(\\d{1,2}))?(?!\\d)");
+    private static final Pattern NUMERIC = Pattern.compile("\\d{1,2}[./-]\\d{1,2}[./-](\\d{4})(?!\\d)");
+    private static final Pattern MONTH_FIRST = Pattern.compile("([A-Z]{3,9})\\.?\\s+(\\d{1,2})(?:ST|ND|RD|TH)?,?\\s+(\\d{3,4})(?![\\d/])");
+    private static final Pattern LONG_MONTH = Pattern.compile("(?:(\\d{1,2})\\s+)?([A-Z]{3,9})\\.?,?\\s+(\\d{3,4})(?![\\d/])");
+    private static final Pattern DAY_MONTH_ONLY = Pattern.compile("(\\d{1,2})\\s+([A-Z]{3,9})\\.?\\s*$");
+
+    /// Dates GEDCOM doesn't allow but files contain: `1850-06-12`,
+    /// `12/06/1850`, `June 12, 1850`, `3 MARCH 1900`, and `12 JUN` with no
+    /// year. The standard pattern would take their leading day for the
+    /// year. Null if `s` (upper case, qualifier removed) is none of these.
+    private static GedDate irregular(String raw, Qualifier q, String s) {
+        Matcher m;
+        if ((m = ISO_DATE.matcher(s)).lookingAt()) {
+            int month = Integer.parseInt(m.group(2));
+            if (month < 1 || month > 12) return new GedDate(raw, q, Integer.parseInt(m.group(1)), 0, 0);
+            int day = m.group(3) == null ? 0 : Integer.parseInt(m.group(3));
+            return new GedDate(raw, q, Integer.parseInt(m.group(1)), month, day > 31 ? 0 : day);
+        }
+        if ((m = NUMERIC.matcher(s)).lookingAt()) {
+            // day and month order differs by country, so only the year is trusted
+            return new GedDate(raw, q, Integer.parseInt(m.group(1)), 0, 0);
+        }
+        if ((m = MONTH_FIRST.matcher(s)).lookingAt() && westernMonth(m.group(1)) > 0) {
+            return new GedDate(raw, q, Integer.parseInt(m.group(3)), westernMonth(m.group(1)), Integer.parseInt(m.group(2)));
+        }
+        // a month written out or dotted (MARCH, SEPT.), which the standard pattern doesn't know
+        if ((m = LONG_MONTH.matcher(s)).lookingAt() && !MONTHS.contains(m.group(2)) && westernMonth(m.group(2)) > 0) {
+            return new GedDate(raw, q, Integer.parseInt(m.group(3)), westernMonth(m.group(2)),
+                    m.group(1) == null ? 0 : Integer.parseInt(m.group(1)));
+        }
+        if ((m = DAY_MONTH_ONLY.matcher(s)).matches() && westernMonth(m.group(2)) > 0) {
+            return new GedDate(raw, q, 0, westernMonth(m.group(2)), Integer.parseInt(m.group(1)));
+        }
+        return null;
+    }
+
+    private static int westernMonth(String word) { return month(word, Calendar.GREGORIAN); }
 
     private static Calendar calendarOf(Matcher m) {
         return Calendar.named(m.group(1) != null ? m.group(1).strip() : m.group(2));
