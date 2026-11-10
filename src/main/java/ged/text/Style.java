@@ -58,6 +58,22 @@ public record Style(boolean enabled) {
         return w >= width ? s : " ".repeat(width - w) + s;
     }
 
+    /// Joins `words` with `", "` into lines of at most `width` columns,
+    /// each starting with `indent` (plain text only).
+    public static String wrap(java.util.List<String> words, String indent, int width) {
+        var out = new StringBuilder();
+        var line = new StringBuilder(indent);
+        for (int i = 0; i < words.size(); i++) {
+            var word = words.get(i) + (i < words.size() - 1 ? "," : "");
+            if (line.length() > indent.length() && width(line + " " + word) > width) {
+                out.append(line).append('\n');
+                line = new StringBuilder(indent);
+            }
+            line.append(line.length() > indent.length() ? " " : "").append(word);
+        }
+        return out.append(line).toString();
+    }
+
     /// Cuts `s` to at most `max` visible columns, ending with `…`.
     /// Only for plain (unstyled) text.
     public static String truncate(String s, int max) {
