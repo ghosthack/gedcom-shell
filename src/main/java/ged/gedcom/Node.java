@@ -20,8 +20,13 @@ public final class Node {
     private final String tag;
     private String value;
     private final List<Node> children = new ArrayList<>();
-    /// Original own line plus its CONT/CONC lines; null once modified.
+    /// Original own line plus its CONT/CONC lines, each with its line
+    /// ending; null once modified.
     private List<String> source;
+    /// Blank or unparseable lines that followed this line inside the
+    /// record (with their line endings). They are written back in place
+    /// even when the line itself is rewritten.
+    private final List<String> junk = new ArrayList<>();
 
     Node(int level, String xref, String tag, String value, String sourceLine) {
         this.level = level;
@@ -49,6 +54,8 @@ public final class Node {
     }
 
     void add(Node child) { children.add(child); }
+
+    void addJunk(String line) { junk.add(line); }
 
     // ---- editing ----------------------------------------------------------
 
@@ -83,8 +90,26 @@ public final class Node {
         return insert(children.size(), tag, value);
     }
 
+    /// Removes `child`. Lines the parser could not read that sat inside
+    /// it are kept, moved up to the line before.
     public void remove(Node child) {
-        children.remove(child);
+        int i = children.indexOf(child);
+        if (i < 0) return;
+        children.remove(i);
+        var orphaned = new ArrayList<String>();
+        child.collectJunk(orphaned);
+        if (orphaned.isEmpty()) return;
+        var keeper = this;
+        if (i > 0) {
+            keeper = children.get(i - 1);
+            while (!keeper.children.isEmpty()) keeper = keeper.children.getLast();
+        }
+        keeper.junk.addAll(orphaned);
+    }
+
+    private void collectJunk(List<String> into) {
+        into.addAll(junk);
+        for (var c : children) c.collectJunk(into);
     }
 
     // ---- queries ----------------------------------------------------------
@@ -111,10 +136,11 @@ public final class Node {
     /// Renders this node and its descendants as GEDCOM lines.
     public void write(StringBuilder out, String newline) {
         if (source != null) {
-            for (var line : source) out.append(line).append(newline);
+            for (var line : source) out.append(line);
         } else {
             writeOwnLines(out, newline);
         }
+        for (var line : junk) out.append(line);
         for (var c : children) c.write(out, newline);
     }
 
@@ -154,6 +180,6 @@ public final class Node {
     public String toString() {
         var sb = new StringBuilder();
         write(sb, "\n");
-        return sb.toString();
+        return sb.toString().replaceAll("\\r\\n|\\r", "\n");
     }
 }

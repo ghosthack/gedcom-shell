@@ -66,13 +66,29 @@ public final class Charsets {
         return switch (declared.toUpperCase(Locale.ROOT)) {
             case "ANSEL" -> looksLikeAnsel(bytes)
                     ? new Decoded(Ansel.decode(bytes), declared, "ANSEL")
-                    : new Decoded(new String(bytes, Charset.forName("windows-1252")), declared, "windows-1252");
+                    : new Decoded(windows1252(bytes), declared, "windows-1252");
             case "IBMPC" -> new Decoded(new String(bytes, Charset.forName("IBM437")), declared, "IBMPC");
             case "MACINTOSH" -> new Decoded(new String(bytes, Charset.forName("x-MacRoman")), declared, "MACINTOSH");
             case "LATIN1", "ISO-8859-1", "ISO8859-1" ->
                     new Decoded(new String(bytes, StandardCharsets.ISO_8859_1), declared, "ISO-8859-1");
-            default -> new Decoded(new String(bytes, Charset.forName("windows-1252")), declared, "windows-1252");
+            default -> new Decoded(windows1252(bytes), declared, "windows-1252");
         };
+    }
+
+    /// Windows-1252 leaves five bytes undefined (0x81, 0x8D, 0x8F, 0x90,
+    /// 0x9D). Files do contain them, so rather than turn them into U+FFFD,
+    /// which could never be written back, they become the control character
+    /// of the same number (as web browsers do) and [#encode] reverses it.
+    private static String windows1252(byte[] bytes) {
+        var chars = new String(bytes, Charset.forName("windows-1252")).toCharArray();
+        for (int i = 0; i < chars.length && i < bytes.length; i++) {
+            if (isUndefined1252(bytes[i] & 0xFF)) chars[i] = (char) (bytes[i] & 0xFF);
+        }
+        return new String(chars);
+    }
+
+    private static boolean isUndefined1252(int b) {
+        return b == 0x81 || b == 0x8D || b == 0x8F || b == 0x90 || b == 0x9D;
     }
 
     /// Encodes `text` the way the file was read: same charset, same BOM.
@@ -94,15 +110,22 @@ public final class Charsets {
             case "ASCII", "US-ASCII" -> StandardCharsets.US_ASCII;
             default -> Charset.forName("windows-1252");
         };
+        boolean windows1252 = cs.name().equalsIgnoreCase("windows-1252");
         var encoder = cs.newEncoder()
                 .onMalformedInput(CodingErrorAction.REPORT)
                 .onUnmappableCharacter(CodingErrorAction.REPORT);
         for (int i = 0; i < text.length(); ) {
             int cp = text.codePointAt(i);
-            if (cp >= 0x80 && !encoder.canEncode(Character.toString(cp))) throw new UnmappableException(cp, cs.name());
+            boolean passThrough = windows1252 && isUndefined1252(cp);
+            if (cp >= 0x80 && !passThrough && !encoder.canEncode(Character.toString(cp))) throw new UnmappableException(cp, cs.name());
             i += Character.charCount(cp);
         }
         var body = text.getBytes(cs);
+        if (windows1252 && body.length == text.length()) {
+            for (int i = 0; i < body.length; i++) {
+                if (isUndefined1252(text.charAt(i))) body[i] = (byte) text.charAt(i);
+            }
+        }
         if (!how.bom()) return body;
         byte[] bom = switch (upper) {
             case "UTF-16LE" -> new byte[] {(byte) 0xFF, (byte) 0xFE};

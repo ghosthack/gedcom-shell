@@ -100,6 +100,7 @@ final class LinkCommand implements Command {
             }
             case Location.Group(var p, var r) -> switch (r) {
                 case CHILDREN -> {
+                    Links.refuseLoop(g, p, x); // before a family is started for them
                     var f = onlyFamily(ctx, p, g.familiesAsSpouse(p), "children");
                     var created = f == null;
                     if (created) {
@@ -144,6 +145,7 @@ final class LinkCommand implements Command {
             throw new IllegalArgumentException(x.name().display() + " is recorded as " + (slot == Slot.HUSB ? "female" : "male")
                     + "; link as " + (slot == Slot.HUSB ? "mother" : "father") + ", or fix with: edit " + x.key() + " sex=…");
         }
+        Links.refuseLoop(g, x, p); // before a family is started for them
         var families = g.familiesAsChild(p);
         Family f;
         boolean created = families.isEmpty();
@@ -171,6 +173,7 @@ final class LinkCommand implements Command {
     /// `x` and `p` become partners: filling the empty slot of `p`'s only
     /// half-empty family, or in a new family.
     private static String asPartner(Context ctx, Genealogy g, Person x, Person p, String name) {
+        if (x.id().equals(p.id())) throw new IllegalArgumentException(x.name().display() + " can't be their own partner");
         if (g.spouses(p).contains(x)) throw new IllegalArgumentException(x.name().display() + " is already a partner of " + p.name().display());
         var open = g.familiesAsSpouse(p).stream().filter(f -> f.husband().isEmpty() || f.wife().isEmpty()).toList();
         Family f;
