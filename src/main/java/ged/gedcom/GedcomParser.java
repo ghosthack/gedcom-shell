@@ -16,15 +16,16 @@ import java.util.regex.Pattern;
 public final class GedcomParser {
     private GedcomParser() {}
 
-    private static final Pattern LINE = Pattern.compile("^\\s*(\\d{1,2})\\s+(?:(@[^@\\s]+@)\\s+)?(\\S+)(?: (.*))?$");
+    /// The value follows a single space, or a tab, which some programs write.
+    private static final Pattern LINE = Pattern.compile("^\\s*(\\d{1,2})\\s+(?:(@[^@\\s]+@)\\s+)?(\\S+)(?:[ \\t](.*))?$");
+    private static final Pattern TERMINATED = Pattern.compile("([^\\r\\n]*)(\\r\\n|\\r|\\n|$)");
 
     /// How the file was laid out, so it can be written back unchanged.
     /// `rawRecords` is parallel to `records`: each record's exact text,
-    /// every line with its own line ending, including any blank or
-    /// unparseable lines that followed it. `trailers` (also parallel) is
-    /// just those trailing lines, which stay at the end of the record when
-    /// it is rewritten. `newline` is the ending new lines are written with.
-    public record Layout(String prefix, List<String> rawRecords, List<String> trailers, String newline, boolean finalNewline) {}
+    /// including any blank or unparseable lines that followed it, and each
+    /// line's own ending (files that mix `\r\n` and `\n` keep the mix).
+    /// `newline` is the file's most common ending, used for new lines.
+    public record Layout(String prefix, List<String> rawRecords, String newline, boolean finalNewline) {}
 
     public record Result(List<Node> records, Charsets.Decoded encoding, List<String> warnings, Layout layout) {}
 
@@ -34,48 +35,41 @@ public final class GedcomParser {
         return new Result(result.records(), decoded, result.warnings(), result.layout());
     }
 
-    private static final Pattern EOL = Pattern.compile("\\r\\n|\\r|\\n");
-
     public static Result parse(String text) {
         var records = new ArrayList<Node>();
         var warnings = new ArrayList<String>();
         var stack = new ArrayDeque<Node>();
-        boolean finalNewline = text.endsWith("\n") || text.endsWith("\r");
-        var newline = text.contains("\r\n") ? "\r\n" : text.contains("\r") ? "\r" : "\n";
-
-        // Each line keeps its own ending, so a file that mixes them is not
-        // rewritten wholesale; a last line without one gets `newline`,
-        // which `Genealogy.render` takes off again.
         var lines = new ArrayList<String>();
-        var whole = new ArrayList<String>();
-        var eol = EOL.matcher(text);
-        int from = 0;
-        while (eol.find()) {
-            lines.add(text.substring(from, eol.start()));
-            whole.add(text.substring(from, eol.end()));
-            from = eol.end();
+        var endings = new ArrayList<String>();
+        var m0 = TERMINATED.matcher(text);
+        while (m0.find()) {
+            if (m0.group(2).isEmpty() && m0.group(1).isEmpty()) break; // end of text
+            lines.add(m0.group(1));
+            endings.add(m0.group(2));
+            if (m0.group(2).isEmpty()) break; // last line, no ending
         }
-        if (from < text.length()) {
-            lines.add(text.substring(from));
-            whole.add(text.substring(from) + newline);
-        }
-
+        boolean finalNewline = !endings.isEmpty() && !endings.getLast().isEmpty();
+        var newline = mostCommon(endings);
         var starts = new ArrayList<Integer>();
-        // blank or unparseable lines seen since the last good line, and that line's node
+        // Blank or unparseable lines seen since the last good line, and that
+        // line's node. Inside a record they are kept where they were, after
+        // the line they followed; after a record's last line they trail the
+        // record (see `Genealogy.recordText`).
         var junk = new ArrayList<String>();
         Node last = null;
-        var lastGood = new ArrayList<Integer>(); // per record: index of its last parsed line
         for (int i = 0; i < lines.size(); i++) {
             var line = lines.get(i);
+            // the line as it is in the file, with its own ending
+            var whole = line + (endings.get(i).isEmpty() ? newline : endings.get(i));
             int lineNo = i + 1;
             if (line.isBlank()) {
-                junk.add(whole.get(i));
+                junk.add(whole);
                 continue;
             }
             var m = LINE.matcher(line);
             if (!m.matches()) {
                 warnings.add("line " + lineNo + ": unparseable: " + line.strip());
-                junk.add(whole.get(i));
+                junk.add(whole);
                 continue;
             }
             int level = Integer.parseInt(m.group(1));
@@ -87,41 +81,50 @@ public final class GedcomParser {
 
             if (level > 0 && parent == null) {
                 warnings.add("line " + lineNo + ": orphaned level " + level + " line");
-                junk.add(whole.get(i));
                 continue;
             }
-            // Junk in the middle of a record stays where it was, after the
-            // line it followed; junk after a record's last line trails the record.
             if (level > 0 && last != null) junk.forEach(last::addJunk);
             junk.clear();
-
             if (parent != null && (tag.equals("CONT") || tag.equals("CONC"))) {
-                parent.append(tag.equals("CONT") ? "\n" + value : value, whole.get(i));
+                parent.append(tag.equals("CONT") ? "\n" + value : value, whole);
                 last = parent;
-                lastGood.set(lastGood.size() - 1, i);
                 continue;
             }
-            var node = new Node(level, m.group(2), tag, value, whole.get(i));
+            var node = new Node(level, m.group(2), tag, value, whole);
             if (parent == null) {
                 records.add(node);
                 starts.add(i);
-                lastGood.add(i);
             } else {
                 parent.add(node);
-                lastGood.set(lastGood.size() - 1, i);
             }
             stack.push(node);
             last = node;
         }
-        var prefix = String.join("", whole.subList(0, starts.isEmpty() ? whole.size() : starts.getFirst()));
+        var prefix = joined(lines, endings, 0, starts.isEmpty() ? lines.size() : starts.getFirst(), newline);
         var raw = new ArrayList<String>();
-        var trailers = new ArrayList<String>();
         for (int r = 0; r < starts.size(); r++) {
-            int end = r + 1 < starts.size() ? starts.get(r + 1) : whole.size();
-            raw.add(String.join("", whole.subList(starts.get(r), end)));
-            trailers.add(String.join("", whole.subList(lastGood.get(r) + 1, end)));
+            raw.add(joined(lines, endings, starts.get(r), r + 1 < starts.size() ? starts.get(r + 1) : lines.size(), newline));
         }
         return new Result(records, new Charsets.Decoded(text, "", "text", false), warnings,
-                new Layout(prefix, raw, trailers, newline, finalNewline));
+                new Layout(prefix, raw, newline, finalNewline));
+    }
+
+    /// Lines `from..to` with their own endings. The file's last line, if
+    /// unterminated, gets `newline` here; [ged.model.Genealogy#render] drops
+    /// it again so the file still ends without one.
+    private static String joined(List<String> lines, List<String> endings, int from, int to, String newline) {
+        var sb = new StringBuilder();
+        for (int i = from; i < to; i++) {
+            sb.append(lines.get(i)).append(endings.get(i).isEmpty() ? newline : endings.get(i));
+        }
+        return sb.toString();
+    }
+
+    /// The most frequent line ending; the first one seen wins a tie, `\n` if none.
+    private static String mostCommon(List<String> endings) {
+        var counts = new java.util.LinkedHashMap<String, Integer>();
+        for (var e : endings) if (!e.isEmpty()) counts.merge(e, 1, Integer::sum);
+        return counts.entrySet().stream().max(java.util.Map.Entry.comparingByValue())
+                .map(java.util.Map.Entry::getKey).orElse("\n");
     }
 }

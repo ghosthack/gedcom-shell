@@ -99,7 +99,7 @@ class RobustnessTest {
             int runs;
             @Override public boolean edit(Path f) throws java.io.IOException {
                 if (runs++ > 0) return false; // the form reopens with the error: give up
-                Files.writeString(f, Files.readString(f).replace("deceased:     yes", "deceased:     no"));
+                Files.writeString(f, Files.readString(f).replaceAll("(?m)^(deceased:\\s+)yes$", "$1no"));
                 return true;
             }
         });
@@ -158,14 +158,15 @@ class RobustnessTest {
         assertEquals(1800, GedDate.parse("BET 1800 AND 1810").year());
         assertEquals(1914, GedDate.parse("FROM 1914 TO 1918").year());
         assertEquals(12, GedDate.parse("12 JUN 1850").day());
-        assertEquals(1750, GedDate.parse("11 FEB 1750/51").year());
+        assertEquals(1751, GedDate.parse("11 FEB 1750/51").year(), "Old Style: the later year");
+        assertEquals(GedDate.Calendar.JULIAN, GedDate.parse("@#DJULIAN@ 4 OCT 1582").calendar());
     }
 
     @Test
     void leapDayNeedsAYearThatCanHaveOne() {
         assertThrows(IllegalArgumentException.class, () -> GedDate.normalize("29 feb 1901"));
         assertEquals("29 FEB 1904", GedDate.normalize("29 feb 1904"));
-        assertEquals("29 FEB 1900", GedDate.normalize("29 feb 1900"), "a leap year in the Julian calendar");
+        assertThrows(IllegalArgumentException.class, () -> GedDate.normalize("29 feb 1900"), "not in the Gregorian calendar");
     }
 
     @Test

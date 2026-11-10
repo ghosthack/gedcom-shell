@@ -16,7 +16,7 @@ Nicholas II I1 › cd 4
 Olga Nikolaevna Romanova I3 › tree -a
 ```
 
-Requires JDK 26 and Maven 3.9+. No runtime dependencies.
+Requires JDK 25 and Maven 3.9+. No runtime dependencies.
 
 ```
 mvn package                         # builds target/ged-browser.jar, runs tests
@@ -67,6 +67,13 @@ own line input, which on Windows already recalls commands with ↑/↓.
 └── found/             results of the last `find`
 ```
 
+`father` and `mother` always come from one family: the first the person
+belongs to by birth (`FAMC` with no `PEDI`, or `PEDI birth`), or, if no
+birth family names a parent, the first adoptive or foster one. `parents/`
+lists everyone from every family. `siblings/` lists full siblings, then
+half-siblings (children of a parent's other families) as `half-brother` /
+`half-sister`.
+
 A path segment can be any of:
 
 | Segment              | Meaning                                                    |
@@ -96,7 +103,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme modern\|classic\|baroque\|sephirot] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share: one self-contained HTML file (no internet needed) with ancestors to the left, descendants and their partners to the right, and one labelled column per generation. Click a person for dates, places and relatives; Print fits it to a landscape page, or use "Save as PDF". `-o x.png` writes a picture to text or email (drawn at 2×, or `--scale N`; huge charts are drawn smaller to keep the file manageable), and `-o x.svg` a scalable image. Default: 4 generations each way, saved as `NAME-tree.html`. Notes are left out unless you pass `--notes`. Birthplaces get a small country flag, worked out from the place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`); flags are drawn as shapes, not emoji, so they show on Windows and in PNGs. Cards show initials tinted by sex, a large flag, age (at death, or today's for the living), and the record id (`I30`); partners are joined by a marriage badge. The HTML follows the viewer's light/dark setting, with a switch, and always prints light; `--dark` makes a dark PNG/SVG (or starts the page dark). `--theme classic` is the plainer warm-paper look (light only, small flags, no ages or ids). `--theme baroque` is a 19th-century engraved look on parchment: cartouche cards with corner scrollwork, the birth country's flag as a medallion on the top edge (or a crest tinted by sex when there's none; `--arms` bears it on a shield for men or a lozenge for women instead, as old heraldry did), and the id on a plate, a double-ruled page border with corner arabesques, and a script title over a flourish (all drawn as vector paths, so identical in HTML, SVG and PNG); its dark version is candlelit. `--theme sephirot` draws the tree like an old engraved Tree of Life, ivory on black (`--light` for black on cream): one round medallion per person with the birth and death set around its ring, the relation (`Grandmother`) above it and the old sign ♂/♀ beside it; ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person, the sun of the plate, to every ancestor from the grandparents up (except where one would pass behind another medallion), opening into the channels they cross like streets at a crossroads; descendants hang below, fanning out from under their parents. `--timeline` draws the same people on a time axis instead (`NAME-timeline.html`): one bar per life, from birth to death or today, so longer lives are longer bars; children branch off their parents' bars in the year they were born, partners are joined at their marriage year, and dates missing from the file are estimated from relatives and drawn pale. |
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 
-| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth/death date and place, deceased; or a family's marriage and divorce. See below. |
+| `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth, baptism, death, burial, occupation and residence; or a family's marriage and divorce. See below. |
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
 | `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
@@ -110,17 +117,26 @@ Separate commands with `;`. `#` starts a comment. Quote names that contain space
 `edit` opens the person in `$VISUAL` / `$EDITOR` (default `vi`) as a short form:
 
 ```
-given:        Alexei Nikolaevich
-surname:      Romanov
+given:           Alexei Nikolaevich
+surname:         Romanov
 suffix:
-sex:          M
+sex:             M
 
-birth.date:   12 AUG 1904
-birth.place:  Peterhof Palace, Russia
+birth.date:      12 AUG 1904
+birth.place:     Peterhof Palace, Russia
 
-death.date:   17 JUL 1918
-death.place:  Yekaterinburg, Russia
-deceased:     yes
+baptism.date:
+baptism.place:
+
+death.date:      17 JUL 1918
+death.place:     Yekaterinburg, Russia
+burial.date:
+burial.place:
+deceased:        yes
+
+occupation:      Tsesarevich
+residence.date:
+residence.place: Alexander Palace, Tsarskoye Selo
 ```
 
 Save and quit to apply. Quit without saving, or `:cq`, to cancel. If a value
@@ -130,6 +146,7 @@ top. The same fields work without an editor, for scripts:
 ```
 edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
 bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
+edit census.date=1881 census.place=London religion=Methodist
 ```
 
 A family opens the same way, with its marriage and divorce (the partners
@@ -146,10 +163,33 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
   you leave unchanged is never rewritten, even if its existing form is
   unusual.
-- **Death and deceased are kept consistent**: a death date or place implies
-  `deceased: yes`. `deceased: yes` with no details writes `1 DEAT Y`.
-  `deceased: no` removes the death record, but refuses if that record has
-  sources or notes, or there is a burial record, so nothing is lost silently.
+- **Julian, Hebrew and French Republican dates** (`@#DJULIAN@ 4 OCT 1582`,
+  `HEBREW 1 TSH 5785`, `@#DFRENCH R@ 18 BRUM 8`, GEDCOM 5.5.1 escape or
+  GEDCOM 7 keyword) are checked against their own months and shown as
+  written, but sorted, filtered and aged by the Gregorian day they mean. A
+  year or month alone counts as the Gregorian year or month holding its
+  middle (Hebrew 5785 → 2025). Old Style dual years (`11 FEB 1731/32`) are
+  read as Julian.
+- **Death and deceased are kept consistent**: a death, burial or cremation
+  date or place implies `deceased: yes`. `deceased: yes` with no details
+  writes `1 DEAT Y`. `deceased: no` removes the death record (and a bare
+  burial or cremation flag), but refuses if any of them has sources or
+  notes, so nothing is lost silently.
+- **Rarer events and facts** appear in the form only when the person has
+  them; a comment lists the others, to add as new lines. Events take
+  `NAME.date` and `NAME.place`: christening, adoption, confirmation,
+  communion, barmitzvah, basmitzvah, graduation, ordination, emigration,
+  immigration, naturalisation, census, retirement, will, probate,
+  cremation. Facts take a value: education, religion, title, nationality.
+  Each also answers to its verb or tag (`emigrated=1890`, `cens=1881`,
+  `cremated.place=Woking`). Like occupation, they edit the first one
+  recorded, and a fact with a date, place, sources or notes can be changed
+  but not removed.
+- **Baptism** is written as `BAPM`, unless the person's record already uses
+  `CHR` (christening) for it; `christening` is a separate field only when
+  the record has both. **Occupation** and **residence** edit the
+  first one recorded; any others are left alone, and an occupation with
+  a date, place, sources or notes can be changed but not removed.
   Divorce works the same way: a divorce date or place implies `divorced:
   yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
@@ -250,6 +290,10 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
   heuristic tells real ANSEL (a combining mark followed by a plausible base
   letter) from mislabelled Latin-1/Windows-1252. ANSEL marks are moved after
   their base letter and NFC-normalised, so `á` is one character.
+- **GEDCOM 5.5, 5.5.1 and 7.0.** The version comes from `HEAD.GEDC.VERS`
+  (`show /` reports it). For 7.0, `SNOTE` shared notes are resolved like
+  `NOTE @N1@`, `EXID`s are shown as external ids, `@VOID@` pointers mean
+  "no link", and edited lines are saved without `CONC`, which 7.0 removed.
 - **Entries and rows.** `FileSystem.entries()` holds the named children a path
   walks through. `FileSystem.rows()` holds what `ls` prints and what row
   numbers index into; for a person, that's the flattened relatives.
@@ -264,7 +308,6 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
 
 ## Not (yet) supported
 
-Editing other events (baptism, residence…), half-siblings through
-separate families, GEDCOM 7 specifics (`SNOTE`, `EXID`), non-Gregorian
-calendar arithmetic (dates are shown verbatim), and export/convert from the
-JS version.
+Editing an event or fact other than the first of its kind, custom `EVEN`
+and `FACT` records, and family events beyond marriage and divorce; and
+export/convert from the JS version.

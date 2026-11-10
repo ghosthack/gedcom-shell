@@ -32,9 +32,6 @@ public final class Genealogy {
     /// Parallel to `records`: each record's text as it now stands in the
     /// file (refreshed on save), with any junk lines that trailed it.
     private final List<String> rawRecords;
-    /// Parallel to `records`: the blank or unparseable lines that trail
-    /// each record, kept at its end when the record is rewritten.
-    private final List<String> trailers;
     private final GedcomParser.Layout layout;
     /// The source file's size and modification time when it was last read
     /// or written here, to notice another program changing it meanwhile.
@@ -56,7 +53,6 @@ public final class Genealogy {
         this.encoding = parsed.encoding();
         this.records = new ArrayList<>(parsed.records());
         this.rawRecords = new ArrayList<>(parsed.layout().rawRecords());
-        this.trailers = new ArrayList<>(parsed.layout().trailers());
         this.layout = parsed.layout();
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
@@ -135,6 +131,17 @@ public final class Genealogy {
     public Optional<Path> source() { return Optional.ofNullable(source); }
     public Optional<Node> header() { return Optional.ofNullable(header); }
     public Charsets.Decoded encoding() { return encoding; }
+
+    /// The GEDCOM version the header declares (`HEAD.GEDC.VERS`, e.g.
+    /// `5.5.1` or `7.0`), or `""` if it declares none.
+    public String gedcomVersion() {
+        return header().flatMap(h -> h.first("GEDC")).map(n -> n.text("VERS").strip()).orElse("");
+    }
+
+    /// True for a GEDCOM 7 file: no `CONC`, `@VOID@` pointers, `SNOTE`.
+    public boolean isGedcom7() {
+        return gedcomVersion().startsWith("7");
+    }
     public List<String> warnings() { return warnings; }
     public List<Person> people() { return List.copyOf(people.values()); }
     public List<Family> families() { return List.copyOf(families.values()); }
@@ -147,7 +154,8 @@ public final class Genealogy {
         return Optional.ofNullable(families.get(xref(idOrKey)));
     }
 
-    /// Text of a note, resolving `@N1@` pointers to shared NOTE records.
+    /// Text of a note, resolving `@N1@` pointers to shared NOTE records
+    /// (and GEDCOM 7 `SNOTE` records, which have the same shape).
     public String noteText(String valueOrPointer) {
         if (valueOrPointer.startsWith("@") && valueOrPointer.endsWith("@")) {
             var rec = otherRecords.get(valueOrPointer);
@@ -229,11 +237,12 @@ public final class Genealogy {
         if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
         records.add(at, node);
         rawRecords.add(at, "");
-        trailers.add(at, "");
         dirty.add(node);
         return node;
     }
 
+    private static final java.util.regex.Pattern LINE_WITH_ENDING =
+            java.util.regex.Pattern.compile("([^\\r\\n]*)(\\r\\n|\\r|\\n)");
     private static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("@([A-Za-z_]*)(\\d{1,9})@");
 
     /// Deletes a family record (used when unlinking leaves it empty).
@@ -243,7 +252,6 @@ public final class Genealogy {
         boolean wasInFile = !rawRecords.get(i).isEmpty();
         records.remove(i);
         rawRecords.remove(i);
-        trailers.remove(i);
         dirty.remove(f.node());
         families.remove(f.id());
         if (wasInFile) deleted++;
@@ -257,7 +265,6 @@ public final class Genealogy {
         boolean wasInFile = !rawRecords.get(i).isEmpty();
         records.remove(i);
         rawRecords.remove(i);
-        trailers.remove(i);
         dirty.remove(p.node());
         people.remove(p.id());
         searchText.remove(p.id());
@@ -283,9 +290,21 @@ public final class Genealogy {
         var raw = rawRecords.get(i);
         if (!dirty.contains(records.get(i))) return raw;
         var sb = new StringBuilder();
-        records.get(i).write(sb, layout.newline());
+        records.get(i).write(sb, layout.newline(), !isGedcom7());
         // keep blank/junk lines that trailed the original record
-        return sb.append(trailers.get(i)).toString();
+        return sb.append(raw.substring(parsedLength(raw))).toString();
+    }
+
+    /// Length of a raw record minus any blank or unparseable lines that
+    /// trail it; those are kept as-is when the record itself is rewritten.
+    private int parsedLength(String raw) {
+        // each line keeps its own ending, so they can differ within a record
+        var m = LINE_WITH_ENDING.matcher(raw);
+        int len = 0;
+        while (m.find()) {
+            if (len == 0 || m.group(1).matches("\\s*\\d{1,2}\\s+\\S.*")) len = m.end();
+        }
+        return len;
     }
 
     /// Writes the file atomically (temp file + rename) in its original
@@ -332,13 +351,31 @@ public final class Genealogy {
         return p.spouseIn().stream().flatMap(id -> family(id).stream()).toList();
     }
 
-    /// Father then mother, from the first family the person is a child of.
+    /// Father then mother, both from [#parentFamily], so they are never
+    /// taken from two different families.
     public Optional<Person> father(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.husband().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::husband).flatMap(this::person);
     }
 
     public Optional<Person> mother(Person p) {
-        return familiesAsChild(p).stream().flatMap(f -> f.wife().stream()).findFirst().flatMap(this::person);
+        return parentFamily(p).flatMap(Family::wife).flatMap(this::person);
+    }
+
+    /// The family a person's father and mother come from: the first family
+    /// they are a child of by birth (`FAMC` with no `PEDI`, or `PEDI birth`)
+    /// that names a parent; failing that, the first adoptive, foster or
+    /// other family that does.
+    public Optional<Family> parentFamily(Person p) {
+        Optional<Family> other = Optional.empty();
+        for (var link : p.node().links("FAMC").toList()) {
+            var f = family(link.value());
+            if (f.isEmpty() || f.get().husband().flatMap(this::person).isEmpty()
+                    && f.get().wife().flatMap(this::person).isEmpty()) continue;
+            var pedi = link.text("PEDI").strip();
+            if (pedi.isEmpty() || pedi.equalsIgnoreCase("birth")) return f;
+            if (other.isEmpty()) other = f;
+        }
+        return other;
     }
 
     public List<Person> parents(Person p) {
@@ -360,6 +397,19 @@ public final class Genealogy {
         return resolve(familiesAsChild(p).stream()
                 .flatMap(f -> f.children().stream())
                 .filter(id -> !id.equals(p.id())));
+    }
+
+    /// Children of a parent's other families: they share one parent with
+    /// `p` but not a family. Full siblings (and `p`) are left out.
+    public List<Person> halfSiblings(Person p) {
+        var own = p.childOf();
+        var full = siblings(p);
+        return resolve(parents(p).stream()
+                .flatMap(parent -> familiesAsSpouse(parent).stream())
+                .filter(f -> !own.contains(f.id()))
+                .flatMap(f -> f.children().stream())
+                .filter(id -> !id.equals(p.id())))
+                .stream().filter(x -> !full.contains(x)).toList();
     }
 
     public List<Person> members(Family f) {

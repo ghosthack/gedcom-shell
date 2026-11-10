@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /// One GEDCOM line and its sub-structures. `CONT`/`CONC` lines are folded
-/// into [#value()] at parse time, so consumers never see them.
+/// into [#value()] at parse time, so consumers never see them. (GEDCOM 7
+/// dropped `CONC`; see [#write(StringBuilder, String, boolean)].)
 ///
 /// A parsed node remembers its source lines; until it is modified,
 /// [#write] reproduces them byte-for-byte, so saving touches only the
@@ -20,13 +21,18 @@ public final class Node {
     private final String tag;
     private String value;
     private final List<Node> children = new ArrayList<>();
-    /// Original own line plus its CONT/CONC lines, each with its line
+    /// Original own line plus its CONT/CONC lines, each with its own line
     /// ending; null once modified.
     private List<String> source;
     /// Blank or unparseable lines that followed this line inside the
     /// record (with their line endings). They are written back in place
     /// even when the line itself is rewritten.
     private final List<String> junk = new ArrayList<>();
+    /// Parallel to `source`: the child line each CONT/CONC line came after
+    /// in the file, or null if it came straight after this node's own lines.
+    /// A file can put one after a sub-line (`2 SOUR`, then `2 CONT`); this
+    /// keeps it there when the record is written back.
+    private List<Node> sourceAfter;
 
     Node(int level, String xref, String tag, String value, String sourceLine) {
         this.level = level;
@@ -34,6 +40,7 @@ public final class Node {
         this.tag = tag;
         this.value = value;
         this.source = sourceLine == null ? null : new ArrayList<>(List.of(sourceLine));
+        this.sourceAfter = sourceLine == null ? null : new ArrayList<>(java.util.Collections.singletonList(null));
     }
 
     /// A new, empty level-0 record, e.g. `0 @F12@ FAM`.
@@ -50,7 +57,10 @@ public final class Node {
 
     void append(String text, String sourceLine) {
         value = value + text;
-        if (source != null) source.add(sourceLine);
+        if (source != null) {
+            source.add(sourceLine);
+            sourceAfter.add(children.isEmpty() ? null : children.getLast());
+        }
     }
 
     void add(Node child) { children.add(child); }
@@ -63,6 +73,7 @@ public final class Node {
         if (value.equals(this.value)) return;
         this.value = value;
         this.source = null;
+        this.sourceAfter = null;
     }
 
     /// Creates a child line `level+1 TAG value` at `index` (clamped).
@@ -90,12 +101,16 @@ public final class Node {
         return insert(children.size(), tag, value);
     }
 
-    /// Removes `child`. Lines the parser could not read that sat inside
-    /// it are kept, moved up to the line before.
     public void remove(Node child) {
         int i = children.indexOf(child);
         if (i < 0) return;
         children.remove(i);
+        if (sourceAfter != null) {
+            // continuation lines that followed it now follow its predecessor
+            var before = i == 0 ? null : children.get(i - 1);
+            sourceAfter.replaceAll(n -> n == child ? before : n);
+        }
+        // lines the parser could not read that sat inside it move up to the line before
         var orphaned = new ArrayList<String>();
         child.collectJunk(orphaned);
         if (orphaned.isEmpty()) return;
@@ -114,6 +129,14 @@ public final class Node {
 
     // ---- queries ----------------------------------------------------------
 
+    /// GEDCOM 7's explicit null pointer: `1 HUSB @VOID@` says "no one".
+    public static final String VOID = "@VOID@";
+
+    /// True for a `@VOID@` pointer, which links to nothing.
+    public boolean isVoid() {
+        return value.equals(VOID);
+    }
+
     public boolean isPointer() {
         return value.length() > 2 && value.startsWith("@") && value.endsWith("@") && !value.startsWith("@#");
     }
@@ -126,6 +149,17 @@ public final class Node {
         return all(tag).findFirst();
     }
 
+    /// Children with `tag` that point somewhere: `@VOID@` pointers are left out.
+    public Stream<Node> links(String tag) {
+        return all(tag).filter(c -> !c.isVoid());
+    }
+
+    /// Notes in file order: `NOTE` (text, or a pointer to a NOTE record)
+    /// and GEDCOM 7's `SNOTE` (a pointer to a shared note record).
+    public Stream<Node> notes() {
+        return children.stream().filter(c -> (c.tag.equals("NOTE") || c.tag.equals("SNOTE")) && !c.isVoid());
+    }
+
     /// Value of the first child with `tag`, or `""`.
     public String text(String tag) {
         return first(tag).map(Node::value).orElse("");
@@ -133,25 +167,46 @@ public final class Node {
 
     // ---- output -----------------------------------------------------------
 
-    /// Renders this node and its descendants as GEDCOM lines.
+    /// Renders this node and its descendants as GEDCOM 5.5 lines.
     public void write(StringBuilder out, String newline) {
-        if (source != null) {
-            for (var line : source) out.append(line);
-        } else {
-            writeOwnLines(out, newline);
-        }
-        for (var line : junk) out.append(line);
-        for (var c : children) c.write(out, newline);
+        write(out, newline, true);
     }
 
-    private void writeOwnLines(StringBuilder out, String newline) {
+    /// Renders this node and its descendants as GEDCOM lines. With `conc`
+    /// (GEDCOM 5.5/5.5.1), long regenerated values are split over `CONC`
+    /// lines; without it (GEDCOM 7, which has no `CONC`), each line of a
+    /// value is written whole. Unmodified lines are copied as read either way.
+    public void write(StringBuilder out, String newline, boolean conc) {
+        if (source == null) {
+            writeOwnLines(out, newline, conc);
+            for (var line : junk) out.append(line);
+            for (var c : children) c.write(out, newline, conc);
+            return;
+        }
+        writeSource(out, newline, null);
+        for (var line : junk) out.append(line);
+        for (var c : children) {
+            c.write(out, newline, conc);
+            writeSource(out, newline, c);
+        }
+    }
+
+    /// The original lines placed after `after` (null: own line and the
+    /// continuation lines straight after it).
+    private void writeSource(StringBuilder out, String newline, Node after) {
+        for (int i = 0; i < source.size(); i++) {
+            if (sourceAfter.get(i) == after) out.append(source.get(i)); // has its own ending
+        }
+    }
+
+    private void writeOwnLines(StringBuilder out, String newline, boolean conc) {
         var head = new StringBuilder().append(level);
         if (xref != null) head.append(' ').append(xref);
         head.append(' ').append(tag);
         var lines = value.split("\n", -1);
         for (int i = 0; i < lines.length; i++) {
             var prefix = i == 0 ? head.toString() : (level + 1) + " CONT";
-            var chunks = chunks(lines[i]);
+            var chunks = conc ? chunks(lines[i]) : List.of(lines[i]);
             out.append(prefix);
             if (!chunks.getFirst().isEmpty()) out.append(' ').append(chunks.getFirst());
             out.append(newline);
