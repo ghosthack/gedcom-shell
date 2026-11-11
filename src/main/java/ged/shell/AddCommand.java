@@ -60,9 +60,13 @@ final class AddCommand implements Command {
         }
         var rel = relation.toLowerCase(Locale.ROOT);
         var where = rel.equals("person") ? null : RELATIONS.getOrDefault(rel, relation);
+        // a person's husband or wife is their partner; in a family the words name its two places
+        if ((rel.equals("husband") || rel.equals("wife")) && ctx.nav().cwd().location() instanceof ged.vfs.Location.PersonDir) {
+            where = "spouses";
+        }
         var sex = switch (rel) {
-            case "father" -> Person.Sex.MALE;
-            case "mother" -> Person.Sex.FEMALE;
+            case "father", "husband" -> Person.Sex.MALE;
+            case "mother", "wife" -> Person.Sex.FEMALE;
             default -> Person.Sex.UNKNOWN;
         };
         if (name.isBlank()) throw new CommandException("the name is empty");
@@ -78,7 +82,7 @@ final class AddCommand implements Command {
         String linked;
         List<PersonForm.Change> changes;
         try {
-            changes = PersonForm.diff(p, fields);
+            changes = PersonForm.diff(p, fields, g.isGedcom7());
             p = PersonForm.apply(g, p, changes);
             linked = where == null ? null : LinkCommand.link(ctx, g, p, where);
         } catch (IllegalArgumentException | CommandException | ged.vfs.Navigator.NotFound e) {

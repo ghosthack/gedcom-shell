@@ -91,6 +91,7 @@ public final class Main {
         var shell = new Shell(nav, out, err, style);
 
         if (command != null) {
+            shell.scripted(true);
             boolean ok = shell.execute(command);
             shell.warnIfDirty();
             return ok ? 0 : 1;

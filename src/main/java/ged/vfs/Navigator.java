@@ -57,10 +57,25 @@ public final class Navigator {
 
     /// Re-points every held location at current records after an edit.
     public void refresh() {
-        home = relocate(home);
-        cwd = new Path(cwd.segments(), relocate(cwd.location()));
-        previous = new Path(previous.segments(), relocate(previous.location()));
         fs.refresh();
+        home = relocate(home);
+        cwd = settle(cwd);
+        previous = settle(previous);
+    }
+
+    /// `path` after an edit: at the current record, and by a route that
+    /// still leads there. An edit can cut the route (`cd father`, then the
+    /// father is unlinked), and commands that read the route to tell how two
+    /// people are related must not act on what it used to mean; such a path
+    /// becomes the location's own (`/people/I2`).
+    private Path settle(Path path) {
+        var loc = relocate(path.location());
+        try {
+            if (walk(path.segments()).canonicalPath().equals(loc.canonicalPath())) return new Path(path.segments(), loc);
+        } catch (NotFound _) {
+            // the route is gone
+        }
+        return new Path(canonicalSegments(loc), loc);
     }
 
     private Location relocate(Location loc) {
@@ -68,8 +83,9 @@ public final class Navigator {
         return switch (loc) {
             case Location.PersonDir(var p) -> new Location.PersonDir(g.person(p.id()).orElse(p));
             case Location.Group(var p, var r) -> new Location.Group(g.person(p.id()).orElse(p), r);
-            case Location.FamilyDir(var f) -> new Location.FamilyDir(g.family(f.id()).orElse(f));
-            case Location.FamilyChildren(var f) -> new Location.FamilyChildren(g.family(f.id()).orElse(f));
+            // a family deleted by `unlink` is no place to stay: step out to /families
+            case Location.FamilyDir(var f) -> g.family(f.id()).<Location>map(Location.FamilyDir::new).orElseGet(Location.Families::new);
+            case Location.FamilyChildren(var f) -> g.family(f.id()).<Location>map(Location.FamilyChildren::new).orElseGet(Location.Families::new);
             default -> loc;
         };
     }

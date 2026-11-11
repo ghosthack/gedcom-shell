@@ -96,26 +96,28 @@ public final class FamilyForm {
 
     /// The changes an edited form asks for; lines left as they were are
     /// not requests (see [PersonForm#diffForm]).
-    public static List<Change> diffForm(Family f, String text) {
+    public static List<Change> diffForm(Family f, String text, boolean gedcom7) {
         var requested = parse(text);
         var current = values(f);
         requested.entrySet().removeIf(e -> Records.clean(e.getValue()).equals(current.get(e.getKey())));
-        return diff(f, requested);
+        return diff(f, requested, gedcom7);
     }
 
     // ---- validation, diff, apply ------------------------------------------
 
     /// Validates and normalises `requested`; returns only real changes.
     ///
+    /// Dates are written in the file's GEDCOM version (`gedcom7`, else 5.5.1).
+    ///
     /// @throws IllegalArgumentException with a user-facing message
-    public static List<Change> diff(Family f, Map<Field, String> requested) {
+    public static List<Change> diff(Family f, Map<Field, String> requested, boolean gedcom7) {
         var current = values(f);
         var wanted = new LinkedHashMap<>(current);
         for (var e : requested.entrySet()) {
             var field = e.getKey();
             var v = Records.clean(e.getValue());
             wanted.put(field, switch (field) {
-                case MARRIAGE_DATE, DIVORCE_DATE -> Records.date(field.key, v, current.get(field));
+                case MARRIAGE_DATE, DIVORCE_DATE -> Records.date(field.key, v, current.get(field), gedcom7);
                 case MARRIAGE_PLACE, DIVORCE_PLACE -> v;
                 case DIVORCED -> Records.yesNo(field.key, v);
             });
