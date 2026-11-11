@@ -11,7 +11,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,37 +36,12 @@ class RestFixesTest {
     }
 
     @Test
-    void aSpanishChartOfSomeoneUnnamedIsTitledInSpanish() throws Exception {
-        var g = Genealogy.of("0 HEAD\n0 @I1@ INDI\n1 BIRT\n2 DATE 1900\n0 TRLR\n");
-        var file = dir.resolve("x.html");
-        shell(g).execute("chart --lang es -o " + file);
-        var html = Files.readString(file);
-        assertTrue(html.contains("(sin nombre)"), said());
-        assertFalse(html.contains("(unnamed)"));
-    }
-
-    @Test
     void tildeIsTheHomeDirectory() {
         var home = System.getProperty("user.home");
         assertEquals(home + "/x.html", Options.home("~/x.html"));
         assertEquals(home, Options.home("~"));
         assertEquals("~x/y.html", Options.home("~x/y.html"));
         assertEquals("a/~/b", Options.home("a/~/b"));
-    }
-
-    @Test
-    void chartWritesBesideADotDotPath() throws Exception {
-        var g = Genealogy.of("0 HEAD\n0 @I1@ INDI\n1 NAME A /B/\n1 BIRT\n2 DATE 1900\n0 TRLR\n");
-        Files.createDirectories(dir.resolve("sub"));
-        shell(g).execute("chart -o " + dir + "/sub/../up.html");
-        assertTrue(Files.exists(dir.resolve("up.html")), said());
-    }
-
-    @Test
-    void aSmallScaleAskedForIsNotWarnedAbout() {
-        var g = Genealogy.of("0 HEAD\n0 @I1@ INDI\n1 NAME A /B/\n1 BIRT\n2 DATE 1900\n0 TRLR\n");
-        assertTrue(shell(g).execute("chart --scale 0.5 -o " + dir + "/small.png"), said());
-        assertFalse(said().contains("hard to read"), said());
     }
 
     @Test

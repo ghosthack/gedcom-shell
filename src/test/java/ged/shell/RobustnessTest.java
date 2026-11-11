@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,13 +56,9 @@ class RobustnessTest {
     // ---- the session survives ------------------------------------------------
 
     @Test
-    void absurdRowNumbersAndBadChartTargetsAreErrorsNotCrashes() {
+    void absurdRowNumbersAreErrorsNotCrashes() {
         cousins();
         assertTrue(run("cd 99999999999").contains("no row 99999999999"), out.toString());
-        assertDoesNotThrow(() -> run("chart -o /"));
-        assertTrue(run("chart -o /").contains("directory"), out.toString());
-        assertTrue(run("chart -o " + dir.resolve("tree.pdf")).contains(".html, .svg or .png"), out.toString());
-        assertFalse(Files.exists(dir.resolve("tree.pdf")));
         assertTrue(run("pwd").contains("/people/I9"), "still running, still where we were");
     }
 
@@ -227,50 +222,5 @@ class RobustnessTest {
         assertFalse(g.isDirty());
         run("edit sex=F");
         assertTrue(run("save").contains("saved"), "our own save is the new baseline");
-    }
-
-    // ---- charts ---------------------------------------------------------------
-
-    private static final String HOSTILE = """
-            0 HEAD
-            1 CHAR UTF-8
-            0 @I1@ INDI
-            1 NAME {{data}}
-            1 SEX M
-            1 BIRT
-            2 PLAC <img src=x onerror=alert(1)>
-            1 NOTE <!--<script>
-            1 FAMS @F1@
-            0 @../../x@ INDI
-            1 NAME {{svg}}
-            1 SEX F
-            1 FAMS @F1@
-            0 @I3@ INDI
-            1 NAME Ольга /Романова/
-            0 @F1@ FAM
-            1 HUSB @I1@
-            1 WIFE @../../x@
-            0 TRLR
-            """;
-
-    @Test
-    void namesThatLookLikeTemplateSlotsOrMarkupStayText() throws Exception {
-        load(Genealogy.of(HOSTILE), "I1", x -> false);
-        var target = dir.resolve("h.html");
-        run("chart --notes -o " + target);
-        var html = Files.readString(target);
-        assertFalse(html.contains("<img src=x"), "file text never arrives as markup");
-        assertFalse(html.contains("<!--<script>"));
-        assertTrue(html.contains("<h1>{{data}}</h1>"), "the title is the name, literally");
-        assertEquals(1, html.split("var DATA = \\{", -1).length - 1);
-        assertTrue(html.contains("\\u003cimg src=x"), "and is still there as data");
-    }
-
-    @Test
-    void defaultChartNamesCannotLeaveTheDirectory() {
-        var g = Genealogy.of(HOSTILE);
-        var unnamed = Genealogy.of("0 @../../x@ INDI\n1 SEX F\n0 TRLR\n").people().getFirst();
-        assertEquals("x", ChartCommand.slug(unnamed));
-        assertEquals("ольга-романова", ChartCommand.slug(g.person("I3").orElseThrow()));
     }
 }

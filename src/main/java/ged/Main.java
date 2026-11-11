@@ -20,10 +20,10 @@ import java.util.Optional;
 
 public final class Main {
     private static final String USAGE = """
-            usage: ged-browser [OPTIONS] FILE.ged
+            usage: gedcom-shell [OPTIONS] FILE.ged
 
-            Browse a GEDCOM file like a filesystem. Commands: ls, cd, pwd, show, tree, chart,
-            find, edit, add, link, unlink, save.
+            Browse a GEDCOM file like a filesystem. Commands: ls, cd, pwd, show, tree, find,
+            edit, add, link, unlink, save.
 
               -c, --command CMDS   run CMDS (';'-separated) and exit
               -H, --home ID        home person for `cd` and `~` (default: first person)
@@ -31,7 +31,7 @@ public final class Main {
               -h, --help           show this help
 
             Without -c, reads commands interactively, or from stdin when piped:
-              echo 'find -b 1500..1550; tree -a /found/1' | ged-browser royals.ged
+              echo 'find -b 1500..1550; tree -a /found/1' | gedcom-shell royals.ged
             """;
 
     public static void main(String[] argv) throws IOException {
@@ -58,11 +58,11 @@ public final class Main {
         if (file == null) return usage(err, "no GEDCOM file given");
         var path = Path.of(file);
         if (!Files.isReadable(path)) {
-            err.println("ged-browser: cannot read " + file);
+            err.println("gedcom-shell: cannot read " + file);
             return 2;
         }
         if (Files.isDirectory(path)) {
-            err.println("ged-browser: " + file + " is a directory, not a GEDCOM file");
+            err.println("gedcom-shell: " + file + " is a directory, not a GEDCOM file");
             return 2;
         }
 
@@ -70,14 +70,14 @@ public final class Main {
         try {
             g = Genealogy.load(path);
         } catch (IOException e) {
-            err.println("ged-browser: cannot read " + file + ": " + e.getMessage());
+            err.println("gedcom-shell: cannot read " + file + ": " + e.getMessage());
             return 2;
         }
         Optional<Person> home;
         if (homeId != null) {
             home = g.person(homeId);
             if (home.isEmpty()) {
-                err.println("ged-browser: --home: no person " + homeId);
+                err.println("gedcom-shell: --home: no person " + homeId);
                 return 2;
             }
         } else {
@@ -99,7 +99,7 @@ public final class Main {
 
         if (interactive) {
             var enc = g.encoding();
-            out.println(style.bold("ged-browser") + " · " + path.getFileName() + " · "
+            out.println(style.bold("gedcom-shell") + " · " + path.getFileName() + " · "
                     + g.people().size() + " people, " + g.families().size() + " families · " + enc.detected());
             var notes = new ArrayList<String>();
             if (enc.mismatch()) notes.add("header says " + enc.declared() + ", decoded as " + enc.detected());
@@ -109,13 +109,13 @@ public final class Main {
                     + home.map(Person::label).orElse("(no people)"));
         }
         var input = interactive
-                ? LineInput.terminal(Path.of(System.getProperty("user.home"), ".ged_browser_history"), out, shell.completer())
+                ? LineInput.terminal(Path.of(System.getProperty("user.home"), ".gedcom_shell_history"), out, shell.completer())
                 : LineInput.of(new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8)));
         return shell.repl(input, interactive);
     }
 
     private static int usage(PrintStream err, String problem) {
-        err.println("ged-browser: " + problem);
+        err.println("gedcom-shell: " + problem);
         err.print(USAGE);
         return 2;
     }

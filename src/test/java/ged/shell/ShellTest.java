@@ -7,12 +7,10 @@ import ged.vfs.FileSystem;
 import ged.vfs.Navigator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -210,71 +208,5 @@ class ShellTest {
             assertTrue(shell.execute("ls; show; tree -n 4; tree -a -n 4; ls /people -s birthday; show /"), name + ": " + errors());
             assertFalse(out.toString(StandardCharsets.UTF_8).contains("�"), name + " has decoding errors");
         }
-    }
-
-    @Test
-    void chartWritesASelfContainedPage(@TempDir Path dir) throws Exception {
-        var file = dir.resolve("elena.html");
-        assertTrue(shell.execute("chart -n 2 -o '" + file + "'"), errors());
-        assertTrue(out.toString(StandardCharsets.UTF_8).contains("wrote " + file), out.toString(StandardCharsets.UTF_8));
-        var html = Files.readString(file);
-        assertTrue(html.contains("<h1>Elena Rossi</h1>") && html.contains("Family tree with "));
-        assertTrue(html.contains("Luca Rossi") && html.contains("Giovanni Rossi"), "2 generations of ancestors");
-
-        var svg = dir.resolve("elena.svg");
-        assertTrue(shell.execute("chart -a --lang es -o '" + svg + "' ~"), errors());
-        assertTrue(Files.readString(svg).startsWith("<?xml") && Files.readString(svg).contains("ABUELOS"));
-    }
-
-    @Test
-    void chartRefusesToOverwriteGedcomAndBadOptions() {
-        assertFalse(shell.execute("chart -o family.ged"));
-        assertTrue(errors().contains("refusing"), errors());
-        assertFalse(shell.execute("chart --lang fr -o x.html"));
-        assertTrue(errors().contains("unknown language"), errors());
-        assertFalse(shell.execute("chart -a -d"));
-    }
-
-    @Test
-    void chartWritesPng(@TempDir Path dir) throws Exception {
-        var file = dir.resolve("elena.png");
-        assertTrue(shell.execute("chart -n 2 --scale 1 -o '" + file + "'"), errors());
-        var img = javax.imageio.ImageIO.read(file.toFile());
-        assertTrue(img != null && img.getWidth() > 500 && img.getHeight() > 200, "a real PNG");
-        assertFalse(shell.execute("chart --scale 9 -o x.png"));
-        assertTrue(errors().contains("scale must be between"), errors());
-    }
-
-    @Test
-    void chartTimeline(@TempDir Path dir) throws Exception {
-        var file = dir.resolve("vidas.html");
-        assertTrue(shell.execute("chart --timeline --lang es -o '" + file + "'"), errors());
-        var html = Files.readString(file);
-        assertTrue(html.contains("<h1>Elena Rossi</h1>") && html.contains("Línea de tiempo familiar con ") && html.contains(">HOY<"), "Spanish timeline");
-        var png = dir.resolve("old.png");
-        assertTrue(shell.execute("chart --timeline --theme baroque --dark --scale 1 -o '" + png + "'"), errors());
-        assertTrue(javax.imageio.ImageIO.read(png.toFile()).getWidth() > 500);
-        assertFalse(shell.execute("chart --timeline --theme classic -o x.html"));
-        assertFalse(shell.execute("chart --arms -o x.html"));
-        assertTrue(errors().contains("baroque"), errors());
-        assertTrue(shell.execute("chart --theme baroque --arms -o '" + dir.resolve("arms.svg") + "'"), errors());
-        assertTrue(Files.readString(dir.resolve("arms.svg")).contains("arms-"));
-        assertTrue(errors().contains("modern"), errors());
-    }
-
-    @Test
-    void chartSephirotStartsDark(@TempDir Path dir) throws Exception {
-        var dark = dir.resolve("plate.png");
-        assertTrue(shell.execute("chart --theme sephirot --scale 1 -o '" + dark + "'"), errors());
-        assertEquals(0x0b0a09, javax.imageio.ImageIO.read(dark.toFile()).getRGB(3, 3) & 0xffffff);
-        var light = dir.resolve("print.png");
-        assertTrue(shell.execute("chart --theme sephirot --light --scale 1 -o '" + light + "'"), errors());
-        assertEquals(0xefe6d2, javax.imageio.ImageIO.read(light.toFile()).getRGB(3, 3) & 0xffffff);
-        var html = dir.resolve("plate.html");
-        assertTrue(shell.execute("chart --theme sephirot -o '" + html + "'"), errors());
-        assertTrue(Files.readString(html).contains("<html lang=\"en\" data-theme=\"dark\">"));
-        assertFalse(shell.execute("chart --theme sephirot --dark --light -o x.html"));
-        assertFalse(shell.execute("chart --timeline --theme sephirot -o x.html"));
-        assertTrue(errors().contains("sephirot"), errors());
     }
 }

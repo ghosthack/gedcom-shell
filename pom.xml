@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ged</groupId>
-  <artifactId>ged-browser</artifactId>
+  <groupId>com.github.ghosthack</groupId>
+  <artifactId>gedcom-shell</artifactId>
   <version>0.1.0-SNAPSHOT</version>
-  <name>ged-browser</name>
-  <description>Shell-style browser for GEDCOM genealogy files</description>
+  <name>gedcom-shell</name>
+  <description>Browse and edit GEDCOM genealogy files like a filesystem</description>
 
   <properties>
     <maven.compiler.release>25</maven.compiler.release>
@@ -27,7 +27,7 @@
   </dependencies>
 
   <build>
-    <finalName>ged-browser</finalName>
+    <finalName>gedcom-shell</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 /// Read–eval–print loop and command dispatch.
 public final class Shell {
@@ -35,8 +36,13 @@ public final class Shell {
         this.ctx = new Context(nav, out, style, editor);
         this.err = err;
         for (var c : List.of(new LsCommand(), new CdCommand(), new PwdCommand(), new ShowCommand(),
-                new TreeCommand(), new ChartCommand(), new FindCommand(), new EditCommand(), new AddCommand(), new LinkCommand(), new UnlinkCommand(), new SaveCommand())) {
+                new TreeCommand(), new FindCommand(), new EditCommand(), new AddCommand(), new LinkCommand(), new UnlinkCommand(), new SaveCommand())) {
             commands.put(c.name(), c);
+        }
+        // Commands other jars add: each names its classes in
+        // META-INF/services/ged.shell.Command. A built-in keeps its name.
+        for (var c : ServiceLoader.load(Command.class)) {
+            commands.putIfAbsent(c.name(), c);
         }
     }
 

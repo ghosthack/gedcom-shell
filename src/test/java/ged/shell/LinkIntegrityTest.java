@@ -118,13 +118,4 @@ class LinkIntegrityTest {
         assertTrue(run("save -x").contains("unknown option -x"));
         assertTrue(run("save --froce").contains("unknown option"));
     }
-
-    @Test
-    void chartWontWriteThroughALinkToTheFile() throws Exception {
-        var link = dir.resolve("link.html");
-        Files.createSymbolicLink(link, file);
-        var before = Files.readString(file);
-        assertTrue(run("chart -o " + link).contains("refusing to overwrite"));
-        assertEquals(before, Files.readString(file));
-    }
 }
