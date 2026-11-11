@@ -58,7 +58,7 @@ class CompletionTest {
     @Test
     void commandNames() {
         assertEquals(List.of("tree "), complete("tr"));
-        assertEquals(List.of("cat ", "cd ", "chart "), complete("c"));
+        assertEquals(List.of("cat ", "cd "), complete("c"));
         assertTrue(complete("").containsAll(List.of("ls ", "ll ", "help ", "exit ", "save ")));
         assertEquals(List.of("tree "), complete("help tr"));
         assertEquals(List.of("ls "), complete("pwd; ls"), "after ;, a new command");
@@ -89,10 +89,10 @@ class CompletionTest {
 
     @Test
     void optionsAndTheirValues() {
-        assertEquals(List.of("--theme "), complete("chart --th"));
-        assertEquals(List.of("baroque "), complete("chart --theme ba"));
-        assertEquals(List.of("--theme=sephirot "), complete("chart --theme=s"));
-        assertEquals(List.of("en ", "es "), complete("chart --lang "));
+        assertEquals(List.of("--sort "), complete("ls --so"));
+        assertEquals(List.of("surname "), complete("ls --sort su"));
+        assertEquals(List.of("--sort=surname "), complete("ls --sort=su"));
+        assertEquals(List.of("M ", "F ", "U "), complete("find --sex "));
         assertEquals(List.of("birth ", "birthday "), complete("ls -s bi"));
         assertEquals(List.of("birth ", "birthday "), complete("ls -rs bi"));
         assertEquals(List.of(), complete("tree -n "), "a number: nothing to offer");
@@ -103,7 +103,7 @@ class CompletionTest {
 
     @Test
     void tabCompletesInTheEditor() throws Exception {
-        assertEquals(List.of("cd father/", "chart --theme baroque "), type("cd fat" + TAB + "\rchart --theme ba" + TAB + "\r"));
+        assertEquals(List.of("cd father/", "ls --sort surname "), type("cd fat" + TAB + "\rls --sort su" + TAB + "\r"));
         assertEquals(List.of("cd I5/"), type("cd jose" + TAB + "\r"));
     }
 

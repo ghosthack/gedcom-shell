@@ -1,10 +1,10 @@
-# ged-browser
+# gedcom-shell
 
 Browse a GEDCOM genealogy file the way you browse a filesystem. People and
 families are directories; a person's relatives are the entries inside.
 
 ```
-$ bin/ged-browser royals.ged
+$ bin/gedcom-shell royals.ged
 Nicholas II I1 › ls
  #  PATH          ID   REL       NAME                           SEX  BORN  DIED
  1  father        I8   father    Alexander III                  M    1845  1894
@@ -19,10 +19,10 @@ Olga Nikolaevna Romanova I3 › tree -a
 Requires JDK 25 and Maven 3.9+. No runtime dependencies.
 
 ```
-mvn package                         # builds target/ged-browser.jar, runs tests
-bin/ged-browser FILE.ged            # interactive prompt (↑/↓ history, Tab completion, line editing)
-bin/ged-browser FILE.ged -c 'find maria; show /found/1'
-echo 'tree -a -n 5' | bin/ged-browser FILE.ged
+mvn package                         # builds target/gedcom-shell.jar, runs tests
+bin/gedcom-shell FILE.ged            # interactive prompt (↑/↓ history, Tab completion, line editing)
+bin/gedcom-shell FILE.ged -c 'find maria; show /found/1'
+echo 'tree -a -n 5' | bin/gedcom-shell FILE.ged
 ```
 
 Options: `-c CMDS` run and exit · `-H ID` home person (default: first in
@@ -43,13 +43,13 @@ command failed, 2 for usage errors, which makes it scriptable.
 | Ctrl-C                  | discard the line                         |
 | Ctrl-D                  | quit (on an empty line)                  |
 
-Tab completes command names, options and their values (`chart --theme
-ba` → `baroque`), and paths: `cd fa` → `cd father/`, and Tab after a `/`
+Tab completes command names, options and their values (`ls --sort
+su` → `surname`), and paths: `cd fa` → `cd father/`, and Tab after a `/`
 lists what's inside, with who each entry is. A word that names no entry is
 read as a name, as `cd` would: `cd olga` becomes `cd children/I3/` when Olga
 is the only match, and when several people match it lists them.
 
-History is kept in `~/.ged_browser_history` (last 1000 commands). Start a
+History is kept in `~/.gedcom_shell_history` (last 1000 commands). Start a
 command with a space to keep it out of history. The editor is built in: it
 uses `stty` to switch the terminal to raw mode only while you type, so it
 needs no libraries. Without `stty` (Windows) it falls back to the console's
@@ -100,9 +100,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `pwd` | `pwd [-P]` | |
 | `show` | `show [-r] [PATH...]` | All facts in file order, parents/siblings, each marriage with children, notes (shared `@N@` notes resolved), age at death, last change. `-r` prints the raw GEDCOM record. `show /` summarises the file: encoding (and whether the header lied), counts, birth range, broken links. |
 | `tree` | `tree [-a\|-d] [-n N\|--all] [-S] [PATH]` | Descendants by default, grouped under each partner (`∞`, with family id and marriage year); `-S` lists children directly. `-a` draws the pedigree with labels (father → grandfather → great-grandfather → 2nd great-grandfather …). Anyone reached twice (cousin marriages, pedigree collapse) is drawn once and then marked `↻`. |
-| `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme NAME] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share, as HTML, PNG or SVG. Default: 4 generations each way, saved as `NAME-tree.html`. See [Charts](#charts). |
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
-
 | `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth, baptism, death, burial, occupation and residence; or a family's marriage and divorce. See below. |
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
@@ -111,54 +109,6 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 
 Aliases: `ll` = `ls -l`, `cat` = `show`, `search` = `find`, `quit` = `exit`, `vi` = `edit`, `w` = `save`.
 Separate commands with `;`. `#` starts a comment. Quote names that contain spaces.
-
-## Charts
-
-`chart` writes a family-tree picture to share: ancestors to the left,
-descendants and their partners to the right, and one labelled column per
-generation. By default it draws 4 generations each way and saves
-`NAME-tree.html`.
-
-```
-chart                               # NAME-tree.html for where you are
-chart -a -n 6 -o pedigree.png       # ancestors only, 6 generations, as a picture
-chart --theme baroque --arms -o family.svg
-chart --timeline --lang es @I12@
-```
-
-**Output** is chosen by the name given to `-o`:
-
-- **`.html`** (the default) is one self-contained file that needs no
-  internet. Click a person for dates, places and relatives. Print fits it
-  to a landscape page, or use "Save as PDF". It follows the viewer's
-  light/dark setting, with a switch, and always prints light.
-- **`.png`** is a picture to text or email, drawn at 2× (or `--scale N`).
-  Huge charts are drawn smaller to keep the file manageable.
-- **`.svg`** is a scalable image.
-
-`--dark` makes a dark PNG or SVG, or starts the HTML page dark. Notes are
-left out unless you pass `--notes`.
-
-**Cards** show initials tinted by sex, a flag, the age (at death, or
-today's for the living) and the record id (`I30`). Partners are joined by a
-marriage badge. The flag is the birthplace's country, worked out from the
-place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`). Flags are drawn
-as shapes, not emoji, so they show on Windows and in PNGs.
-
-**Themes** (`--theme`):
-
-| Theme | Look |
-|---|---|
-| `modern` | The default, described above. |
-| `classic` | Plainer, on warm paper: light only, small flags, no ages or ids. |
-| `baroque` | A 19th-century engraving on parchment. Cards are cartouches with corner scrollwork, the flag is a medallion on the top edge (a crest tinted by sex when there is none) and the id sits on a plate. The page has a double-ruled border with corner arabesques and a script title over a flourish. `--arms` bears the crest on a shield for men or a lozenge for women, as old heraldry did. The dark version is candlelit. Everything is drawn as vector paths, so it is identical in HTML, SVG and PNG. |
-| `sephirot` | An old engraved Tree of Life, ivory on black (`--light` for black on cream). Each person is a round medallion with birth and death around its ring, the relation (`Grandmother`) above and the sign ♂/♀ beside it. Ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person to every ancestor from the grandparents up. Descendants hang below, fanning out from under their parents. |
-
-**`--timeline`** draws the same people on a time axis instead
-(`NAME-timeline.html`): one bar per life, from birth to death or today, so
-longer lives are longer bars. Children branch off their parents' bars in
-the year they were born, and partners are joined at their marriage year.
-Dates missing from the file are estimated from relatives and drawn pale.
 
 ## Editing
 
@@ -193,7 +143,7 @@ top. The same fields work without an editor, for scripts:
 
 ```
 edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
-bin/ged-browser tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
+bin/gedcom-shell tree.ged -c 'edit @I12@ died="abt 1920" deathplace=Roma; save'
 edit census.date=1881 census.place=London religion=Methodist
 ```
 
@@ -332,7 +282,6 @@ ged.vfs      Location, FileSystem, Navigator   the directory view and path resol
 ged.shell    Shell, Tokenizer, Options, one class per command
 ged.edit     PersonForm (form ⇄ fields ⇄ GEDCOM nodes), Editor ($EDITOR launcher)
 ged.text     Style (ANSI, width-aware), Table
-ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions in rows, ancestors rising), Timeline (lifelines on a year axis, date estimates), Theme (geometry, fonts, palettes), Ornaments (baroque frames, scrollwork and plate emblems as path data), ChartPage (card marks → SVG + HTML), PngChart (marks → Java2D)
 ```
 
 - **Parse to a generic tree first.** The parser only knows the line grammar,
@@ -360,6 +309,32 @@ ged.chart    Layout (generation columns, tidy placement), Sephirot (medallions i
   replaces what JLine would provide. Its key handling is separate from the
   terminal setup, so it's unit-tested with byte streams. Style and tables
   work out display width themselves, so accented and CJK names line up.
+
+## Adding commands
+
+Another jar can add commands without changing this one. Implement
+`ged.shell.Command`, give the class a public no-argument constructor, and
+name it in `META-INF/services/ged.shell.Command`:
+
+```
+com.example.MyCommand
+```
+
+Put that jar on the classpath beside `gedcom-shell.jar` and run `ged.Main`;
+the command then shows up in `help`, runs, and is tab-completed like the
+built-in ones. A command can't take a built-in's name. `Context` gives it
+the navigator, the genealogy, the output stream and the style; `Options`
+parses its flags.
+
+As a Maven dependency (after `mvn install` here):
+
+```xml
+<dependency>
+  <groupId>com.github.ghosthack</groupId>
+  <artifactId>gedcom-shell</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
 
 ## Not (yet) supported
 
