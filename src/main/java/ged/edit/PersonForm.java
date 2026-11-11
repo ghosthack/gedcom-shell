@@ -293,11 +293,12 @@ public final class PersonForm {
     /// from the person's current one count as requests: the form always
     /// lists every field, so an untouched `deceased: no` must not veto a
     /// death date typed next to it.
-    public static List<Change> diffForm(Person p, String text) {
+    /// Dates are written in the file's GEDCOM version (`gedcom7`, else 5.5.1).
+    public static List<Change> diffForm(Person p, String text, boolean gedcom7) {
         var requested = parse(text);
         var current = values(p);
         requested.entrySet().removeIf(e -> Records.clean(e.getValue()).equals(current.get(e.getKey())));
-        return diff(p, requested);
+        return diff(p, requested, gedcom7);
     }
 
     // ---- validation, diff, apply ------------------------------------------
@@ -310,11 +311,17 @@ public final class PersonForm {
     ///
     /// @throws IllegalArgumentException with a user-facing message
     public static List<Change> diff(Person p, Map<Field, String> requested) {
+        return diff(p, requested, false);
+    }
+
+    /// As [#diff(Person, Map)] (which is for a GEDCOM 5.5.1 file), writing
+    /// dates in the file's GEDCOM version (`gedcom7`, else 5.5.1).
+    public static List<Change> diff(Person p, Map<Field, String> requested, boolean gedcom7) {
         var n = p.node();
         requested = christeningAsBaptism(n, requested);
         var current = values(p);
         var wanted = new LinkedHashMap<>(current);
-        for (var e : requested.entrySet()) wanted.put(e.getKey(), normalize(e.getKey(), e.getValue(), current.get(e.getKey())));
+        for (var e : requested.entrySet()) wanted.put(e.getKey(), normalize(e.getKey(), e.getValue(), current.get(e.getKey()), gedcom7));
 
         boolean hasDeathFacts = DEATH_FACTS.stream().anyMatch(f -> !wanted.get(f).isEmpty());
         if (hasDeathFacts && requested.containsKey(Field.DECEASED) && wanted.get(Field.DECEASED).equals("no")) {
@@ -366,7 +373,7 @@ public final class PersonForm {
         }
     }
 
-    private static String normalize(Field f, String value, String current) {
+    private static String normalize(Field f, String value, String current, boolean gedcom7) {
         var v = Records.clean(value);
         return switch (f) {
             case GIVEN, SURNAME, SUFFIX -> {
@@ -380,7 +387,7 @@ public final class PersonForm {
                 default -> throw new IllegalArgumentException("sex must be M, F or U, not '" + v + "'");
             };
             case DECEASED -> Records.yesNo(f.key, v);
-            default -> f.part == Field.Part.DATE ? Records.date(f.key, v, current) : v;
+            default -> f.part == Field.Part.DATE ? Records.date(f.key, v, current, gedcom7) : v;
         };
     }
 
@@ -399,7 +406,8 @@ public final class PersonForm {
             var given = after.getOrDefault(Field.GIVEN, p.name().given());
             var surname = after.getOrDefault(Field.SURNAME, p.name().surname());
             var suffix = after.getOrDefault(Field.SUFFIX, p.name().suffix());
-            var value = (given + " /" + surname + "/ " + suffix).strip();
+            // no surname and no suffix: plain text, not `John //`
+            var value = surname.isEmpty() && suffix.isEmpty() ? given : (given + " /" + surname + "/ " + suffix).strip();
             var name = rec.first("NAME").orElseGet(() -> rec.insert(0, "NAME", ""));
             name.setValue(value);
             // keep the optional name pieces consistent with the NAME line

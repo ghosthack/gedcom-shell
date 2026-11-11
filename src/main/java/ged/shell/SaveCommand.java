@@ -32,11 +32,14 @@ final class SaveCommand implements Command {
     public void run(List<String> args, Context ctx) {
         args = new java.util.ArrayList<>(args);
         boolean force = args.remove("-f") | args.remove("--force");
+        for (var a : args) {
+            if (a.startsWith("-") && a.length() > 1) throw new CommandException("unknown option " + a + " (to save to a file of that name: save ./" + a + ")");
+        }
         if (args.size() > 1) throw new CommandException("too many arguments");
         var g = ctx.g();
         var target = args.isEmpty()
                 ? g.source().orElseThrow(() -> new CommandException("no file to save to; give a FILE"))
-                : Path.of(args.getFirst());
+                : Path.of(Options.home(args.getFirst()));
         if (!g.isDirty() && args.isEmpty()) {
             ctx.out().println(ctx.style().dim("nothing to save"));
             return;

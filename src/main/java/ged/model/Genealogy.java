@@ -228,11 +228,15 @@ public final class Genealogy {
         }
         var prefix = prefixes.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(fallback);
         int max = 0;
+        int width = 0; // of zero-padded ids (`I0042`), which new ones follow
         for (var r : records) {
             var m = r.xref() == null ? null : ID.matcher(r.xref());
-            if (m != null && m.matches() && m.group(1).equals(prefix)) max = Math.max(max, Integer.parseInt(m.group(2)));
+            if (m == null || !m.matches() || !m.group(1).equals(prefix)) continue;
+            max = Math.max(max, Integer.parseInt(m.group(2)));
+            if (m.group(2).startsWith("0")) width = Math.max(width, m.group(2).length());
         }
-        var node = Node.record("@" + prefix + (max + 1) + "@", tag);
+        var number = width > 0 ? ("%0" + width + "d").formatted(max + 1) : Integer.toString(max + 1);
+        var node = Node.record("@" + prefix + number + "@", tag);
         int at = records.size();
         if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
         records.add(at, node);
@@ -457,7 +461,9 @@ public final class Genealogy {
     public static String fold(String s) {
         return Normalizer.normalize(s, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}+", "")
-                .replace('ł', 'l').replace('Ł', 'L').replace('ø', 'o').replace('Ø', 'O').replace("ß", "ss")
-                .toLowerCase(Locale.ROOT);
+                .toLowerCase(Locale.ROOT)
+                // letters Unicode doesn't take apart into a base and a mark
+                .replace('ł', 'l').replace('ø', 'o').replace('đ', 'd').replace('ð', 'd').replace('ı', 'i')
+                .replace("ß", "ss").replace("æ", "ae").replace("œ", "oe").replace("þ", "th");
     }
 }

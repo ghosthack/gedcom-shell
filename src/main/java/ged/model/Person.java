@@ -56,15 +56,19 @@ public record Person(
     }
 
     public GedDate death() {
-        return firstDated("DEAT", "BURI");
+        return firstDated("DEAT", "BURI", "CREM");
     }
 
     /// The date of the first of these events that has one: an undated
     /// `BIRT` (place only) doesn't hide a dated christening.
     private GedDate firstDated(String... tags) {
-        for (var tag : tags) {
-            var d = events.stream().filter(e -> e.tag().equals(tag)).map(Event::date).filter(x -> !x.isEmpty()).findFirst();
-            if (d.isPresent()) return d.get();
+        // a date that names a year first; failing that, whatever was written (a phrase)
+        for (var known : List.of(true, false)) {
+            for (var tag : tags) {
+                var d = events.stream().filter(e -> e.tag().equals(tag)).map(Event::date)
+                        .filter(x -> known ? x.hasYear() : !x.isEmpty()).findFirst();
+                if (d.isPresent()) return d.get();
+            }
         }
         return GedDate.EMPTY;
     }

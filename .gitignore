@@ -3,7 +3,8 @@ target/
 *.iml
 .vscode/
 .DS_Store
-src/test/resources/genealogiaAdrianFernandez.ged
+# private family files: name them *.private.ged (or list them in .git/info/exclude)
+*.private.ged
 
 # chart output and saved pictures, wherever they land (chart -o NAME.html/.png/.svg, Save as PDF)
 *.html
@@ -13,8 +14,8 @@ src/test/resources/genealogiaAdrianFernandez.ged
 *.pdf
 *.jpg
 *.jpeg
-# ...except test fixtures, which may need to be committed (extension by extension, so the
-# family .ged above stays ignored)
+# ...except test fixtures, which may need to be committed (extension by extension, so
+# private .ged files stay ignored)
 !/src/test/resources/**/*.html
 !/src/test/resources/**/*.png
 !/src/test/resources/**/*.svg

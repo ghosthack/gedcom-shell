@@ -117,4 +117,12 @@ public final class Options {
         }
         return sb.toString();
     }
+
+    /// A file name with a leading `~/` (or `~` alone) taken as the home
+    /// directory, as a shell would before the program saw it.
+    static String home(String file) {
+        var home = System.getProperty("user.home");
+        if (home == null || !(file.equals("~") || file.startsWith("~/"))) return file;
+        return home + file.substring(1);
+    }
 }

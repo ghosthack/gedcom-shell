@@ -140,9 +140,15 @@ public final class Links {
         g.removeFamily(fresh(g, f));
     }
 
-    private static Family fresh(Genealogy g, Family f) { return g.family(f.id()).orElse(f); }
+    /// The current record; a deleted one can't be linked to, or the file
+    /// would point at a record it doesn't have.
+    private static Family fresh(Genealogy g, Family f) {
+        return g.family(f.id()).orElseThrow(() -> new IllegalArgumentException(f.key() + " no longer exists"));
+    }
 
-    private static Person fresh(Genealogy g, Person p) { return g.person(p.id()).orElse(p); }
+    private static Person fresh(Genealogy g, Person p) {
+        return g.person(p.id()).orElseThrow(() -> new IllegalArgumentException(p.key() + " no longer exists"));
+    }
 
     private static void remove(Node rec, String tag, String pointer) {
         rec.all(tag).filter(n -> n.value().equals(pointer)).toList().forEach(rec::remove);

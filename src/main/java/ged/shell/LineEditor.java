@@ -29,7 +29,10 @@ import java.util.function.IntSupplier;
 /// Lines wider than the terminal wrap; the editor tracks which row the
 /// cursor is on so redraws stay in place.
 public final class LineEditor {
-    private final InputStream in;
+    /// How long after Esc the rest of a key sequence may take to arrive.
+    private static final long ESC_WAIT_NANOS = 50_000_000L;
+
+    private final java.io.PushbackInputStream in;
     private final PrintStream out;
     private final History history;
     private final IntSupplier columns;
@@ -51,7 +54,7 @@ public final class LineEditor {
     }
 
     public LineEditor(InputStream in, PrintStream out, History history, IntSupplier columns, Completer completer) {
-        this.in = in;
+        this.in = new java.io.PushbackInputStream(in, 1);
         this.out = out;
         this.history = history;
         this.columns = columns;
@@ -125,8 +128,20 @@ public final class LineEditor {
 
     /// ESC [ A, ESC O A (application mode), ESC [ 3 ~, ESC [ 1 ; 5 C ...
     private void escape() throws IOException {
+        // Esc on its own sends nothing more, and reading on would take the next
+        // key typed for part of a sequence. A key sequence follows at once, though
+        // over a slow link (ssh) not always in the same packet: give it a moment.
+        for (long until = System.nanoTime() + ESC_WAIT_NANOS; in.available() == 0; ) {
+            if (System.nanoTime() >= until) return;
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
         int b = in.read();
-        if (b != '[' && b != 'O') return; // lone ESC or Alt-key: ignore
+        if (b != '[' && b != 'O') return; // Alt-key: ignore
         var params = new StringBuilder();
         int c;
         while ((c = in.read()) >= 0 && (c >= '0' && c <= '9' || c == ';')) params.append((char) c);
@@ -234,6 +249,11 @@ public final class LineEditor {
         for (int i = 0; i < extra; i++) {
             int b = in.read();
             if (b < 0) break;
+            if ((b & 0xC0) != 0x80) {
+                // not a continuation byte: the character was cut short, and this is the next key
+                in.unread(b);
+                return "\uFFFD";
+            }
             bytes.write(b);
         }
         return bytes.toString(StandardCharsets.UTF_8);
@@ -321,7 +341,7 @@ public final class LineEditor {
         out.print("\r\u001B[J");
         out.print(prompt);
         out.print(buf);
-        int end = Style.width(prompt) + Style.width(buf.toString());
+        int end = cells(buf.length(), cols);
         // At an exact multiple of the width the terminal defers wrapping;
         // force it so the cursor really is on the next row.
         if (end > 0 && end % cols == 0) out.print("\r\n");
@@ -333,7 +353,7 @@ public final class LineEditor {
     /// the position of `cursor` in the buffer.
     private void placeCursor() {
         int cols = cols();
-        int at = Style.width(prompt) + Style.width(buf.substring(0, cursor));
+        int at = cells(cursor, cols);
         int row = at / cols;
         int col = at % cols;
         if (row < cursorRow) out.print("\u001B[" + (cursorRow - row) + "A");
@@ -342,6 +362,21 @@ public final class LineEditor {
         if (col > 0) out.print("\u001B[" + col + "C");
         cursorRow = row;
         out.flush();
+    }
+
+    /// Screen cells from the start of the prompt to position `upTo` of the
+    /// buffer. A double-width character that doesn't fit at the end of a row
+    /// is moved whole to the next one, leaving a blank cell behind.
+    private int cells(int upTo, int cols) {
+        int at = Style.width(prompt);
+        for (int i = 0; i < upTo; ) {
+            int cp = buf.codePointAt(i);
+            int w = Style.width(Character.toString(cp));
+            if (w > 1 && at % cols + w > cols) at += cols - at % cols;
+            at += w;
+            i += Character.charCount(cp);
+        }
+        return at;
     }
 
     private void moveToEnd() {

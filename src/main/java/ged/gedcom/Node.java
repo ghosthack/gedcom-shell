@@ -223,7 +223,10 @@ public final class Node {
         var rest = line;
         while (rest.length() > MAX_VALUE) {
             int cut = MAX_VALUE;
-            while (cut > MAX_VALUE / 2 && (rest.charAt(cut) == ' ' || rest.charAt(cut - 1) == ' ')) cut--;
+            // ...nor inside a character: an emoji's two halves, or a letter and its accent
+            while (cut > MAX_VALUE / 2 && (rest.charAt(cut) == ' ' || rest.charAt(cut - 1) == ' '
+                    || Character.isLowSurrogate(rest.charAt(cut))
+                    || Character.getType(rest.codePointAt(cut)) == Character.NON_SPACING_MARK)) cut--;
             out.add(rest.substring(0, cut));
             rest = rest.substring(cut);
         }

@@ -100,7 +100,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `pwd` | `pwd [-P]` | |
 | `show` | `show [-r] [PATH...]` | All facts in file order, parents/siblings, each marriage with children, notes (shared `@N@` notes resolved), age at death, last change. `-r` prints the raw GEDCOM record. `show /` summarises the file: encoding (and whether the header lied), counts, birth range, broken links. |
 | `tree` | `tree [-a\|-d] [-n N\|--all] [-S] [PATH]` | Descendants by default, grouped under each partner (`∞`, with family id and marriage year); `-S` lists children directly. `-a` draws the pedigree with labels (father → grandfather → great-grandfather → 2nd great-grandfather …). Anyone reached twice (cousin marriages, pedigree collapse) is drawn once and then marked `↻`. |
-| `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme modern\|classic\|baroque\|sephirot] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share: one self-contained HTML file (no internet needed) with ancestors to the left, descendants and their partners to the right, and one labelled column per generation. Click a person for dates, places and relatives; Print fits it to a landscape page, or use "Save as PDF". `-o x.png` writes a picture to text or email (drawn at 2×, or `--scale N`; huge charts are drawn smaller to keep the file manageable), and `-o x.svg` a scalable image. Default: 4 generations each way, saved as `NAME-tree.html`. Notes are left out unless you pass `--notes`. Birthplaces get a small country flag, worked out from the place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`); flags are drawn as shapes, not emoji, so they show on Windows and in PNGs. Cards show initials tinted by sex, a large flag, age (at death, or today's for the living), and the record id (`I30`); partners are joined by a marriage badge. The HTML follows the viewer's light/dark setting, with a switch, and always prints light; `--dark` makes a dark PNG/SVG (or starts the page dark). `--theme classic` is the plainer warm-paper look (light only, small flags, no ages or ids). `--theme baroque` is a 19th-century engraved look on parchment: cartouche cards with corner scrollwork, the birth country's flag as a medallion on the top edge (or a crest tinted by sex when there's none; `--arms` bears it on a shield for men or a lozenge for women instead, as old heraldry did), and the id on a plate, a double-ruled page border with corner arabesques, and a script title over a flourish (all drawn as vector paths, so identical in HTML, SVG and PNG); its dark version is candlelit. `--theme sephirot` draws the tree like an old engraved Tree of Life, ivory on black (`--light` for black on cream): one round medallion per person with the birth and death set around its ring, the relation (`Grandmother`) above it and the old sign ♂/♀ beside it; ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person, the sun of the plate, to every ancestor from the grandparents up (except where one would pass behind another medallion), opening into the channels they cross like streets at a crossroads; descendants hang below, fanning out from under their parents. `--timeline` draws the same people on a time axis instead (`NAME-timeline.html`): one bar per life, from birth to death or today, so longer lives are longer bars; children branch off their parents' bars in the year they were born, partners are joined at their marriage year, and dates missing from the file are estimated from relatives and drawn pale. |
+| `chart` | `chart [-a\|-d] [--timeline] [-n N\|--all] [-S] [-o FILE] [--scale N] [-t TITLE] [--lang en\|es] [--notes] [--theme NAME] [--arms] [--dark\|--light] [PATH]` | Writes a family-tree picture to share, as HTML, PNG or SVG. Default: 4 generations each way, saved as `NAME-tree.html`. See [Charts](#charts). |
 | `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 
 | `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth, baptism, death, burial, occupation and residence; or a family's marriage and divorce. See below. |
@@ -111,6 +111,54 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 
 Aliases: `ll` = `ls -l`, `cat` = `show`, `search` = `find`, `quit` = `exit`, `vi` = `edit`, `w` = `save`.
 Separate commands with `;`. `#` starts a comment. Quote names that contain spaces.
+
+## Charts
+
+`chart` writes a family-tree picture to share: ancestors to the left,
+descendants and their partners to the right, and one labelled column per
+generation. By default it draws 4 generations each way and saves
+`NAME-tree.html`.
+
+```
+chart                               # NAME-tree.html for where you are
+chart -a -n 6 -o pedigree.png       # ancestors only, 6 generations, as a picture
+chart --theme baroque --arms -o family.svg
+chart --timeline --lang es @I12@
+```
+
+**Output** is chosen by the name given to `-o`:
+
+- **`.html`** (the default) is one self-contained file that needs no
+  internet. Click a person for dates, places and relatives. Print fits it
+  to a landscape page, or use "Save as PDF". It follows the viewer's
+  light/dark setting, with a switch, and always prints light.
+- **`.png`** is a picture to text or email, drawn at 2× (or `--scale N`).
+  Huge charts are drawn smaller to keep the file manageable.
+- **`.svg`** is a scalable image.
+
+`--dark` makes a dark PNG or SVG, or starts the HTML page dark. Notes are
+left out unless you pass `--notes`.
+
+**Cards** show initials tinted by sex, a flag, the age (at death, or
+today's for the living) and the record id (`I30`). Partners are joined by a
+marriage badge. The flag is the birthplace's country, worked out from the
+place text (`…, Argentina`, `…, Scotland`, `Entre Ríos`). Flags are drawn
+as shapes, not emoji, so they show on Windows and in PNGs.
+
+**Themes** (`--theme`):
+
+| Theme | Look |
+|---|---|
+| `modern` | The default, described above. |
+| `classic` | Plainer, on warm paper: light only, small flags, no ages or ids. |
+| `baroque` | A 19th-century engraving on parchment. Cards are cartouches with corner scrollwork, the flag is a medallion on the top edge (a crest tinted by sex when there is none) and the id sits on a plate. The page has a double-ruled border with corner arabesques and a script title over a flourish. `--arms` bears the crest on a shield for men or a lozenge for women, as old heraldry did. The dark version is candlelit. Everything is drawn as vector paths, so it is identical in HTML, SVG and PNG. |
+| `sephirot` | An old engraved Tree of Life, ivory on black (`--light` for black on cream). Each person is a round medallion with birth and death around its ring, the relation (`Grandmother`) above and the sign ♂/♀ beside it. Ancestors rise above the person in triangles, each pair of parents joined by a channel carrying their marriage year, with rays from the person to every ancestor from the grandparents up. Descendants hang below, fanning out from under their parents. |
+
+**`--timeline`** draws the same people on a time axis instead
+(`NAME-timeline.html`): one bar per life, from birth to death or today, so
+longer lives are longer bars. Children branch off their parents' bars in
+the year they were born, and partners are joined at their marriage year.
+Dates missing from the file are estimated from relatives and drawn pale.
 
 ## Editing
 
@@ -162,7 +210,12 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   become `12 JUN 1850`, and `circa 1850` becomes `ABT 1850`. `BEF`, `AFT`,
   `BET … AND …`, `FROM … TO …` and `(free text)` are also accepted. A date
   you leave unchanged is never rewritten, even if its existing form is
-  unusual.
+  unusual. A range that runs backwards (`BET 1810 AND 1800`) is refused.
+  Dates are written in the file's GEDCOM version: 5.5.1 gets `B.C.` and
+  calendar escapes (`@#DJULIAN@`), 7.0 gets `BCE` and keywords (`JULIAN`).
+  GEDCOM 7 keeps free text in a `PHRASE` line, which `edit` can't write
+  yet, so `(free text)` is refused there, as are `INT` and dual years
+  (`1731/32`), which GEDCOM 7 doesn't have.
 - **Julian, Hebrew and French Republican dates** (`@#DJULIAN@ 4 OCT 1582`,
   `HEBREW 1 TSH 5785`, `@#DFRENCH R@ 18 BRUM 8`, GEDCOM 5.5.1 escape or
   GEDCOM 7 keyword) are checked against their own months and shown as
@@ -194,6 +247,8 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   yes`, which with no details writes `1 DIV Y`.
 - **Edits stay in memory until `save`**. The prompt shows `*` while there
   are unsaved changes, and `exit` (or Ctrl-D) warns once before discarding them.
+  In a script (`-c` or piped input) `exit` ends the run at once, with a
+  warning if edits were left unsaved.
 - **Saving produces a minimal diff.** Records you didn't edit are copied byte for
   byte, and inside an edited record only the changed lines are regenerated.
   The file keeps its encoding (UTF-8, ANSEL, Latin-1, …), line endings, BOM
