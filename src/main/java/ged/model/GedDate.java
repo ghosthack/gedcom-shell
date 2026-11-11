@@ -108,17 +108,22 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
     /// Parses `raw` in `calendar` (null: none named yet) unless the text names its own.
     private static GedDate parse(String raw, Calendar calendar) {
         var s = raw.toUpperCase(Locale.ROOT);
+        // a date phrase, `(died young, age 12)`, says nothing a number in it could be trusted for
+        if (s.startsWith("(")) return new GedDate(raw, Qualifier.PHRASE, Calendar.GREGORIAN, 0, 0, 0);
         var c = CALENDAR.matcher(s);
         if (c.find()) {
             calendar = calendarOf(c);
             s = s.substring(c.end());
         }
         var first = s.split("\\s+", 2)[0];
-        var q = switch (first) {
-            case "ABT", "ABOUT", "CAL", "EST", "CIRCA", "C." -> Qualifier.ABOUT;
+        // files also write the qualifier out or dot it: `Abt. 1850`, `BETWEEN 1800 AND 1810`
+        boolean dotted = first.endsWith(".");
+        var q = switch (dotted ? first.substring(0, first.length() - 1) : first) {
+            case "ABT", "ABOUT", "CAL", "EST", "CIRCA", "CA" -> Qualifier.ABOUT;
+            case "C" -> dotted ? Qualifier.ABOUT : Qualifier.EXACT;
             case "BEF", "BEFORE" -> Qualifier.BEFORE;
             case "AFT", "AFTER" -> Qualifier.AFTER;
-            case "BET" -> Qualifier.BETWEEN;
+            case "BET", "BETWEEN" -> Qualifier.BETWEEN;
             case "FROM", "TO" -> Qualifier.PERIOD;
             case "INT" -> Qualifier.PHRASE;
             default -> Qualifier.EXACT;
@@ -130,9 +135,19 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
                 s = s.substring(c.end());
             }
         }
+        // `INT 1850 (from his age)`: the reason is not part of the date
+        int paren = s.indexOf('(');
+        if (paren >= 0) s = s.substring(0, paren).strip();
+        boolean western = calendar == null || calendar == Calendar.GREGORIAN || calendar == Calendar.JULIAN;
+        if (western) s = westernMonths(s);
         if (calendar == null) {
             var odd = irregular(raw, q, s);
             if (odd != null) return odd;
+        } else if (western) {
+            var dm = DAY_MONTH_ONLY.matcher(s);
+            if (dm.matches() && westernMonth(dm.group(2)) > 0) {
+                return new GedDate(raw, q, calendar, 0, westernMonth(dm.group(2)), Integer.parseInt(dm.group(1)));
+            }
         }
         var m = DATE.matcher(s);
         if (!m.find()) return new GedDate(raw, Qualifier.PHRASE, calendar == null ? Calendar.GREGORIAN : calendar, 0, 0, 0);
@@ -153,13 +168,12 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
     private static final Pattern ISO_DATE = Pattern.compile("(\\d{4})-(\\d{1,2})(?:-(\\d{1,2}))?(?!\\d)");
     private static final Pattern NUMERIC = Pattern.compile("\\d{1,2}[./-]\\d{1,2}[./-](\\d{4})(?!\\d)");
     private static final Pattern MONTH_FIRST = Pattern.compile("([A-Z]{3,9})\\.?\\s+(\\d{1,2})(?:ST|ND|RD|TH)?,?\\s+(\\d{3,4})(?![\\d/])");
-    private static final Pattern LONG_MONTH = Pattern.compile("(?:(\\d{1,2})\\s+)?([A-Z]{3,9})\\.?,?\\s+(\\d{3,4})(?![\\d/])");
     private static final Pattern DAY_MONTH_ONLY = Pattern.compile("(\\d{1,2})\\s+([A-Z]{3,9})\\.?\\s*$");
 
     /// Dates GEDCOM doesn't allow but files contain: `1850-06-12`,
-    /// `12/06/1850`, `June 12, 1850`, `3 MARCH 1900`, and `12 JUN` with no
-    /// year. The standard pattern would take their leading day for the
-    /// year. Null if `s` (upper case, qualifier removed) is none of these.
+    /// `12/06/1850`, `June 12, 1850`, and `12 JUN` with no year. The
+    /// standard pattern would take their leading day for the year. Null if
+    /// `s` (upper case, qualifier removed, months abbreviated) is none of these.
     private static GedDate irregular(String raw, Qualifier q, String s) {
         Matcher m;
         if ((m = ISO_DATE.matcher(s)).lookingAt()) {
@@ -175,11 +189,6 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
         if ((m = MONTH_FIRST.matcher(s)).lookingAt() && westernMonth(m.group(1)) > 0) {
             return new GedDate(raw, q, Integer.parseInt(m.group(3)), westernMonth(m.group(1)), Integer.parseInt(m.group(2)));
         }
-        // a month written out or dotted (MARCH, SEPT.), which the standard pattern doesn't know
-        if ((m = LONG_MONTH.matcher(s)).lookingAt() && !MONTHS.contains(m.group(2)) && westernMonth(m.group(2)) > 0) {
-            return new GedDate(raw, q, Integer.parseInt(m.group(3)), westernMonth(m.group(2)),
-                    m.group(1) == null ? 0 : Integer.parseInt(m.group(1)));
-        }
         if ((m = DAY_MONTH_ONLY.matcher(s)).matches() && westernMonth(m.group(2)) > 0) {
             return new GedDate(raw, q, 0, westernMonth(m.group(2)), Integer.parseInt(m.group(1)));
         }
@@ -187,6 +196,18 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
     }
 
     private static int westernMonth(String word) { return month(word, Calendar.GREGORIAN); }
+
+    private static final Pattern MONTH_WORD = Pattern.compile("\\b([A-Z]{3,9})\\b\\.?,?");
+
+    /// Month names as files write them (`MARCH`, `Sept.`, `FEB.`) put in
+    /// GEDCOM's three letters, so the standard pattern reads them whatever
+    /// surrounds them: a calendar, a dual year, B.C.
+    private static String westernMonths(String s) {
+        return MONTH_WORD.matcher(s).replaceAll(r -> {
+            int month = westernMonth(r.group(1));
+            return month > 0 ? MONTHS.get(month - 1) : Matcher.quoteReplacement(r.group());
+        });
+    }
 
     private static Calendar calendarOf(Matcher m) {
         return Calendar.named(m.group(1) != null ? m.group(1).strip() : m.group(2));
@@ -220,7 +241,7 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
             calendar = calendarOf(c);
             s = s.substring(c.end());
         }
-        var parts = s.replaceFirst("^(?:BET|FROM)\\s+", "").split("\\s+(?:AND|TO)\\s+");
+        var parts = s.replaceFirst("^(?:BET(?:WEEN)?\\.?|FROM)\\s+", "").split("\\s+(?:AND|TO)\\s+");
         if (parts.length != 2) return List.of();
         return List.of(parse(parts[0].strip(), calendar), parse(parts[1].strip(), calendar));
     }
@@ -266,6 +287,59 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
         var s = input.strip().replaceAll("\\s+", " ");
         if (s.isEmpty()) return "";
         if (s.startsWith("(") && s.endsWith(")")) return s;
+        var out = canonical(s, input);
+        var ends = parse(out).ends();
+        if (ends.size() == 2 && inOrder(ends.get(1), ends.get(0)) && !inOrder(ends.get(0), ends.get(1))) {
+            throw new IllegalArgumentException("'" + input.strip() + "': the first date is after the second");
+        }
+        return out;
+    }
+
+    /// As [#normalize(String)], in the forms the file's GEDCOM version has.
+    /// GEDCOM 7 names calendars by keyword (`JULIAN`) and writes `BCE`;
+    /// 5.5.1 uses escapes (`@#DJULIAN@`) and `B.C.`. GEDCOM 7 has no
+    /// parenthesised date phrase (it keeps one in a `PHRASE` line under an
+    /// empty `DATE`), no `INT` and no dual year (`1731/32`), so those are
+    /// refused rather than written wrongly.
+    ///
+    /// @throws IllegalArgumentException if the text is not a GEDCOM date
+    public static String normalize(String input, boolean gedcom7) {
+        var out = normalize(input);
+        if (out.startsWith("(")) {
+            if (gedcom7) throw new IllegalArgumentException("'" + input.strip() + "': a GEDCOM 7 file keeps a date phrase"
+                    + " in a PHRASE line, which edit can't write; give a date, or add the phrase to the file directly");
+            return out;
+        }
+        int paren = out.indexOf('(');
+        if (gedcom7 && out.startsWith("INT ")) {
+            throw new IllegalArgumentException("'" + input.strip() + "': GEDCOM 7 has no INT; write "
+                    + out.substring(4, paren).strip() + ", or EST or CAL before it for a worked-out date");
+        }
+        var date = paren < 0 ? out : out.substring(0, paren);
+        if (gedcom7 && date.matches(".*\\d/\\d.*")) {
+            throw new IllegalArgumentException("'" + input.strip() + "': GEDCOM 7 has no dual year; write the date"
+                    + " with one year and its calendar, e.g. JULIAN 11 FEB 1731");
+        }
+        var rest = paren < 0 ? "" : out.substring(paren);
+        if (gedcom7) {
+            date = Pattern.compile("@#D(GREGORIAN|JULIAN|HEBREW|FRENCH R)@").matcher(date)
+                    .replaceAll(r -> Calendar.named(r.group(1)).keyword());
+            date = date.replace(" B.C.", " BCE");
+        } else {
+            date = Pattern.compile("(?<![#\\w])(GREGORIAN|JULIAN|HEBREW|FRENCH_R)(?![\\w@])").matcher(date)
+                    .replaceAll(r -> Matcher.quoteReplacement(Calendar.named(r.group(1)).escape()));
+        }
+        return date + rest;
+    }
+
+    /// True unless `a` is certainly after `b`, comparing only the parts both give.
+    private static boolean inOrder(GedDate a, GedDate b) {
+        if (!a.hasYear() || !b.hasYear() || a.year() != b.year()) return !a.hasYear() || !b.hasYear() || a.year() < b.year();
+        if (a.month() == 0 || b.month() == 0 || a.month() != b.month()) return a.month() == 0 || b.month() == 0 || a.month() < b.month();
+        return a.day() == 0 || b.day() == 0 || a.day() <= b.day();
+    }
+
+    private static String canonical(String s, String input) {
         var mark = Mark.NONE;
         var cal = CALENDAR_MARK.matcher(s.toUpperCase(Locale.ROOT));
         if (cal.matches()) {
@@ -286,9 +360,12 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
         if ((m = Pattern.compile("^INT (.+?) ?(\\(.*\\))$").matcher(u)).matches()) {
             return "INT " + side(m.group(1), input, mark) + " " + s.substring(s.indexOf('('));
         }
-        if ((m = Pattern.compile("^(ABT|ABOUT|CIRCA|CA\\.?|C\\.|CAL|EST|BEF|BEFORE|AFT|AFTER) (.+)$").matcher(u)).matches()) {
+        if (u.equals("INT") || u.startsWith("INT ")) {
+            throw new IllegalArgumentException("'" + input.strip() + "': INT takes a date and the reason in parentheses: INT 1850 (from his age)");
+        }
+        if ((m = Pattern.compile("^(ABT|ABOUT|CIRCA|CA|C(?=\\.)|CAL|EST|BEF|BEFORE|AFT|AFTER)\\.? (.+)$").matcher(u)).matches()) {
             var q = switch (m.group(1)) {
-                case "ABOUT", "CIRCA", "CA", "CA.", "C." -> "ABT";
+                case "ABOUT", "CIRCA", "CA", "C" -> "ABT";
                 case "BEFORE" -> "BEF";
                 case "AFTER" -> "AFT";
                 default -> m.group(1);
@@ -325,6 +402,11 @@ public record GedDate(String raw, Qualifier qualifier, Calendar calendar, int ye
         if (!western && (m.group(4) != null || m.group(5) != null)) throw new IllegalArgumentException(
                 "'" + input.strip() + "': only Gregorian and Julian dates can have a dual year or B.C.");
         int year = Integer.parseInt(m.group(3));
+        if (year == 0) throw new IllegalArgumentException("'" + input.strip() + "': there is no year 0");
+        if (m.group(4) != null && Integer.parseInt(m.group(4).substring(1)) != (year + 1) % 100) {
+            throw new IllegalArgumentException("'" + input.strip() + "': a dual year names two years in a row ("
+                    + year + "/" + "%02d".formatted((year + 1) % 100) + ")");
+        }
         var sb = new StringBuilder();
         if (m.group(2) != null) {
             int month = month(m.group(2), calendar);

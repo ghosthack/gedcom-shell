@@ -36,7 +36,10 @@ public final class Ansel {
     /// before it. Throws [Charsets.UnmappableException] for characters
     /// ANSEL has no code for.
     public static byte[] encode(String text) {
-        var nfd = Normalizer.normalize(text, Normalizer.Form.NFD);
+        // ANSEL has Ơ and Ư as letters of their own, not as a letter and a horn
+        var nfd = Normalizer.normalize(text, Normalizer.Form.NFD)
+                .replace("O\u031B", "\u01A0").replace("o\u031B", "\u01A1")
+                .replace("U\u031B", "\u01AF").replace("u\u031B", "\u01B0");
         var out = new java.io.ByteArrayOutputStream(nfd.length());
         var marks = new java.io.ByteArrayOutputStream();
         int base = -1;

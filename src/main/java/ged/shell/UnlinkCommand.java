@@ -43,7 +43,21 @@ final class UnlinkCommand implements Command {
 
     @Override
     public void run(List<String> args, Context ctx) {
+        try {
+            unlink(args, ctx);
+        } catch (IllegalArgumentException e) {
+            // from Links: a record that no longer exists
+            throw new CommandException(e.getMessage());
+        }
+    }
+
+    private static void unlink(List<String> args, Context ctx) {
         if (args.size() != 1) throw new CommandException("usage: unlink PATH (see: help unlink)");
+        var typed = java.util.Arrays.stream(args.getFirst().split("/")).filter(t -> !t.isEmpty() && !t.equals(".")).toList();
+        // `.`, `-` and `..` name a place, not a relative: the route that led there says nothing about who to cut loose
+        if (typed.isEmpty() || typed.getLast().equals("..") || args.getFirst().equals("-")) {
+            throw new CommandException(args.getFirst() + " is not a relationship; try children/I3, spouses/I8, father");
+        }
         var path = ctx.nav().resolve(args.getFirst());
         var segs = path.segments();
         if (segs.size() < 2) throw new CommandException(args.getFirst() + " is not a relationship; try children/I3, spouses/I8, father");

@@ -14,9 +14,15 @@ public record Name(String given, String surname, String suffix) {
         if (a >= 0 && b > a) {
             given = v.substring(0, a).strip();
             surname = v.substring(a + 1, b).strip();
-            suffix = v.substring(b + 1).strip();
+            // a second surname in its own slashes (`/García/ /López/`) reads on as text
+            suffix = v.substring(b + 1).replace("/", " ").strip().replaceAll("\\s+", " ");
+        } else if (a >= 0) {
+            // the closing slash is missing: `John /Doe`
+            given = v.substring(0, a).strip();
+            surname = v.substring(a + 1).strip();
+            suffix = "";
         } else {
-            given = v.replace("/", "").strip();
+            given = v;
             surname = "";
             suffix = "";
         }
