@@ -21,6 +21,11 @@ public final class Shell {
     private boolean exitRequested;
 
     private boolean exitWarned;
+    /// True when commands come from `-c` or a pipe: nobody is there to
+    /// answer a warning, so `exit` exits.
+    private boolean scripted;
+
+    public void scripted(boolean scripted) { this.scripted = scripted; }
 
     public Shell(Navigator nav, PrintStream out, PrintStream err, Style style) {
         this(nav, out, err, style, Editor.external());
@@ -68,7 +73,7 @@ public final class Shell {
             args = expanded;
         }
         if (name.equals("exit")) {
-            if (ctx.g().isDirty() && !exitWarned) {
+            if (ctx.g().isDirty() && !exitWarned && !scripted) {
                 exitWarned = true;
                 err.println(ctx.style().yellow(ctx.g().dirtyCount() + " unsaved record(s); `save` first, or exit again to discard"));
                 return true;
@@ -124,7 +129,7 @@ public final class Shell {
 
     /// For non-interactive runs (-c, piped input) that end with edits unsaved.
     public void warnIfDirty() {
-        if (ctx.g().isDirty() && !exitRequested) {
+        if (ctx.g().isDirty() && (scripted || !exitRequested)) {
             err.println(ctx.style().yellow("warning: " + ctx.g().dirtyCount() + " edited record(s) not saved (add `save`)"));
         }
     }
@@ -145,6 +150,7 @@ public final class Shell {
     /// warns once before quitting.
     public int repl(LineInput input, boolean interactive) throws IOException {
         boolean allOk = true;
+        scripted = !interactive;
         while (!exitRequested) {
             var line = input.readLine(interactive ? prompt() : "");
             if (line == null) {

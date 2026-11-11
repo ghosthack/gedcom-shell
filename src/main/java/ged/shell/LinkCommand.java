@@ -75,11 +75,19 @@ final class LinkCommand implements Command {
         var base = slash < 0 ? "" : where.substring(0, slash + 1);
         if (List.of("father", "mother", "husband", "wife").contains(last)) {
             var loc = ctx.nav().resolve(base).location();
+            boolean male = last.equals("father") || last.equals("husband");
             return switch (loc) {
-                case Location.PersonDir(var p) -> asParent(g, x, p, last.equals("father") ? Slot.HUSB : Slot.WIFE, name);
+                case Location.PersonDir(var p) -> {
+                    // a person's husband or wife is a partner, not a parent
+                    if (last.equals("husband") || last.equals("wife")) throw new CommandException(
+                            last + " names a place in a family; for " + p.name().display() + "'s partner use spouses"
+                            + " (or families/F…/" + last + ")");
+                    yield asParent(g, x, p, male ? Slot.HUSB : Slot.WIFE, name);
+                }
                 case Location.FamilyDir(var f) -> {
-                    Links.setPartner(g, f, last.equals("husband") ? Slot.HUSB : Slot.WIFE, x);
-                    yield name + " is now the " + last + " in " + family(ctx, f);
+                    var slot = male ? Slot.HUSB : Slot.WIFE;
+                    Links.setPartner(g, f, slot, x);
+                    yield name + " is now the " + slot.word + " in " + family(ctx, f);
                 }
                 default -> throw new CommandException(last + " only makes sense for a person or a family");
             };

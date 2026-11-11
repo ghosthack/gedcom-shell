@@ -145,7 +145,7 @@ final class EditCommand implements Command {
 
         @Override
         List<PersonForm.Change> diff(Map<String, String> byKey) {
-            return PersonForm.diff(p, fields(byKey, PersonForm.Field::parse, this::unknown));
+            return PersonForm.diff(p, fields(byKey, PersonForm.Field::parse, this::unknown), ctx.g().isGedcom7());
         }
 
         /// Points family fields at the family they belong to.
@@ -159,7 +159,7 @@ final class EditCommand implements Command {
             return key + " is a family field: " + where;
         }
 
-        @Override List<PersonForm.Change> diffForm(String text) { return PersonForm.diffForm(p, text); }
+        @Override List<PersonForm.Change> diffForm(String text) { return PersonForm.diffForm(p, text, ctx.g().isGedcom7()); }
 
         @Override
         List<Row> rows(List<PersonForm.Change> changes) {
@@ -202,10 +202,10 @@ final class EditCommand implements Command {
             return FamilyForm.diff(f, fields(byKey, FamilyForm.Field::parse, key ->
                     PersonForm.Field.parse(key).isPresent()
                             ? key + " is a person field: edit husband, wife or a child (e.g. edit husband " + key + "=…)"
-                            : "unknown field '" + key + "' (see: help edit)"));
+                            : "unknown field '" + key + "' (see: help edit)"), ctx.g().isGedcom7());
         }
 
-        @Override List<FamilyForm.Change> diffForm(String text) { return FamilyForm.diffForm(f, text); }
+        @Override List<FamilyForm.Change> diffForm(String text) { return FamilyForm.diffForm(f, text, ctx.g().isGedcom7()); }
 
         @Override
         List<Row> rows(List<FamilyForm.Change> changes) {

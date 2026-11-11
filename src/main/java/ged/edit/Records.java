@@ -49,12 +49,12 @@ final class Records {
         return value.strip().replaceAll("\\s+", " ");
     }
 
-    /// A date, normalised; text equal to `current` is kept as it is, even
+    /// A date, normalised for the file's GEDCOM version; text equal to `current` is kept as it is, even
     /// if the file's form is unusual.
-    static String date(String key, String v, String current) {
+    static String date(String key, String v, String current, boolean gedcom7) {
         if (v.equals(current)) return current;
         try {
-            return GedDate.normalize(v);
+            return GedDate.normalize(v, gedcom7);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(key + ": " + e.getMessage());
         }
