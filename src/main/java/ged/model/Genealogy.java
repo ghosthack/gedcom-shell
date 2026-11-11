@@ -164,6 +164,51 @@ public final class Genealogy {
         return valueOrPointer;
     }
 
+    /// The person's pictures, in file order: the first is the preferred one
+    /// (GEDCOM 7's rule; a link marked `_PRIM Y`, as 5.5.1 programs write,
+    /// goes ahead of it). Both forms of `OBJE` are read: a pointer to a
+    /// multimedia record, and 5.5.1's embedded form with the `FILE` inline.
+    /// The crop sits on the person's own link, so people sharing one group
+    /// photo each have their own. Links without a file are left out.
+    public List<Photo> photos(Person p) {
+        var first = new ArrayList<Photo>();
+        var rest = new ArrayList<Photo>();
+        p.node().links("OBJE").forEach(link -> {
+            var rec = link.isPointer() ? otherRecords.get(link.value()) : link;
+            if (rec == null) return;
+            var crop = Photo.cropOf(link);
+            var title = link.text("TITL").isBlank() ? rec.text("TITL") : link.text("TITL");
+            boolean primary = link.text("_PRIM").strip().equalsIgnoreCase("Y");
+            rec.all("FILE").filter(f -> !f.value().isBlank()).forEach(f -> {
+                var t = title.isBlank() ? f.text("TITL") : title;
+                (primary ? first : rest).add(new Photo(f.value().strip(), t.strip(), crop, Photo.dateOf(link, f, rec)));
+            });
+        });
+        first.addAll(rest);
+        return List.copyOf(first);
+    }
+
+    /// Where a `FILE` value is on disk: an absolute path or `file:` URL as
+    /// it stands, anything else relative to the GEDCOM file's folder.
+    /// Empty for web addresses, for a file that is not there, and for a
+    /// genealogy that was not loaded from a file and a relative path.
+    public Optional<Path> mediaPath(String file) {
+        try {
+            Path path;
+            if (file.regionMatches(true, 0, "file:", 0, 5)) path = Path.of(java.net.URI.create(file.replace(" ", "%20")));
+            else if (file.matches("(?i)[a-z][a-z0-9+.-]+://.*")) return Optional.empty();
+            else path = Path.of(file.replace('\\', java.io.File.separatorChar));
+            if (!path.isAbsolute()) {
+                if (source == null) return Optional.empty();
+                var dir = source.toAbsolutePath().getParent();
+                path = dir == null ? path : dir.resolve(path);
+            }
+            return Files.isRegularFile(path) ? Optional.of(path.normalize()) : Optional.empty();
+        } catch (RuntimeException e) { // a path this system cannot express
+            return Optional.empty();
+        }
+    }
+
     /// `@I1@` → `I1`
     public static String key(String xref) {
         return xref.length() > 2 && xref.startsWith("@") && xref.endsWith("@") ? xref.substring(1, xref.length() - 1) : xref;
