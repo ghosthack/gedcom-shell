@@ -203,7 +203,8 @@ edit @F2@ divorced=no divorce.date= divorce.place=
   byte, and inside an edited record only the changed lines are regenerated.
   The file keeps its encoding (UTF-8, ANSEL, Latin-1, …), line endings, BOM
   and permissions. The record's existing `CHAN` date is updated, as
-  genealogy programs do. A character the file's encoding can't hold is
+  genealogy programs do (in UTC, marked `Z`, in a GEDCOM 7 file; in local
+  time in 5.5.1, which can't mark it). A character the file's encoding can't hold is
   refused before anything is written. The write is atomic. Lines the
   parser could not read are kept where they were, and a file that mixes
   line endings keeps each line's own.
@@ -328,7 +329,8 @@ parses its flags.
 
 The genealogy also reads what no built-in command shows yet, for commands
 that want it. `Genealogy.photos(person)` lists a person's pictures (`OBJE`
-links, pointer or embedded), preferred one first, each with its file,
+links, pointer or embedded; one per link, taking the image among a
+record's several `FILE`s), preferred one first, each with its file,
 title, date and the crop that shows that person; `Genealogy.mediaPath(file)`
 turns a picture's `FILE` value into a path on disk, relative to the GEDCOM
 file.
