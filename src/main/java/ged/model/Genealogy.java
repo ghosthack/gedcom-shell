@@ -57,34 +57,43 @@ public final class Genealogy {
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
         int line = 1 + lineCount(layout.prefix()); // of the record being read
+        var lineOf = new java.util.HashMap<Node, Integer>();
         var firstAt = new java.util.HashMap<String, Integer>();
+        var repeats = new ArrayList<Integer>(); // indexes of people and families whose id was taken
         for (int i = 0; i < records.size(); i++) {
             var r = records.get(i);
-            switch (r.tag()) {
-                case "HEAD" -> head = r;
-                case "INDI" -> put(people, r.xref(), Person.of(r), line, firstAt);
-                case "FAM" -> put(families, r.xref(), Family.of(r), line, firstAt);
-                default -> {
-                    if (r.xref() != null && otherRecords.putIfAbsent(r.xref(), r) != null) {
-                        warnings.add("duplicate id " + r.xref() + " at line " + line + " ignored");
-                    }
-                }
-            }
+            lineOf.put(r, line);
             line += lineCount(rawRecords.get(i));
+            if (r.tag().equals("HEAD")) head = r;
+            else if (r.tag().equals("INDI") || r.tag().equals("FAM")) {
+                if (r.xref() == null) warnings.add("record without id at line " + lineOf.get(r) + " ignored");
+                else if (firstAt.putIfAbsent(r.xref(), lineOf.get(r)) != null) repeats.add(i);
+                else index(r);
+            } else if (r.xref() != null && otherRecords.putIfAbsent(r.xref(), r) != null) {
+                warnings.add("duplicate id " + r.xref() + " at line " + lineOf.get(r) + " ignored");
+            }
+        }
+        // A person or family whose id another record already has can't be
+        // told apart by it, so here it goes by the next free id. The file
+        // keeps it as it is until the record is edited; then it is written
+        // under the new id. Pointers to the shared id mean the first record.
+        for (int i : repeats) {
+            var r = records.get(i);
+            boolean person = r.tag().equals("INDI");
+            var fresh = r.renamed(nextId(person ? "I" : "F", person ? people.keySet() : families.keySet()));
+            records.set(i, fresh);
+            index(fresh);
+            warnings.add("duplicate id " + r.xref() + ": the record at line " + lineOf.get(r) + " is read as " + fresh.xref()
+                    + " (the first is at line " + firstAt.get(r.xref()) + ") and is saved under that id once edited");
         }
         this.header = head;
         people.values().forEach(p -> searchText.put(p.id(), fold(p.allNames())));
         checkLinks();
     }
 
-    /// Indexes a record read at `line`. A second record with an id already
-    /// taken stays in the file but is not indexed; the warning says where
-    /// both are, since only a text editor can tell them apart.
-    private <T> void put(Map<String, T> map, String id, T value, int line, Map<String, Integer> firstAt) {
-        if (id == null) warnings.add("record without id at line " + line + " ignored");
-        else if (map.putIfAbsent(id, value) != null) {
-            warnings.add("duplicate id " + id + ": the record at line " + line + " is ignored (the first is at line " + firstAt.get(id) + ")");
-        } else firstAt.put(id, line);
+    private void index(Node r) {
+        if (r.tag().equals("INDI")) people.put(r.xref(), Person.of(r));
+        else families.put(r.xref(), Family.of(r));
     }
 
     private static int lineCount(String text) {
@@ -293,6 +302,18 @@ public final class Genealogy {
     /// Its id follows the file's own style: the prefix most of `ids` use
     /// (`I`, `P`, …; `fallback` if none), numbered after the highest in use.
     private Node newRecord(String tag, String fallback, Set<String> ids) {
+        var node = Node.record(nextId(fallback, ids), tag);
+        if (records.isEmpty()) startFile();
+        int at = records.size();
+        if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
+        records.add(at, node);
+        rawRecords.add(at, "");
+        dirty.add(node);
+        return node;
+    }
+
+    /// An id no record has, in the file's own style (see [#newRecord]).
+    private String nextId(String fallback, Set<String> ids) {
         var prefixes = new LinkedHashMap<String, Integer>();
         for (var id : ids) {
             var m = ID.matcher(id);
@@ -308,14 +329,7 @@ public final class Genealogy {
             if (m.group(2).startsWith("0")) width = Math.max(width, m.group(2).length());
         }
         var number = width > 0 ? ("%0" + width + "d").formatted(max + 1) : Integer.toString(max + 1);
-        var node = Node.record("@" + prefix + number + "@", tag);
-        if (records.isEmpty()) startFile();
-        int at = records.size();
-        if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
-        records.add(at, node);
-        rawRecords.add(at, "");
-        dirty.add(node);
-        return node;
+        return "@" + prefix + number + "@";
     }
 
     /// Gives a file that had no records the header and trailer every
