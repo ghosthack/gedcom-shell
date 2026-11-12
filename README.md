@@ -299,6 +299,11 @@ ged.text     Style (ANSI, width-aware), Table
   (`show /` reports it). For 7.0, `SNOTE` shared notes are resolved like
   `NOTE @N1@`, `EXID`s are shown as external ids, `@VOID@` pointers mean
   "no link", and edited lines are saved without `CONC`, which 7.0 removed.
+- **A repeated id doesn't hide a record.** When two people or two families
+  have the same id, the second is read under the next free one (`show /`
+  says which, and where both are), so it can be opened and edited. The file
+  keeps the record as it is until you edit it; then it is saved under the
+  new id. Pointers to the shared id mean the first record.
 - **Entries and rows.** `FileSystem.entries()` holds the named children a path
   walks through. `FileSystem.rows()` holds what `ls` prints and what row
   numbers index into; for a person, that's the flattened relatives.

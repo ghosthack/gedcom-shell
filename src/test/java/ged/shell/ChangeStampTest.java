@@ -51,22 +51,52 @@ class ChangeStampTest {
         assertTrue(chan.matches("1 CHAN\n2 DATE \\d{1,2} [A-Z]{3} \\d{4}\n3 TIME \\d\\d:\\d\\d:\\d\\d\n"), chan);
     }
 
-    @Test
-    void aRepeatedIdSaysWhereBothRecordsAre() {
-        var g = Genealogy.of("""
-                0 HEAD
-                0 @I1@ INDI
-                1 NAME A /One/
+    private static final String REPEATED = """
+            0 HEAD
+            0 @I1@ INDI
+            1 NAME A /One/
+            1 FAMS @F1@
 
-                0 @I1@ INDI
-                1 NAME B /Two/
-                0 @N1@ NOTE first
-                0 @N1@ NOTE second
-                0 TRLR
-                """);
+            0 @I1@ INDI
+            1 NAME B /Two/
+            1 SEX F
+            0 @I2@ INDI
+            1 NAME C /Three/
+            0 @F1@ FAM
+            1 HUSB @I1@
+            0 @F1@ FAM
+            1 WIFE @I2@
+            0 @N1@ NOTE first
+            0 @N1@ NOTE second
+            0 TRLR
+            """;
+
+    @Test
+    void aRepeatedIdIsReadUnderTheNextFreeOne() {
+        var g = Genealogy.of(REPEATED);
         assertEquals(java.util.List.of(
-                "duplicate id @I1@: the record at line 5 is ignored (the first is at line 2)",
-                "duplicate id @N1@ at line 8 ignored"), g.warnings());
+                "duplicate id @N1@ at line 16 ignored",
+                "duplicate id @I1@: the record at line 6 is read as @I3@ (the first is at line 2) and is saved under that id once edited",
+                "duplicate id @F1@: the record at line 13 is read as @F2@ (the first is at line 11) and is saved under that id once edited"),
+                g.warnings());
         assertEquals("A One", g.person("I1").orElseThrow().name().full());
+        assertEquals("B Two", g.person("I3").orElseThrow().name().full());
+        assertEquals(java.util.Optional.of("@I2@"), g.family("F2").orElseThrow().wife());
+        assertEquals(REPEATED, g.render(), "nothing changes in the file until it is edited");
+    }
+
+    @Test
+    void editingItWritesItUnderItsNewId() {
+        var g = Genealogy.of(REPEATED);
+        var sink = new PrintStream(new ByteArrayOutputStream(), true, StandardCharsets.UTF_8);
+        var shell = new Shell(new Navigator(new FileSystem(g), g.person("I1")), sink, sink, Style.PLAIN);
+        assertTrue(shell.execute("cd two; edit born=1900; link I3 /families/F2/children"));
+        assertEquals(REPEATED
+                .replace("0 @I1@ INDI\n1 NAME B /Two/\n1 SEX F\n", "0 @I3@ INDI\n1 NAME B /Two/\n1 SEX F\n1 BIRT\n2 DATE 1900\n1 FAMC @F2@\n")
+                .replace("0 @F1@ FAM\n1 WIFE @I2@\n", "0 @F2@ FAM\n1 WIFE @I2@\n1 CHIL @I3@\n"), g.render());
+        var again = Genealogy.of(g.render());
+        assertEquals(java.util.List.of("duplicate id @N1@ at line 20 ignored"), again.warnings());
+        assertTrue(shell.execute("add person \"D /Four/\""));
+        assertTrue(g.person("I4").isPresent(), "new ids steer clear of the ones handed out on reading");
     }
 }
