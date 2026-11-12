@@ -83,7 +83,8 @@ final class FindCommand implements Command {
             ctx.out().println(s.yellow("no matches"));
             return;
         }
-        ctx.out().print(Listing.render(Listing.number(ctx.fs().rows(new Location.Found())), o.has("long"), ctx));
+        ctx.out().print(Listing.render(Listing.number(ctx.fs().rows(new Location.Found())), o.has("long"), ctx,
+                p -> g.matchedAs(p, name)));
         ctx.out().println(s.dim(ordered.size() + (ordered.size() == 1 ? " match" : " matches") + " → /found  (cd /found/N)"));
     }
 

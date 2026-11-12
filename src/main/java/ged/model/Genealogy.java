@@ -65,7 +65,7 @@ public final class Genealogy {
             }
         }
         this.header = head;
-        people.values().forEach(p -> searchText.put(p.id(), fold(p.name().full())));
+        people.values().forEach(p -> searchText.put(p.id(), fold(p.allNames())));
         checkLinks();
     }
 
@@ -230,7 +230,7 @@ public final class Genealogy {
     public Person updated(Person p) {
         var fresh = Person.of(p.node());
         people.put(fresh.id(), fresh);
-        searchText.put(fresh.id(), fold(fresh.name().full()));
+        searchText.put(fresh.id(), fold(fresh.allNames()));
         dirty.add(p.node());
         return fresh;
     }
@@ -258,7 +258,7 @@ public final class Genealogy {
         rec.insert(1, "SEX", sex == Person.Sex.UNKNOWN ? "U" : sex.code);
         var fresh = Person.of(rec);
         people.put(fresh.id(), fresh);
-        searchText.put(fresh.id(), fold(fresh.name().full()));
+        searchText.put(fresh.id(), fold(fresh.allNames()));
         return fresh;
     }
 
@@ -516,6 +516,28 @@ public final class Genealogy {
             if (!term.isEmpty() && !hay.contains(term)) return false;
         }
         return true;
+    }
+
+    /// The other names and nicknames that made `p` match `query`, when the
+    /// main name alone would not have: `find ruiz` lists María Gómez as
+    /// `María Gómez de Ruiz`. Empty when the main name holds every term.
+    public String matchedAs(Person p, String query) {
+        var main = fold(p.name().full());
+        var missing = new ArrayList<String>();
+        for (var term : fold(query).split("\\s+")) {
+            if (!term.isEmpty() && !main.contains(term)) missing.add(term);
+        }
+        if (missing.isEmpty()) return "";
+        var others = new ArrayList<String>();
+        p.otherNames().forEach(o -> others.add(o.name().full()));
+        others.addAll(p.nicknames());
+        var used = new ArrayList<String>();
+        for (var other : others) {
+            var folded = fold(other);
+            if (missing.removeIf(folded::contains)) used.add(other);
+            if (missing.isEmpty()) break;
+        }
+        return String.join(", ", used);
     }
 
     /// Lower-case and strip diacritics for forgiving comparisons.
