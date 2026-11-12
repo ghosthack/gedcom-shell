@@ -457,7 +457,7 @@ public final class PersonForm {
                         after.get(Field.of(f.tag, Field.Part.PLACE)), false);
             }
         }
-        Records.touch(rec);
+        Records.touch(rec, g.isGedcom7());
         return g.updated(p);
     }
 

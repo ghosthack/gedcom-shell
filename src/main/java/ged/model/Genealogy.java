@@ -56,22 +56,42 @@ public final class Genealogy {
         this.layout = parsed.layout();
         this.warnings = new ArrayList<>(parsed.warnings());
         Node head = null;
-        for (var r : parsed.records()) {
+        int line = 1 + lineCount(layout.prefix()); // of the record being read
+        var firstAt = new java.util.HashMap<String, Integer>();
+        for (int i = 0; i < records.size(); i++) {
+            var r = records.get(i);
             switch (r.tag()) {
                 case "HEAD" -> head = r;
-                case "INDI" -> put(people, r.xref(), Person.of(r));
-                case "FAM" -> put(families, r.xref(), Family.of(r));
-                default -> { if (r.xref() != null) otherRecords.put(r.xref(), r); }
+                case "INDI" -> put(people, r.xref(), Person.of(r), line, firstAt);
+                case "FAM" -> put(families, r.xref(), Family.of(r), line, firstAt);
+                default -> {
+                    if (r.xref() != null && otherRecords.putIfAbsent(r.xref(), r) != null) {
+                        warnings.add("duplicate id " + r.xref() + " at line " + line + " ignored");
+                    }
+                }
             }
+            line += lineCount(rawRecords.get(i));
         }
         this.header = head;
         people.values().forEach(p -> searchText.put(p.id(), fold(p.allNames())));
         checkLinks();
     }
 
-    private <T> void put(Map<String, T> map, String id, T value) {
-        if (id == null) warnings.add("record without id ignored");
-        else if (map.putIfAbsent(id, value) != null) warnings.add("duplicate id " + id + " ignored");
+    /// Indexes a record read at `line`. A second record with an id already
+    /// taken stays in the file but is not indexed; the warning says where
+    /// both are, since only a text editor can tell them apart.
+    private <T> void put(Map<String, T> map, String id, T value, int line, Map<String, Integer> firstAt) {
+        if (id == null) warnings.add("record without id at line " + line + " ignored");
+        else if (map.putIfAbsent(id, value) != null) {
+            warnings.add("duplicate id " + id + ": the record at line " + line + " is ignored (the first is at line " + firstAt.get(id) + ")");
+        } else firstAt.put(id, line);
+    }
+
+    private static int lineCount(String text) {
+        var m = LINE_WITH_ENDING.matcher(text);
+        int n = 0;
+        while (m.find()) n++;
+        return n;
     }
 
     private void checkLinks() {
@@ -165,11 +185,16 @@ public final class Genealogy {
     }
 
     /// The person's pictures, in file order: the first is the preferred one
-    /// (GEDCOM 7's rule; a link marked `_PRIM Y`, as 5.5.1 programs write,
-    /// goes ahead of it). Both forms of `OBJE` are read: a pointer to a
-    /// multimedia record, and 5.5.1's embedded form with the `FILE` inline.
+    /// (GEDCOM 7's rule; one marked `_PRIM Y`, as 5.5.1 programs write, goes
+    /// ahead of it: on the person's link, or on the multimedia record unless
+    /// the link says otherwise). Both forms of `OBJE` are read: a pointer to
+    /// a multimedia record, and 5.5.1's embedded form with the `FILE` inline.
     /// The crop sits on the person's own link, so people sharing one group
     /// photo each have their own. Links without a file are left out.
+    ///
+    /// Each link is one picture. A record's several `FILE`s are the same
+    /// object in other formats, so the first that is an image stands for it
+    /// (the first of all, if none says it is one).
     public List<Photo> photos(Person p) {
         var first = new ArrayList<Photo>();
         var rest = new ArrayList<Photo>();
@@ -178,11 +203,13 @@ public final class Genealogy {
             if (rec == null) return;
             var crop = Photo.cropOf(link);
             var title = link.text("TITL").isBlank() ? rec.text("TITL") : link.text("TITL");
-            boolean primary = link.text("_PRIM").strip().equalsIgnoreCase("Y");
-            rec.all("FILE").filter(f -> !f.value().isBlank()).forEach(f -> {
-                var t = title.isBlank() ? f.text("TITL") : title;
-                (primary ? first : rest).add(new Photo(f.value().strip(), t.strip(), crop, Photo.dateOf(link, f, rec)));
-            });
+            var prim = link.first("_PRIM").or(() -> rec.first("_PRIM")).map(Node::value).orElse("");
+            boolean primary = prim.strip().equalsIgnoreCase("Y");
+            var files = rec.all("FILE").filter(f -> !f.value().isBlank()).toList();
+            if (files.isEmpty()) return;
+            var f = files.stream().filter(Photo::isImage).findFirst().orElse(files.getFirst());
+            var t = title.isBlank() ? f.text("TITL") : title;
+            (primary ? first : rest).add(new Photo(f.value().strip(), t.strip(), crop, Photo.dateOf(link, f, rec)));
         });
         first.addAll(rest);
         return List.copyOf(first);
