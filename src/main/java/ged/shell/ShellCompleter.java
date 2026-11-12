@@ -2,6 +2,7 @@ package ged.shell;
 
 import ged.shell.Completer.Candidate;
 import ged.shell.Completer.Result;
+import ged.model.Person;
 import ged.vfs.Location;
 
 import java.util.ArrayList;
@@ -135,15 +136,21 @@ final class ShellCompleter implements Completer {
         for (var e : fs.rows(loc)) {
             if (e.target() instanceof Location.PersonDir(var p) && g.nameMatches(p, part)) {
                 var rel = String.join("/", e.path());
-                out.add(entry(dir + rel, rel, e.target()));
+                out.add(matched(entry(dir + rel, rel, e.target()), p, part));
             }
         }
         if (out.isEmpty() && global) {
             for (var p : g.people()) {
-                if (g.nameMatches(p, part)) out.add(entry(dir + p.key(), p.key(), new Location.PersonDir(p)));
+                if (g.nameMatches(p, part)) out.add(matched(entry(dir + p.key(), p.key(), new Location.PersonDir(p)), p, part));
             }
         }
         return out;
+    }
+
+    /// Adds the other name or nickname `typed` matched, if it wasn't the main one.
+    private Candidate matched(Candidate c, Person p, String typed) {
+        var as = ctx.g().matchedAs(p, typed);
+        return as.isEmpty() ? c : new Candidate(c.text(), c.suffix(), c.display(), c.note() + ctx.style().dim("  (matched " + as + ")"));
     }
 
     /// A directory candidate, listed with who or what it leads to.
