@@ -16,7 +16,7 @@ public record Entry(List<String> path, Location target, String relation) {
     public String displayPath() {
         var p = String.join("/", path);
         return switch (target) {
-            case Location.PersonDir _, Location.FamilyDir _ -> p;
+            case Location.PersonDir _, Location.FamilyDir _, Location.RecordDir _ -> p;
             default -> p + "/";
         };
     }

@@ -6,6 +6,7 @@ import ged.model.Family;
 import ged.model.GedDate;
 import ged.model.Genealogy;
 import ged.model.Person;
+import ged.model.RecordKind;
 import ged.text.Style;
 import ged.vfs.Location;
 
@@ -21,7 +22,7 @@ final class ShowCommand implements Command {
     @Override public String name() { return "show"; }
     @Override public Options options() { return opts; }
     @Override public boolean takesPaths() { return true; }
-    @Override public String summary() { return "show the full record of a person or family (at / : file summary)"; }
+    @Override public String summary() { return "show the full record of a person, family, note, source or picture (at / : file summary)"; }
 
     @Override
     public String usage() {
@@ -35,6 +36,7 @@ final class ShowCommand implements Command {
                   show                   current person or family
                   show mother            the current person's mother
                   show -r @F3@           raw GEDCOM for family F3
+                  show @S2@              source S2, and who cites it
 
                 """ + opts.describe();
     }
@@ -50,6 +52,7 @@ final class ShowCommand implements Command {
                 case Location.PersonDir(var p) -> o.has("raw") ? p.node().toString() : person(p, ctx);
                 case Location.FamilyDir(var f) -> o.has("raw") ? f.node().toString() : family(f, ctx);
                 case Location.Root _ -> o.has("raw") ? ctx.g().header().map(Node::toString).orElse("") : summary(ctx);
+                case Location.RecordDir r -> o.has("raw") ? r.record().toString() : record(r, ctx);
                 default -> throw new CommandException(ctx.fs().describe(loc) + " is a listing; use ls");
             };
             ctx.out().print(text);
@@ -135,6 +138,10 @@ final class ShowCommand implements Command {
                 + bySex.getOrDefault(Person.Sex.FEMALE, 0L) + " female, "
                 + bySex.getOrDefault(Person.Sex.UNKNOWN, 0L) + " unknown)", s);
         field(out, "Families", String.valueOf(g.families().size()), s);
+        for (var k : RecordKind.values()) {
+            int n = g.records(k).size();
+            if (n > 0) field(out, k.dirName.substring(0, 1).toUpperCase(java.util.Locale.ROOT) + k.dirName.substring(1), String.valueOf(n), s);
+        }
         var years = people.stream().map(Person::birth).filter(GedDate::hasYear).mapToInt(GedDate::year).summaryStatistics();
         if (years.getCount() > 0) field(out, "Births", years.getMin() + " – " + years.getMax(), s);
         if (!g.warnings().isEmpty()) {
@@ -142,6 +149,84 @@ final class ShowCommand implements Command {
             g.warnings().stream().limit(10).forEach(w -> out.append(" ".repeat(LABEL + 2)).append(s.dim(w)).append('\n'));
         }
         return out.toString();
+    }
+
+    private static final java.util.Map<String, String> LABELS = java.util.Map.ofEntries(
+            java.util.Map.entry("TITL", "Title"), java.util.Map.entry("AUTH", "Author"),
+            java.util.Map.entry("PUBL", "Publication"), java.util.Map.entry("ABBR", "Short title"),
+            java.util.Map.entry("TEXT", "Text"), java.util.Map.entry("REPO", "Repository"),
+            java.util.Map.entry("CALN", "Call number"), java.util.Map.entry("FILE", "File"),
+            java.util.Map.entry("FORM", "Format"), java.util.Map.entry("MEDI", "Medium"),
+            java.util.Map.entry("TYPE", "Type"), java.util.Map.entry("DATE", "Date"),
+            java.util.Map.entry("PLAC", "Place"), java.util.Map.entry("DATA", "Data"),
+            java.util.Map.entry("EVEN", "Events"), java.util.Map.entry("AGNC", "Agency"),
+            java.util.Map.entry("REFN", "Reference"), java.util.Map.entry("LANG", "Language"),
+            java.util.Map.entry("MIME", "Format"), java.util.Map.entry("SOUR", "Source"),
+            java.util.Map.entry("OBJE", "Media"), java.util.Map.entry("PAGE", "Page"),
+            java.util.Map.entry("QUAY", "Quality"), java.util.Map.entry("RIN", "Record number"),
+            java.util.Map.entry("_UID", "Unique id"), java.util.Map.entry("UID", "Unique id"));
+
+    /// A note, source or picture: its text or fields, then who uses it.
+    private String record(Location.RecordDir r, Context ctx) {
+        var s = ctx.style();
+        var g = ctx.g();
+        var rec = r.record();
+        var out = new StringBuilder();
+        boolean note = r.kind() == RecordKind.NOTES;
+        title(out, note ? "Note" : Genealogy.recordTitle(rec), r.key(), s);
+        if (note) out.append(rec.value().isBlank() ? s.dim("(empty)") : rec.value()).append('\n');
+        var notes = new java.util.ArrayList<String>();
+        for (var c : rec.children()) {
+            switch (c.tag()) {
+                case "CHAN", "CONT", "CONC", "EXID" -> { }
+                case "NOTE", "SNOTE" -> { if (!c.isVoid()) notes.add(c.value()); }
+                case "FILE" -> field(out, "File", file(c, g, s), s);
+                case "TITL" -> { if (r.kind() == RecordKind.NOTES) field(out, "Title", c.value(), s); }
+                default -> fields(out, c, 0, g, s);
+            }
+        }
+        externalIds(out, rec, s);
+        notes(out, notes, s, ctx);
+        var users = g.usersOf(rec);
+        out.append('\n').append(s.heading("Used by")).append('\n');
+        if (users.isEmpty()) out.append("  ").append(s.dim("nobody")).append('\n');
+        for (var u : users) {
+            switch (u.tag()) {
+                case "INDI" -> g.person(u.xref()).ifPresent(p -> relative(out, "person", p, s));
+                case "FAM" -> g.family(u.xref()).ifPresent(f ->
+                        line(out, "family", s.dim(Style.pad(f.key(), 6)) + " " + ctx.fs().familyTitle(f), s));
+                default -> RecordKind.of(u.tag()).ifPresent(k -> line(out, k.member,
+                        s.dim(Style.pad(Genealogy.key(u.xref()), 6)) + " " + Genealogy.recordTitle(u), s));
+            }
+        }
+        changed(out, rec, s);
+        return out.toString();
+    }
+
+    /// A field and the lines under it, one level indented per level down.
+    /// Pointers to notes, sources and pictures show what they point at.
+    private static void fields(StringBuilder out, Node n, int depth, Genealogy g, Style s) {
+        var label = LABELS.getOrDefault(n.tag(), n.tag());
+        var value = n.value();
+        if (n.isPointer()) {
+            var target = g.pointed(n.value());
+            value = s.dim(Genealogy.key(n.value())) + " " + target.map(Genealogy::recordTitle).orElse(s.yellow("(missing)"));
+        }
+        if (depth == 0) field(out, label, value, s);
+        else out.append("  ".repeat(depth)).append(s.dim(Style.pad(label, LABEL - 2 * depth))).append("  ")
+                .append(value.replace("\n", "\n" + " ".repeat(LABEL + 2))).append('\n');
+        for (var c : n.children()) fields(out, c, depth + 1, g, s);
+    }
+
+    /// A picture's file: as written, with its format, and whether it is there.
+    private static String file(Node f, Genealogy g, Style s) {
+        var parts = new StringBuilder(f.value().strip());
+        var form = f.first("FORM").map(Node::value).orElse("").strip();
+        if (!form.isEmpty()) parts.append("  ").append(s.dim("(" + form + ")"));
+        if (!f.text("TITL").isBlank()) parts.append("\n").append(f.text("TITL").strip());
+        boolean web = f.value().strip().matches("(?i)[a-z][a-z0-9+.-]+://.*");
+        if (!web && g.mediaPath(f.value().strip()).isEmpty()) parts.append("  ").append(s.yellow("(not found)"));
+        return parts.toString();
     }
 
     // ---- formatting helpers ---------------------------------------------

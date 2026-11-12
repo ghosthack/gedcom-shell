@@ -23,7 +23,7 @@ final class Listing {
 
     record Row(int number, Entry entry) {}
 
-    static final List<String> SORT_KEYS = List.of("name", "surname", "id", "birth", "death", "birthday", "rel");
+    static final List<String> SORT_KEYS = List.of("name", "surname", "id", "birth", "death", "birthday", "rel", "title");
 
     static List<Row> number(List<Entry> entries) {
         return IntStream.range(0, entries.size()).mapToObj(i -> new Row(i + 1, entries.get(i))).toList();
@@ -39,6 +39,8 @@ final class Listing {
             case "name" -> new By(notPerson, text(p -> p.name().full()));
             case "surname" -> new By(notPerson, text(p -> p.name().surname() + " " + p.name().given()));
             case "id" -> new By(_ -> false, Comparator.comparing((Row r) -> idKey(r.entry().target())));
+            case "title" -> new By(r -> !(r.entry().target() instanceof Location.RecordDir),
+                    Comparator.comparing((Row r) -> Genealogy.fold(Genealogy.recordTitle(((Location.RecordDir) r.entry().target()).record()))));
             case "birth" -> new By(r -> notPerson.test(r) || !person(r).birth().hasYear(),
                     Comparator.comparing((Row r) -> person(r).birth()));
             case "death" -> new By(r -> notPerson.test(r) || !person(r).death().hasYear(),
@@ -65,6 +67,7 @@ final class Listing {
         var key = switch (loc) {
             case Location.PersonDir(var p) -> p.key();
             case Location.FamilyDir(var f) -> f.key();
+            case Location.RecordDir r -> r.key();
             default -> "";
         };
         // natural order: I2 before I10
@@ -88,6 +91,7 @@ final class Listing {
         var targets = rows.stream().map(r -> r.entry().target()).toList();
         if (targets.stream().allMatch(t -> t instanceof Location.PersonDir)) return people(rows, longFormat, ctx, matched);
         if (targets.stream().allMatch(t -> t instanceof Location.FamilyDir)) return families(rows, ctx);
+        if (targets.stream().allMatch(t -> t instanceof Location.RecordDir)) return records(rows, ctx);
         return dirs(rows, ctx);
     }
 
@@ -160,13 +164,37 @@ final class Listing {
         return table.render(s);
     }
 
+    /// Notes, sources or media: what each is, and how many use it.
+    private static String records(List<Row> rows, Context ctx) {
+        var s = ctx.style();
+        boolean showRel = rows.stream().anyMatch(r -> !r.entry().relation().isEmpty());
+        var cols = new ArrayList<Column>();
+        cols.add(Column.right("#").style(s::dim));
+        cols.add(Column.left("ID").style(s::dim));
+        if (showRel) cols.add(Column.left("REL").style(s::cyan));
+        cols.add(Column.left("TITLE").max(60).style(s::bold));
+        cols.add(Column.right("USED BY"));
+        var table = new Table(cols.toArray(Column[]::new));
+        for (var r : rows) {
+            var rec = (Location.RecordDir) r.entry().target();
+            var cells = new ArrayList<String>();
+            cells.add(String.valueOf(r.number()));
+            cells.add(rec.key());
+            if (showRel) cells.add(r.entry().relation());
+            cells.add(Genealogy.recordTitle(rec.record()));
+            cells.add(String.valueOf(ctx.g().usersOf(rec.record()).size()));
+            table.row(cells.toArray(String[]::new));
+        }
+        return table.render(s);
+    }
+
     private static String dirs(List<Row> rows, Context ctx) {
         var s = ctx.style();
         var table = new Table(Column.right("#").style(s::dim), Column.left("PATH").style(s::blue),
                 Column.left("REL").style(s::cyan), Column.right("ITEMS"), Column.left("NAME").style(s::bold));
         for (var r : rows) {
             var t = r.entry().target();
-            var isDir = !(t instanceof Location.PersonDir || t instanceof Location.FamilyDir);
+            var isDir = !(t instanceof Location.PersonDir || t instanceof Location.FamilyDir || t instanceof Location.RecordDir);
             table.row(String.valueOf(r.number()), r.entry().displayPath(), isDir ? "" : r.entry().relation(),
                     isDir ? String.valueOf(ctx.fs().rows(t).size()) : "",
                     isDir ? "" : ctx.fs().describe(t));
