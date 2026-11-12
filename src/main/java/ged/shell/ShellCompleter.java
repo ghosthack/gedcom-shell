@@ -131,6 +131,12 @@ final class ShellCompleter implements Completer {
             for (var f : g.families()) {
                 if (startsWithIgnoreCase(f.key(), key)) out.add(entry(f.key(), f.key(), new Location.FamilyDir(f)));
             }
+            for (var k : ged.model.RecordKind.values()) {
+                for (var r : g.records(k)) {
+                    var rk = ged.model.Genealogy.key(r.xref());
+                    if (startsWithIgnoreCase(rk, key)) out.add(entry(rk, rk, new Location.RecordDir(k, r)));
+                }
+            }
             if (!out.isEmpty()) return out;
         }
         for (var e : fs.rows(loc)) {
@@ -158,6 +164,7 @@ final class ShellCompleter implements Completer {
         var note = switch (target) {
             case Location.PersonDir(var p) -> (name.equals(p.key()) || name.endsWith("/" + p.key()) ? "" : p.key() + "  ") + p.label();
             case Location.FamilyDir(var f) -> ctx.fs().familyTitle(f);
+            case Location.RecordDir r -> ged.model.Genealogy.recordTitle(r.record());
             default -> "";
         };
         return new Candidate(text, "/", name + "/", ctx.style().dim(note));

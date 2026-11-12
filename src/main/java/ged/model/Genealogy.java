@@ -58,33 +58,50 @@ public final class Genealogy {
         Node head = null;
         int line = 1 + lineCount(layout.prefix()); // of the record being read
         var lineOf = new java.util.HashMap<Node, Integer>();
+        // Where each id was first seen. People, families and the other records
+        // are looked up separately (a FAMC pointer means a family), so an id
+        // is repeated only within one of the three.
         var firstAt = new java.util.HashMap<String, Integer>();
-        var repeats = new ArrayList<Integer>(); // indexes of people and families whose id was taken
+        var repeats = new ArrayList<Integer>(); // indexes of records whose id was taken
         for (int i = 0; i < records.size(); i++) {
             var r = records.get(i);
             lineOf.put(r, line);
             line += lineCount(rawRecords.get(i));
-            if (r.tag().equals("HEAD")) head = r;
-            else if (r.tag().equals("INDI") || r.tag().equals("FAM")) {
-                if (r.xref() == null) warnings.add("record without id at line " + lineOf.get(r) + " ignored");
-                else if (firstAt.putIfAbsent(r.xref(), lineOf.get(r)) != null) repeats.add(i);
-                else index(r);
-            } else if (r.xref() != null && otherRecords.putIfAbsent(r.xref(), r) != null) {
-                warnings.add("duplicate id " + r.xref() + " at line " + lineOf.get(r) + " ignored");
+            if (r.tag().equals("HEAD")) {
+                head = r;
+                continue;
+            }
+            boolean indexed = r.tag().equals("INDI") || r.tag().equals("FAM");
+            if (r.xref() == null) {
+                if (indexed) warnings.add("record without id at line " + lineOf.get(r) + " ignored");
+            } else if (firstAt.putIfAbsent(group(r) + r.xref(), lineOf.get(r)) == null) {
+                index(r);
+            } else if (indexed || RecordKind.of(r.tag()).isPresent()) {
+                repeats.add(i);
+            } else {
+                warnings.add("duplicate id " + r.xref() + ": the record at line " + lineOf.get(r)
+                        + " is ignored (the first is at line " + firstAt.get(group(r) + r.xref()) + ")");
             }
         }
-        // A person or family whose id another record already has can't be
-        // told apart by it, so here it goes by the next free id. The file
-        // keeps it as it is until the record is edited; then it is written
-        // under the new id. Pointers to the shared id mean the first record.
+        // A person, family, note, source or media record whose id another
+        // record already has can't be told apart by it, so here it goes by the
+        // next free id. The file keeps it as it is until the record is edited;
+        // then it is written under the new id. Pointers to the shared id mean
+        // the first record.
         for (int i : repeats) {
             var r = records.get(i);
-            boolean person = r.tag().equals("INDI");
-            var fresh = r.renamed(nextId(person ? "I" : "F", person ? people.keySet() : families.keySet()));
+            var kind = RecordKind.of(r.tag());
+            var fresh = r.renamed(switch (r.tag()) {
+                case "INDI" -> nextId("I", people.keySet());
+                case "FAM" -> nextId("F", families.keySet());
+                default -> nextId(kind.orElseThrow().prefix,
+                        records(kind.get()).stream().map(Node::xref).collect(java.util.stream.Collectors.toSet()));
+            });
             records.set(i, fresh);
             index(fresh);
             warnings.add("duplicate id " + r.xref() + ": the record at line " + lineOf.get(r) + " is read as " + fresh.xref()
-                    + " (the first is at line " + firstAt.get(r.xref()) + ") and is saved under that id once edited");
+                    + " (the first is at line " + firstAt.get(group(r) + r.xref()) + ")"
+                    + (kind.isPresent() ? "" : " and is saved under that id once edited"));
         }
         this.header = head;
         people.values().forEach(p -> searchText.put(p.id(), fold(p.allNames())));
@@ -92,8 +109,19 @@ public final class Genealogy {
     }
 
     private void index(Node r) {
-        if (r.tag().equals("INDI")) people.put(r.xref(), Person.of(r));
-        else families.put(r.xref(), Family.of(r));
+        switch (r.tag()) {
+            case "INDI" -> people.put(r.xref(), Person.of(r));
+            case "FAM" -> families.put(r.xref(), Family.of(r));
+            default -> otherRecords.put(r.xref(), r);
+        }
+    }
+
+    /// Which set of ids a record's id belongs to.
+    private static String group(Node r) {
+        return switch (r.tag()) {
+            case "INDI", "FAM" -> r.tag() + " ";
+            default -> "";
+        };
     }
 
     private static int lineCount(String text) {
@@ -183,6 +211,82 @@ public final class Genealogy {
         return Optional.ofNullable(families.get(xref(idOrKey)));
     }
 
+    /// The notes, sources or media records, in file order.
+    public List<Node> records(RecordKind kind) {
+        return records.stream()
+                .filter(r -> r.xref() != null && kind.tags.contains(r.tag()) && otherRecords.get(r.xref()) == r)
+                .toList();
+    }
+
+    /// A note, source or media record by id (`S1` or `@S1@`, any case).
+    public Optional<Node> record(String idOrKey) {
+        var x = idOrKey.startsWith("@") ? idOrKey : "@" + idOrKey + "@";
+        var exact = otherRecords.get(x);
+        if (exact != null) return Optional.of(exact).filter(r -> RecordKind.of(r.tag()).isPresent());
+        return otherRecords.entrySet().stream()
+                .filter(e -> e.getKey().equalsIgnoreCase(x) && RecordKind.of(e.getValue().tag()).isPresent())
+                .map(Map.Entry::getValue).findFirst();
+    }
+
+    /// The record a pointer such as `@R1@` leads to, of any kind but a
+    /// person or family (a repository, a submitter, a note...).
+    public Optional<Node> pointed(String pointer) {
+        return Optional.ofNullable(otherRecords.get(pointer));
+    }
+
+    /// A one-line name for a note, source or media record: a note's first
+    /// line, a source's title, a picture's title or file.
+    public static String recordTitle(Node r) {
+        var title = switch (r.tag()) {
+            case "NOTE", "SNOTE" -> r.value().strip().lines().findFirst().orElse("");
+            case "SOUR" -> firstOf(r.text("TITL"), r.text("ABBR"), r.text("AUTH"));
+            case "OBJE" -> firstOf(r.text("TITL"), r.first("FILE").map(f -> firstOf(f.text("TITL"), f.value())).orElse(""));
+            default -> firstOf(r.text("NAME"), r.value());
+        };
+        title = title.strip().replaceAll("\\s+", " ");
+        if (title.length() > 60) title = title.substring(0, 59).strip() + "…";
+        return title.isEmpty() ? "(untitled " + RecordKind.of(r.tag()).map(k -> k.member).orElse("record") + ")" : title;
+    }
+
+    private static String firstOf(String... texts) {
+        for (var t : texts) if (!t.isBlank()) return t;
+        return "";
+    }
+
+    /// The records that point at `r` anywhere inside them (a person citing a
+    /// source in their birth, a source's picture), in file order.
+    public List<Node> usersOf(Node r) {
+        if (usedBy == null) {
+            usedBy = new java.util.HashMap<>();
+            for (var rec : records) {
+                if (rec.xref() == null || !isCurrent(rec)) continue;
+                var targets = new LinkedHashSet<String>();
+                pointers(rec, targets);
+                for (var t : targets) usedBy.computeIfAbsent(t, _ -> new ArrayList<>()).add(rec);
+            }
+        }
+        if (otherRecords.get(r.xref()) != r) return List.of(); // a repeat: pointers to its old id mean the first
+        return List.copyOf(usedBy.getOrDefault(r.xref(), List.of()));
+    }
+
+    /// Pointers to a record's id, from the people, families and records that use it.
+    private Map<String, List<Node>> usedBy;
+
+    private boolean isCurrent(Node rec) {
+        return switch (rec.tag()) {
+            case "INDI" -> person(rec.xref()).map(Person::node).filter(n -> n == rec).isPresent();
+            case "FAM" -> family(rec.xref()).map(Family::node).filter(n -> n == rec).isPresent();
+            default -> otherRecords.get(rec.xref()) == rec;
+        };
+    }
+
+    private static void pointers(Node n, Set<String> into) {
+        for (var c : n.children()) {
+            if (c.isPointer() && !c.isVoid()) into.add(c.value());
+            pointers(c, into);
+        }
+    }
+
     /// Text of a note, resolving `@N1@` pointers to shared NOTE records
     /// (and GEDCOM 7 `SNOTE` records, which have the same shape).
     public String noteText(String valueOrPointer) {
@@ -268,6 +372,7 @@ public final class Genealogy {
         people.put(fresh.id(), fresh);
         searchText.put(fresh.id(), fold(fresh.allNames()));
         dirty.add(p.node());
+        usedBy = null;
         return fresh;
     }
 
@@ -277,6 +382,7 @@ public final class Genealogy {
         var fresh = Family.of(f.node());
         families.put(fresh.id(), fresh);
         dirty.add(f.node());
+        usedBy = null;
         return fresh;
     }
 
@@ -309,6 +415,7 @@ public final class Genealogy {
         records.add(at, node);
         rawRecords.add(at, "");
         dirty.add(node);
+        usedBy = null;
         return node;
     }
 
@@ -360,6 +467,7 @@ public final class Genealogy {
         rawRecords.remove(i);
         dirty.remove(f.node());
         families.remove(f.id());
+        usedBy = null;
         if (wasInFile) deleted++;
     }
 
@@ -373,6 +481,7 @@ public final class Genealogy {
         rawRecords.remove(i);
         dirty.remove(p.node());
         people.remove(p.id());
+        usedBy = null;
         searchText.remove(p.id());
         if (wasInFile) deleted++;
     }

@@ -3,6 +3,7 @@ package ged.vfs;
 import ged.model.Family;
 import ged.model.Genealogy;
 import ged.model.Person;
+import ged.model.RecordKind;
 import ged.vfs.Location.FamilyChildren;
 import ged.vfs.Location.FamilyDir;
 import ged.vfs.Location.Group;
@@ -22,7 +23,9 @@ import java.util.stream.Stream;
 /// │   └── I1/          father, mother, parents/, spouses/, children/, siblings/, families/
 /// ├── families/        F1, F2, ...
 /// │   └── F1/          husband, wife, children/
-/// └── found/           results of the last `find`
+/// ├── found/           results of the last `find`
+/// └── notes/ sources/ media/   N1, S1, M1, ...
+///     └── S1/          the people, families and records that use it
 /// ```
 ///
 /// [#entries] are the named children a path can walk through. [#rows] is
@@ -54,7 +57,10 @@ public final class FileSystem {
             case Location.Root _ -> List.of(
                     new Entry("people", new Location.People(), "dir"),
                     new Entry("families", new Location.Families(), "dir"),
-                    new Entry("found", new Location.Found(), "dir"));
+                    new Entry("found", new Location.Found(), "dir"),
+                    new Entry("notes", new Location.Records(RecordKind.NOTES), "dir"),
+                    new Entry("sources", new Location.Records(RecordKind.SOURCES), "dir"),
+                    new Entry("media", new Location.Records(RecordKind.MEDIA), "dir"));
             case Location.People _ -> g.people().stream().map(p -> person(p, "")).toList();
             case Location.Families _ -> g.families().stream().map(f -> family(f, "")).toList();
             case Location.Found _ -> found.stream().map(p -> person(p, "")).toList();
@@ -85,6 +91,9 @@ public final class FileSystem {
             };
             case FamilyChildren(var f) -> f.children().stream()
                     .flatMap(id -> g.person(id).stream()).map(x -> person(x, childLabel(x))).toList();
+            case Location.Records(var k) -> g.records(k).stream()
+                    .map(r -> new Entry(Genealogy.key(r.xref()), new Location.RecordDir(k, r), "")).toList();
+            case Location.RecordDir r -> g.usersOf(r.record()).stream().flatMap(u -> user(u).stream()).toList();
         };
     }
 
@@ -114,6 +123,16 @@ public final class FileSystem {
                 yield rows;
             }
             default -> entries(loc);
+        };
+    }
+
+    /// A record that uses another, as an entry: a person, family or record.
+    private Optional<Entry> user(ged.gedcom.Node u) {
+        return switch (u.tag()) {
+            case "INDI" -> g.person(u.xref()).map(p -> person(p, "person"));
+            case "FAM" -> g.family(u.xref()).map(f -> family(f, "family"));
+            default -> RecordKind.of(u.tag()).map(k ->
+                    new Entry(Genealogy.key(u.xref()), new Location.RecordDir(k, u), k.member));
         };
     }
 
@@ -156,6 +175,8 @@ public final class FileSystem {
             case FamilyDir(var f) -> familyTitle(f);
             case Group(var p, var r) -> p.name().display() + " › " + r.dirName;
             case FamilyChildren(var f) -> familyTitle(f) + " › children";
+            case Location.Records(var k) -> k.dirName;
+            case Location.RecordDir r -> Genealogy.recordTitle(r.record());
         };
     }
 

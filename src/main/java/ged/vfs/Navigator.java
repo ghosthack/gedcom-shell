@@ -149,6 +149,11 @@ public final class Navigator {
             if (p.isPresent()) return global("people", p.get().key(), new Location.PersonDir(p.get()));
             var f = g.family(seg);
             if (f.isPresent()) return global("families", f.get().key(), new Location.FamilyDir(f.get()));
+            var r = g.record(seg);
+            if (r.isPresent()) {
+                var kind = ged.model.RecordKind.of(r.get().tag()).orElseThrow();
+                return global(kind.dirName, Genealogy.key(r.get().xref()), new Location.RecordDir(kind, r.get()));
+            }
             if (seg.startsWith("@")) throw new NotFound(seg + ": no such record");
         }
 
