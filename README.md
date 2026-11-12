@@ -81,7 +81,7 @@ A path segment can be any of:
 | `father`, `children` | an entry name                                              |
 | `3`                  | row 3 of `ls` for that directory                           |
 | `@I12@` or `I12`     | a record id, from anywhere (jumps to `/people/I12`)        |
-| `maria`, `"jose p"`  | a unique name match, case- and accent-insensitive; tries relatives first, then everyone |
+| `maria`, `"jose p"`  | a unique name match, case- and accent-insensitive, on any of a person's names or nicknames; tries relatives first, then everyone |
 | `..`                 | step back along the path you took (logical, like a shell)  |
 | `~`, `/`, `-`        | home person, root, previous directory                      |
 
@@ -98,9 +98,9 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `ls` | `ls [-l] [-s KEY] [-r] [PATH...]` | At a person, lists all relatives with a cd-able `PATH`. Sort keys: `name surname id birth death birthday rel`. Row numbers stay with their rows when sorted, so `cd 3` is unambiguous. Undated people sort last in either direction. `-l` adds full dates and places. |
 | `cd` | `cd [PATH]` | No argument goes home. Ambiguous names list the candidates. |
 | `pwd` | `pwd [-P]` | |
-| `show` | `show [-r] [PATH...]` | All facts in file order, parents/siblings, each marriage with children, notes (shared `@N@` notes resolved), age at death, last change. `-r` prints the raw GEDCOM record. `show /` summarises the file: encoding (and whether the header lied), counts, birth range, broken links. |
+| `show` | `show [-r] [PATH...]` | Nicknames and other names (married, birth, aka…), all facts in file order, parents/siblings, each marriage with children, notes (shared `@N@` notes resolved), age at death, last change. `-r` prints the raw GEDCOM record. `show /` summarises the file: encoding (and whether the header lied), counts, birth range, broken links. |
 | `tree` | `tree [-a\|-d] [-n N\|--all] [-S] [PATH]` | Descendants by default, grouped under each partner (`∞`, with family id and marriage year); `-S` lists children directly. `-a` draws the pedigree with labels (father → grandfather → great-grandfather → 2nd great-grandfather …). Anyone reached twice (cousin marriages, pedigree collapse) is drawn once and then marked `↻`. |
-| `find` | `find [OPTIONS] [NAME...]` | All NAME words must match. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
+| `find` | `find [OPTIONS] [NAME...]` | All NAME words must match, in any of the person's names or nicknames; a `MATCHED` column shows the name that did when it wasn't the main one. Filters: `-b/--born RANGE`, `-d/--died RANGE`, `-p/--place TEXT`, `-x/--sex M\|F\|U`, `--ancestors-of PATH`, `--descendants-of PATH`. RANGE: `1850`, `1800..1850`, `..1700`, `1900..`. Results go to `/found`. |
 | `edit` | `edit [PATH] [FIELD=VALUE...]` | Change a person's name, sex, birth, baptism, death, burial, occupation and residence; or a family's marriage and divorce. See below. |
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |

@@ -47,6 +47,38 @@ public record Person(
                 n);
     }
 
+    /// A name besides the main one, with its GEDCOM `TYPE` (`aka`, `married`,
+    /// `birth`, ...; empty when not given). Where GEDCOM 7 explains the type
+    /// in words (`TYPE OTHER` with `PHRASE stage name`), `type` is those words.
+    public record OtherName(Name name, String type) {}
+
+    /// Every `NAME` after the first, in file order.
+    public List<OtherName> otherNames() {
+        return node.all("NAME").skip(1)
+                .map(n -> new OtherName(Name.of(n), n.first("TYPE")
+                        .map(t -> t.text("PHRASE").isBlank() ? t.value() : t.text("PHRASE")).orElse("").strip()))
+                .filter(o -> !o.name().full().isEmpty())
+                .toList();
+    }
+
+    /// `NICK` values from all of the person's names, without repeats.
+    public List<String> nicknames() {
+        return node.all("NAME").flatMap(n -> n.all("NICK"))
+                .map(n -> n.value().strip())
+                .filter(v -> !v.isEmpty())
+                .distinct()
+                .toList();
+    }
+
+    /// Main name, other names and nicknames, for searching.
+    public String allNames() {
+        var parts = new java.util.ArrayList<String>();
+        parts.add(name.full());
+        otherNames().forEach(o -> parts.add(o.name().full()));
+        parts.addAll(nicknames());
+        return String.join(" ", parts);
+    }
+
     public Optional<Event> event(String tag) {
         return events.stream().filter(e -> e.tag().equals(tag)).findFirst();
     }

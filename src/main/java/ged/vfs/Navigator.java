@@ -156,7 +156,7 @@ public final class Navigator {
                 .filter(e -> e.target() instanceof Location.PersonDir(var p) && g.nameMatches(p, seg))
                 .toList();
         if (local.size() == 1) return new Step(local.getFirst(), false);
-        if (local.size() > 1) throw ambiguous(seg, local.stream().map(e -> ((Location.PersonDir) e.target()).person()).toList());
+        if (local.size() > 1) throw ambiguous(g, seg, local.stream().map(e -> ((Location.PersonDir) e.target()).person()).toList());
 
         if (allowGlobal || loc instanceof Location.People) {
             var matches = g.people().stream().filter(p -> g.nameMatches(p, seg)).toList();
@@ -164,7 +164,7 @@ public final class Navigator {
                 var p = matches.getFirst();
                 return global("people", p.key(), new Location.PersonDir(p));
             }
-            if (matches.size() > 1) throw ambiguous(seg, matches);
+            if (matches.size() > 1) throw ambiguous(g, seg, matches);
         }
         throw new NotFound(seg + ": not found in " + fs.describe(loc));
     }
@@ -173,9 +173,10 @@ public final class Navigator {
         return new Step(new Entry(List.of(dir, key), target, ""), true);
     }
 
-    private static NotFound ambiguous(String seg, List<Person> matches) {
+    private static NotFound ambiguous(ged.model.Genealogy g, String seg, List<Person> matches) {
         var sb = new StringBuilder(seg + ": " + matches.size() + " people match; be more specific or use an id:");
-        matches.stream().limit(8).forEach(p -> sb.append("\n  ").append("%-6s".formatted(p.key())).append(p.label()));
+        matches.stream().limit(8).forEach(p -> sb.append("\n  ").append("%-6s".formatted(p.key())).append(p.label())
+                .append(g.matchedAs(p, seg).isEmpty() ? "" : "  (matched " + g.matchedAs(p, seg) + ")"));
         if (matches.size() > 8) sb.append("\n  … (try: find ").append(seg).append(")");
         return new NotFound(sb.toString());
     }
