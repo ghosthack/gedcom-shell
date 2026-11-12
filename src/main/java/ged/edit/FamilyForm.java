@@ -163,7 +163,7 @@ public final class FamilyForm {
             Records.event(rec, "DIV", n -> n.insertAfter(LEADING, "DIV", ""),
                     after.get(Field.DIVORCE_DATE), after.get(Field.DIVORCE_PLACE), true);
         }
-        Records.touch(rec);
+        Records.touch(rec, g.isGedcom7());
         return g.updated(f);
     }
 }
