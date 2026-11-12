@@ -77,14 +77,22 @@ final class Listing {
     }
 
     static String render(List<Row> rows, boolean longFormat, Context ctx) {
+        return render(rows, longFormat, ctx, _ -> "");
+    }
+
+    /// As [#render(List, boolean, Context)], for the results of a name
+    /// search: `matched` gives the other name or nickname a person was
+    /// found by (or `""`), shown in a `MATCHED` column when anyone has one.
+    static String render(List<Row> rows, boolean longFormat, Context ctx, Function<Person, String> matched) {
         if (rows.isEmpty()) return ctx.style().dim("(empty)") + "\n";
         var targets = rows.stream().map(r -> r.entry().target()).toList();
-        if (targets.stream().allMatch(t -> t instanceof Location.PersonDir)) return people(rows, longFormat, ctx);
+        if (targets.stream().allMatch(t -> t instanceof Location.PersonDir)) return people(rows, longFormat, ctx, matched);
         if (targets.stream().allMatch(t -> t instanceof Location.FamilyDir)) return families(rows, ctx);
         return dirs(rows, ctx);
     }
 
-    private static String people(List<Row> rows, boolean longFormat, Context ctx) {
+    private static String people(List<Row> rows, boolean longFormat, Context ctx, Function<Person, String> matched) {
+        boolean showMatched = rows.stream().anyMatch(r -> !matched.apply(person(r)).isEmpty());
         var s = ctx.style();
         boolean showEntry = rows.stream().anyMatch(r -> !r.entry().name().equals(person(r).key()) || r.entry().path().size() > 1);
         boolean showRel = rows.stream().anyMatch(r -> !r.entry().relation().isEmpty());
@@ -94,6 +102,7 @@ final class Listing {
         cols.add(Column.left("ID").style(s::dim));
         if (showRel) cols.add(Column.left("REL").style(s::cyan));
         cols.add(Column.left("NAME").max(longFormat ? 0 : 40).style(s::bold));
+        if (showMatched) cols.add(Column.left("MATCHED").max(longFormat ? 0 : 40));
         cols.add(Column.left("SEX"));
         cols.add(Column.right("BORN"));
         cols.add(Column.right("DIED"));
@@ -110,6 +119,7 @@ final class Listing {
             cells.add(p.key());
             if (showRel) cells.add(r.entry().relation());
             cells.add(p.name().display());
+            if (showMatched) cells.add(matched.apply(p));
             cells.add(p.sex().code);
             cells.add(longFormat ? p.birth().raw() : p.birth().shortForm());
             cells.add(longFormat ? p.death().raw() : p.isDeceased() && p.death().isEmpty() ? "†" : p.death().shortForm());

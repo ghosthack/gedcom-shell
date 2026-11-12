@@ -4,6 +4,7 @@ import ged.gedcom.Node;
 import ged.model.Event;
 import ged.model.Family;
 import ged.model.GedDate;
+import ged.model.Genealogy;
 import ged.model.Person;
 import ged.text.Style;
 import ged.vfs.Location;
@@ -60,6 +61,7 @@ final class ShowCommand implements Command {
         var g = ctx.g();
         var out = new StringBuilder();
         title(out, p.name().display(), p.key(), s);
+        names(out, p, s);
         field(out, "Sex", switch (p.sex()) { case MALE -> "male"; case FEMALE -> "female"; default -> "unknown"; }, s);
         for (var e : p.events()) event(out, e, s, ctx);
         age(p).ifPresent(a -> field(out, "Age", a, s));
@@ -143,6 +145,25 @@ final class ShowCommand implements Command {
     }
 
     // ---- formatting helpers ---------------------------------------------
+
+    /// Nicknames and other names (married, birth, aka...), one per line. A
+    /// name that differs from one already shown only by accents or case
+    /// (`Jose` beside `José`) is a spelling kept for searching and is
+    /// skipped; `find` matches both either way.
+    private static void names(StringBuilder out, Person p, Style s) {
+        var nicks = p.nicknames();
+        if (!nicks.isEmpty()) field(out, nicks.size() == 1 ? "Nickname" : "Nicknames", String.join(", ", nicks), s);
+        var seen = new java.util.HashSet<String>();
+        seen.add(Genealogy.fold(p.name().full()));
+        var lines = new java.util.ArrayList<String>();
+        for (var o : p.otherNames()) {
+            if (!seen.add(Genealogy.fold(o.name().full()))) continue;
+            var type = o.type().toLowerCase(java.util.Locale.ROOT);
+            // "aka" and "other" say no more than the heading does
+            lines.add(o.name().full() + (type.isEmpty() || type.equals("aka") || type.equals("other") ? "" : "  " + s.dim("(" + type + ")")));
+        }
+        if (!lines.isEmpty()) field(out, "Also known as", String.join("\n", lines), s);
+    }
 
     private static void title(StringBuilder out, String title, String key, Style s) {
         out.append(s.bold(title));
