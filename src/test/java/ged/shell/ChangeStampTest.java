@@ -75,9 +75,9 @@ class ChangeStampTest {
     void aRepeatedIdIsReadUnderTheNextFreeOne() {
         var g = Genealogy.of(REPEATED);
         assertEquals(java.util.List.of(
-                "duplicate id @N1@ at line 16 ignored",
                 "duplicate id @I1@: the record at line 6 is read as @I3@ (the first is at line 2) and is saved under that id once edited",
-                "duplicate id @F1@: the record at line 13 is read as @F2@ (the first is at line 11) and is saved under that id once edited"),
+                "duplicate id @F1@: the record at line 13 is read as @F2@ (the first is at line 11) and is saved under that id once edited",
+                "duplicate id @N1@: the record at line 16 is read as @N2@ (the first is at line 15)"),
                 g.warnings());
         assertEquals("A One", g.person("I1").orElseThrow().name().full());
         assertEquals("B Two", g.person("I3").orElseThrow().name().full());
@@ -95,7 +95,7 @@ class ChangeStampTest {
                 .replace("0 @I1@ INDI\n1 NAME B /Two/\n1 SEX F\n", "0 @I3@ INDI\n1 NAME B /Two/\n1 SEX F\n1 BIRT\n2 DATE 1900\n1 FAMC @F2@\n")
                 .replace("0 @F1@ FAM\n1 WIFE @I2@\n", "0 @F2@ FAM\n1 WIFE @I2@\n1 CHIL @I3@\n"), g.render());
         var again = Genealogy.of(g.render());
-        assertEquals(java.util.List.of("duplicate id @N1@ at line 20 ignored"), again.warnings());
+        assertEquals(java.util.List.of("duplicate id @N1@: the record at line 20 is read as @N2@ (the first is at line 19)"), again.warnings());
         assertTrue(shell.execute("add person \"D /Four/\""));
         assertTrue(g.person("I4").isPresent(), "new ids steer clear of the ones handed out on reading");
     }

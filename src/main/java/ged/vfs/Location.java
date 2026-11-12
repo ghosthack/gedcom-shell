@@ -2,6 +2,8 @@ package ged.vfs;
 
 import ged.model.Family;
 import ged.model.Person;
+import ged.model.RecordKind;
+import ged.gedcom.Node;
 
 /// A place you can `cd` into. Every location is directory-like: people and
 /// families "contain" their relatives.
@@ -22,6 +24,13 @@ public sealed interface Location {
     record Group(Person person, Relation relation) implements Location {}
     /// `/families/F1/children`
     record FamilyChildren(Family family) implements Location {}
+    /// `/notes`, `/sources`, `/media`
+    record Records(RecordKind kind) implements Location {}
+    /// `/sources/S1`: one note, source or media record. It "contains" the
+    /// people, families and records that use it.
+    record RecordDir(RecordKind kind, Node record) implements Location {
+        public String key() { return ged.model.Genealogy.key(record.xref()); }
+    }
 
     enum Relation {
         PARENTS("parents"), SPOUSES("spouses"), CHILDREN("children"), SIBLINGS("siblings"), FAMILIES("families");
@@ -53,6 +62,8 @@ public sealed interface Location {
             case FamilyDir(var f) -> "/families/" + f.key();
             case Group(var p, var r) -> "/people/" + p.key() + "/" + r.dirName;
             case FamilyChildren(var f) -> "/families/" + f.key() + "/children";
+            case Records(var k) -> "/" + k.dirName;
+            case RecordDir r -> "/" + r.kind().dirName + "/" + r.key();
         };
     }
 }
