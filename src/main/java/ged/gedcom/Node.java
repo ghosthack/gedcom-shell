@@ -48,6 +48,15 @@ public final class Node {
         return new Node(0, xref, tag, "", null);
     }
 
+    /// This record under another id: the same sub-lines (still written as
+    /// they were read), with only its own line made anew.
+    public Node renamed(String xref) {
+        var n = new Node(level, xref, tag, value, null);
+        n.children.addAll(children);
+        n.junk.addAll(junk);
+        return n;
+    }
+
     public int level() { return level; }
     /// Cross-reference id of a record (e.g. `@I1@`), or `null`.
     public String xref() { return xref; }
