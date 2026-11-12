@@ -87,14 +87,17 @@ public final class Records {
     private static final DateTimeFormatter CHAN_TIME = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.ROOT);
 
     /// Updates the record's existing `CHAN` date/time, as genealogy
-    /// programs do. A record without one is left without one.
-    static void touch(Node rec) {
+    /// programs do. A record without one is left without one. GEDCOM 7 can
+    /// say a time is UTC (a `Z` after it), so there the stamp is UTC and
+    /// the same wherever the file is edited; 5.5.1 has no such mark, and
+    /// its times are local, as the programs that write it mean them.
+    static void touch(Node rec, boolean gedcom7) {
         rec.first("CHAN").ifPresent(chan -> {
-            var now = LocalDateTime.now();
+            var now = gedcom7 ? LocalDateTime.now(java.time.ZoneOffset.UTC) : LocalDateTime.now();
             var date = chan.first("DATE").orElseGet(() -> chan.insert(0, "DATE", ""));
             date.setValue(CHAN_DATE.format(now).toUpperCase(Locale.ROOT));
             var time = date.first("TIME");
-            if (time.isPresent()) time.get().setValue(CHAN_TIME.format(now));
+            if (time.isPresent()) time.get().setValue(CHAN_TIME.format(now) + (gedcom7 ? "Z" : ""));
         });
     }
 

@@ -155,8 +155,8 @@ public final class Links {
     }
 
     private static void done(Genealogy g, Family f, Person p) {
-        Records.touch(f.node());
-        Records.touch(p.node());
+        Records.touch(f.node(), g.isGedcom7());
+        Records.touch(p.node(), g.isGedcom7());
         g.updated(f);
         g.updated(p);
     }

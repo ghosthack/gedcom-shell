@@ -77,4 +77,26 @@ class PhotoTest {
         assertTrue(g.mediaPath("https://example.com/a.jpg").isEmpty());
         assertTrue(with("0 @I1@ INDI").mediaPath("photos/a b.jpg").isEmpty());
     }
+
+    @Test
+    void aRecordsSeveralFilesAreOnePicture() {
+        var g = with(
+                "0 @I1@ INDI", "1 OBJE @M1@", "2 CROP", "3 TOP 5", "3 LEFT 6", "1 OBJE @M2@", "1 OBJE @M3@",
+                "0 @M1@ OBJE", "1 FILE a.tif", "2 FORM image/tiff", "1 FILE a.jpg", "2 FORM image/jpeg",
+                "0 @M2@ OBJE", "1 FILE speech.mp3", "2 FORM audio/mpeg", "1 FILE portrait.png",
+                "0 @M3@ OBJE", "1 FILE letter.pdf", "1 FILE letter.txt");
+        var photos = photos(g, "I1");
+        assertEquals(List.of("a.tif", "portrait.png", "letter.pdf"), photos.stream().map(Photo::file).toList());
+        assertEquals(Optional.of(new Photo.Crop(6, 5, 0, 0)), photos.getFirst().crop());
+    }
+
+    @Test
+    void aRecordCanBeMarkedPrimaryUnlessTheLinkSaysNo() {
+        var g = with(
+                "0 @I1@ INDI", "1 OBJE @M1@", "1 OBJE @M2@", "1 OBJE @M3@", "2 _PRIM N",
+                "0 @M1@ OBJE", "1 FILE a.jpg",
+                "0 @M2@ OBJE", "1 FILE b.jpg", "1 _PRIM Y",
+                "0 @M3@ OBJE", "1 FILE c.jpg", "1 _PRIM Y");
+        assertEquals(List.of("b.jpg", "a.jpg", "c.jpg"), photos(g, "I1").stream().map(Photo::file).toList());
+    }
 }

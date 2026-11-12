@@ -20,6 +20,19 @@ public record Photo(String file, String title, Optional<Crop> crop, GedDate date
         this(file, title, crop, GedDate.EMPTY);
     }
 
+    private static final java.util.Set<String> IMAGE_TYPES =
+            java.util.Set.of("jpg", "jpeg", "png", "gif", "bmp", "tif", "tiff", "webp", "heic", "heif", "pcx", "pict", "svg");
+
+    /// True if a `FILE` says it is an image: by its `FORM` (GEDCOM 7's
+    /// `image/jpeg`, 5.5.1's `jpeg`), or, with no `FORM`, by its extension.
+    static boolean isImage(Node file) {
+        var form = file.text("FORM").strip().toLowerCase(java.util.Locale.ROOT);
+        if (!form.isEmpty()) return form.startsWith("image/") || IMAGE_TYPES.contains(form);
+        var name = file.value().strip().toLowerCase(java.util.Locale.ROOT);
+        int dot = name.lastIndexOf('.');
+        return dot >= 0 && IMAGE_TYPES.contains(name.substring(dot + 1));
+    }
+
     /// The date written on the first of these that has one.
     static GedDate dateOf(Node... places) {
         for (var n : places) {
