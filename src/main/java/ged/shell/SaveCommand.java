@@ -3,6 +3,7 @@ package ged.shell;
 import ged.gedcom.Charsets;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -21,6 +22,7 @@ final class SaveCommand implements Command {
                 The write is atomic (temp file + rename) and keeps file permissions.
 
                 With FILE, writes there instead and leaves the original untouched.
+                A FILE that already exists is not replaced unless you say `save -f FILE`.
 
                 If another program changed the file since it was opened, save
                 refuses, so that program's changes aren't lost: write a copy with
@@ -46,6 +48,9 @@ final class SaveCommand implements Command {
         }
         int records = g.dirtyCount();
         try {
+            if (!force && !g.isSource(target) && Files.exists(target)) {
+                throw new CommandException(target + " already exists; `save -f " + args.getFirst() + "` overwrites it");
+            }
             if (!force && g.isSource(target) && g.changedOnDisk()) {
                 throw new CommandException(target + " was changed by another program since it was opened; "
                         + "`save OTHER.ged` writes a copy to compare, `save -f` overwrites it");

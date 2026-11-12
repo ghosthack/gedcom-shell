@@ -40,7 +40,7 @@ public final class Genealogy {
     private final Set<Node> dirty = new LinkedHashSet<>();
     /// Records that were in the file and have been deleted since the last save.
     private int deleted;
-    private final Node header;
+    private Node header;
     private final Charsets.Decoded encoding;
     private final List<String> warnings;
     private final SequencedMap<String, Person> people = new LinkedHashMap<>();
@@ -282,12 +282,28 @@ public final class Genealogy {
         }
         var number = width > 0 ? ("%0" + width + "d").formatted(max + 1) : Integer.toString(max + 1);
         var node = Node.record("@" + prefix + number + "@", tag);
+        if (records.isEmpty()) startFile();
         int at = records.size();
         if (at > 0 && records.get(at - 1).tag().equals("TRLR")) at--;
         records.add(at, node);
         rawRecords.add(at, "");
         dirty.add(node);
         return node;
+    }
+
+    /// Gives a file that had no records the header and trailer every
+    /// GEDCOM file needs, so the first record added to it is readable elsewhere.
+    private void startFile() {
+        header = Node.record(null, "HEAD");
+        var gedc = header.insert(0, "GEDC", "");
+        gedc.insert(0, "VERS", "5.5.1");
+        gedc.insert(1, "FORM", "LINEAGE-LINKED");
+        header.insert(1, "CHAR", "UTF-8");
+        for (var rec : List.of(header, Node.record(null, "TRLR"))) {
+            records.add(rec);
+            rawRecords.add("");
+            dirty.add(rec);
+        }
     }
 
     private static final java.util.regex.Pattern LINE_WITH_ENDING =

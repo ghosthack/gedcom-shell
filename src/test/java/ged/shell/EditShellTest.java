@@ -97,6 +97,52 @@ class EditShellTest {
     }
 
     @Test
+    void reopenedFormKeepsWhatWasTyped() {
+        load(Fixtures.cousins());
+        editorSteps.add(set("surname", "Rossi-Verdi").andThen(set("birth.date", "31 FEB 1910"))::apply);
+        editorSteps.add(set("birth.date", "31 APR 1910")); // wrong again: the banner is replaced, not stacked
+        editorSteps.add(set("birth.date", "8 JAN 1910"));
+        var r = run("edit");
+        assertEquals(3, formsShown.size());
+        assertTrue(formsShown.get(1).contains("surname: Rossi-Verdi"), formsShown.get(1));
+        assertTrue(formsShown.get(1).contains("birth.date: 31 FEB 1910"), formsShown.get(1));
+        assertTrue(formsShown.get(2).startsWith("# ERROR: birth.date: day 31 is out of range for APR"), formsShown.get(2));
+        assertEquals(1, formsShown.get(2).split("# ERROR:", -1).length - 1, formsShown.get(2));
+        assertTrue(r.contains("Elena Rossi-Verdi  I9  2 changes"), r);
+    }
+
+    @Test
+    void saveDoesNotReplaceAnotherFileUnasked() throws Exception {
+        var file = dir.resolve("tree.ged");
+        Files.writeString(file, Fixtures.COUSINS);
+        var other = dir.resolve("notes.txt");
+        Files.writeString(other, "precious");
+        load(Genealogy.load(file));
+        assertTrue(run("save " + other).contains("already exists"), out.toString());
+        assertEquals("precious", Files.readString(other));
+        assertTrue(run("save -f " + other).contains("saved"));
+        assertEquals(Fixtures.COUSINS, Files.readString(other));
+        assertTrue(run("save " + file).contains("saved"), "the file it was opened from is not 'another file'");
+    }
+
+    @Test
+    void firstPersonInAnEmptyFileGetsHeaderAndTrailer() throws Exception {
+        var file = dir.resolve("new.ged");
+        Files.writeString(file, "");
+        g = Genealogy.load(file);
+        shell = new Shell(new Navigator(new FileSystem(g), java.util.Optional.empty()),
+                new PrintStream(out, true, StandardCharsets.UTF_8), new PrintStream(err, true, StandardCharsets.UTF_8), Style.PLAIN);
+        assertTrue(run("add person \"Ana /Ruiz/\"; save").contains("saved"), out.toString());
+        var text = Files.readString(file);
+        assertTrue(text.startsWith("0 HEAD\n1 GEDC\n2 VERS 5.5.1\n2 FORM LINEAGE-LINKED\n1 CHAR UTF-8\n0 @I1@ INDI\n"), text);
+        assertTrue(text.endsWith("1 SEX U\n0 TRLR\n"), text);
+        var again = Genealogy.load(file);
+        assertEquals(1, again.people().size());
+        assertTrue(again.warnings().isEmpty(), again.warnings().toString());
+        assertEquals("5.5.1", again.gedcomVersion());
+    }
+
+    @Test
     void cancellingChangesNothing() {
         load(Fixtures.cousins());
         editorSteps.add(_ -> null);          // :cq

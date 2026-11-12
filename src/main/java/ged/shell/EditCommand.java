@@ -2,6 +2,7 @@ package ged.shell;
 
 import ged.edit.FamilyForm;
 import ged.edit.PersonForm;
+import ged.edit.Records;
 import ged.model.Family;
 import ged.model.Person;
 import ged.text.Style;
@@ -235,8 +236,8 @@ final class EditCommand implements Command {
         try {
             var file = Files.createTempFile("ged-" + target.key() + "-", ".txt");
             try {
+                var form = target.render(null);
                 while (true) {
-                    var form = target.render(error);
                     Files.writeString(file, form, StandardCharsets.UTF_8);
                     boolean saved;
                     try {
@@ -254,6 +255,7 @@ final class EditCommand implements Command {
                         return;
                     } catch (IllegalArgumentException e) {
                         error = e.getMessage();
+                        form = Records.reopened(edited, error); // their text, not the record's
                         ctx.out().println(ctx.style().red("edit: " + error) + ctx.style().dim("  (reopening the form)"));
                     }
                 }

@@ -14,7 +14,7 @@ import java.util.function.Function;
 
 /// Helpers shared by the person and family forms: reading the `field:
 /// value` text, normalising values, and writing events into records.
-final class Records {
+public final class Records {
     private Records() {}
 
     /// Parses an edited form. Fields left out of the text are unchanged.
@@ -43,6 +43,15 @@ final class Records {
     /// The `# ERROR:` banner that tops a reopened form.
     static String errorBanner(String error) {
         return error == null ? "" : "# ERROR: " + error.replace("\n", "\n#        ") + "\n#\n";
+    }
+
+    private static final java.util.regex.Pattern BANNER =
+            java.util.regex.Pattern.compile("\\A# ERROR: [^\\n]*\\n(?:#        [^\\n]*\\n)*#\\n");
+
+    /// The form as the user left it, to open again with `error` on top
+    /// (in place of an earlier error), so nothing they typed is lost.
+    public static String reopened(String edited, String error) {
+        return errorBanner(error) + BANNER.matcher(edited).replaceFirst("");
     }
 
     static String clean(String value) {
