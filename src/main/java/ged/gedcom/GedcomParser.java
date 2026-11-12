@@ -48,7 +48,7 @@ public final class GedcomParser {
             endings.add(m0.group(2));
             if (m0.group(2).isEmpty()) break; // last line, no ending
         }
-        boolean finalNewline = !endings.isEmpty() && !endings.getLast().isEmpty();
+        boolean finalNewline = endings.isEmpty() || !endings.getLast().isEmpty(); // an empty file gains one
         var newline = mostCommon(endings);
         var starts = new ArrayList<Integer>();
         // Blank or unparseable lines seen since the last good line, and that

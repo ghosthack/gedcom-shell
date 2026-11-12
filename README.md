@@ -105,7 +105,7 @@ step rather than guessing which "parent" you meant. `pwd` shows the route;
 | `add` | `add RELATION NAME [FIELD=VALUE...]` | Create a person as a child, spouse, father, mother or sibling of where you are (or unlinked: `add person`). Takes `edit`'s fields. See below. |
 | `link` | `link PERSON WHERE` | Make an existing person a child, partner, parent or sibling: `link I12 children`, `link I12 father`. See below. |
 | `unlink` | `unlink PATH` | Take the person PATH ends with out of the family connecting you: `unlink children/I12`. Nobody is deleted. |
-| `save` | `save [-f] [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone. If another program changed the file since it was opened, `save` refuses rather than lose that program's changes; `save -f` overwrites. |
+| `save` | `save [-f] [FILE]` | Write edits back. With FILE, writes a copy and leaves the original (and the unsaved state) alone; a FILE that already exists is replaced only with `save -f FILE`. If another program changed the file since it was opened, `save` refuses rather than lose that program's changes; `save -f` overwrites. |
 
 Aliases: `ll` = `ls -l`, `cat` = `show`, `search` = `find`, `quit` = `exit`, `vi` = `edit`, `w` = `save`.
 Separate commands with `;`. `#` starts a comment. Quote names that contain spaces.
@@ -138,8 +138,8 @@ residence.place: Alexander Palace, Tsarskoye Selo
 ```
 
 Save and quit to apply. Quit without saving, or `:cq`, to cancel. If a value
-is invalid (`31 FEB 1900`, `sex: X`), the form reopens with the error at the
-top. The same fields work without an editor, for scripts:
+is invalid (`31 FEB 1900`, `sex: X`), the form reopens as you left it, with
+the error at the top. The same fields work without an editor, for scripts:
 
 ```
 edit mother sex=F born="12 jun 1850" birthplace="Genova, Italia"
@@ -325,6 +325,13 @@ the command then shows up in `help`, runs, and is tab-completed like the
 built-in ones. A command can't take a built-in's name. `Context` gives it
 the navigator, the genealogy, the output stream and the style; `Options`
 parses its flags.
+
+The genealogy also reads what no built-in command shows yet, for commands
+that want it. `Genealogy.photos(person)` lists a person's pictures (`OBJE`
+links, pointer or embedded), preferred one first, each with its file,
+title, date and the crop that shows that person; `Genealogy.mediaPath(file)`
+turns a picture's `FILE` value into a path on disk, relative to the GEDCOM
+file.
 
 As a Maven dependency (after `mvn install` here):
 
