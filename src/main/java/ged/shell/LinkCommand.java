@@ -8,6 +8,7 @@ import ged.model.Person;
 import ged.vfs.Location;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 final class LinkCommand implements Command {
@@ -123,8 +124,7 @@ final class LinkCommand implements Command {
                 case PARENTS -> {
                     var slot = Slot.of(x);
                     if (slot == null) {
-                        var open = g.familiesAsChild(p).stream().findFirst()
-                                .filter(f -> f.husband().isEmpty() != f.wife().isEmpty());
+                        var open = childHome(g, p).filter(f -> f.husband().isEmpty() != f.wife().isEmpty());
                         if (open.isEmpty()) throw new CommandException(x.name().display()
                                 + "'s sex is unknown; say which: link " + x.key() + " father (or mother)");
                         slot = open.get().husband().isEmpty() ? Slot.HUSB : Slot.WIFE;
@@ -132,7 +132,7 @@ final class LinkCommand implements Command {
                     yield asParent(g, x, p, slot, name);
                 }
                 case SIBLINGS -> {
-                    var f = g.familiesAsChild(p).stream().findFirst().orElseThrow(() -> new CommandException(
+                    var f = childHome(g, p).orElseThrow(() -> new CommandException(
                             p.name().display() + " has no parents' family yet; link a parent first"));
                     Links.addChild(g, f, x);
                     yield name + " is now a sibling of " + s.bold(p.name().display()) + " in " + family(ctx, f);
@@ -145,8 +145,8 @@ final class LinkCommand implements Command {
         };
     }
 
-    /// `x` becomes `p`'s father or mother: in `p`'s family as a child, or a
-    /// new one if `p` has none.
+    /// `x` becomes `p`'s father or mother: in the family `father` and
+    /// `mother` read, or a new one if `p` has no child-family yet.
     private static String asParent(Genealogy g, Person x, Person p, Slot slot, String name) {
         var word = slot == Slot.HUSB ? "father" : "mother";
         if (Slot.of(x) == slot.other()) {
@@ -154,16 +154,15 @@ final class LinkCommand implements Command {
                     + "; link as " + (slot == Slot.HUSB ? "mother" : "father") + ", or fix with: edit " + x.key() + " sex=…");
         }
         Links.refuseLoop(g, x, p); // before a family is started for them
-        var families = g.familiesAsChild(p);
+        var home = childHome(g, p);
         Family f;
-        boolean created = families.isEmpty();
+        boolean created = home.isEmpty();
         if (created) {
             f = g.newFamily();
             Links.setPartner(g, f, slot, x);
             Links.addChild(g, f, p);
         } else {
-            // the first family is the one `father` and `mother` read
-            f = families.getFirst();
+            f = home.get();
             var current = slot == Slot.HUSB ? f.husband() : f.wife();
             if (current.isPresent()) {
                 var who = current.flatMap(g::person).map(q -> q.key() + "  " + q.label()).orElse(current.get());
@@ -199,6 +198,17 @@ final class LinkCommand implements Command {
         }
         return name + " and " + ctx.style().bold(p.name().display()) + " are now partners in "
                 + family(ctx, g.family(f.id()).orElseThrow()) + (created ? ctx.style().dim(" (new family)") : "");
+    }
+
+    /// The family `father`, `mother` and `siblings` edit. That is the one
+    /// [Genealogy#parentFamily] shows when a child-family names a parent;
+    /// when every child-family is still empty, the first of them, so the
+    /// link lands on the family the person already has.
+    private static Optional<Family> childHome(Genealogy g, Person p) {
+        var shown = g.parentFamily(p);
+        if (shown.isPresent()) return shown;
+        var families = g.familiesAsChild(p);
+        return families.isEmpty() ? Optional.empty() : Optional.of(families.getFirst());
     }
 
     private static Slot slotOrHusband(Person p) {

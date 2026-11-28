@@ -141,6 +141,8 @@ final class UnlinkCommand implements Command {
             case "spouses" -> g.familiesAsSpouse(p).stream().filter(f -> f.partnerOf(p.id()).filter(x.id()::equals).isPresent()).toList();
             case "parents" -> g.familiesAsChild(p).stream().filter(f -> isPartner(f, x)).toList();
             case "siblings" -> {
+                var home = g.parentFamily(p).filter(f -> f.children().contains(x.id()));
+                if (home.isPresent()) yield List.of(home.get()); // the family `father` and `mother` read
                 var shared = g.familiesAsChild(p).stream().filter(f -> f.children().contains(x.id())).toList();
                 if (!shared.isEmpty()) yield shared;
                 // a half-sibling leaves the family that gives them the shared parent
@@ -153,14 +155,13 @@ final class UnlinkCommand implements Command {
         };
     }
 
+    /// `x` leaves the one child-family `father` and `mother` display.
+    /// Another family where they are also a partner stays as it is.
     private static void leaveAsParent(Genealogy g, Person x, Person p, List<Family> touched) {
-        for (var f : g.familiesAsChild(p)) {
-            if (isPartner(f, x)) {
-                Links.removePartner(g, f, x);
-                touched.add(f);
-            }
-        }
-        if (touched.isEmpty()) throw new CommandException("no family connects these two");
+        var home = g.parentFamily(p).filter(f -> isPartner(f, x));
+        if (home.isEmpty()) throw new CommandException("no family connects these two");
+        Links.removePartner(g, home.get(), x);
+        touched.add(home.get());
     }
 
     private static Family partnerLeaves(Genealogy g, Family f, Person x) {
